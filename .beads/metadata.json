@@ -1,0 +1,7 @@
+{
+  "database": "dolt",
+  "backend": "dolt",
+  "dolt_mode": "embedded",
+  "dolt_database": "hotel_booking_system",
+  "project_id": "97dac3ad-d8d7-45c6-9306-c47d9fcbd24f"
+}
