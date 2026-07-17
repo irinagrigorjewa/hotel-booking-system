@@ -29,6 +29,7 @@ def create_access_token(*, user_id: int, role: UserRole) -> str:
             "role": role.value,
             "iat": issued_at,
             "exp": expires_at,
+            "jti": token_urlsafe(16),
             "type": "access",
         },
         settings.secret_key,
