@@ -1,13 +1,12 @@
 from typing import Annotated
 
-import jwt
 from fastapi import APIRouter, Depends, HTTPException, Response, status
-from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from sqlalchemy.orm import Session
 
-from app.core.security import decode_access_token
+from app.core.deps import CurrentUserDependency
 from app.database.session import get_session
 from app.schemas.auth import LoginRequest, RefreshTokenRequest, RegisterRequest, TokenPairResponse
+from app.schemas.user import UserPublic
 from app.services.auth import (
     EmailAlreadyRegisteredError,
     InvalidCredentialsError,
@@ -21,28 +20,6 @@ from app.services.auth import (
 
 router = APIRouter(prefix="/api/v1/auth", tags=["Auth"])
 SessionDependency = Annotated[Session, Depends(get_session)]
-bearer_scheme = HTTPBearer(auto_error=False)
-
-
-def get_current_user_id(
-    credentials: Annotated[HTTPAuthorizationCredentials | None, Depends(bearer_scheme)],
-) -> int:
-    if credentials is None:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Not authenticated",
-        )
-
-    try:
-        return decode_access_token(credentials.credentials)
-    except jwt.InvalidTokenError as error:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid token",
-        ) from error
-
-
-CurrentUserIdDependency = Annotated[int, Depends(get_current_user_id)]
 
 
 @router.post(
@@ -103,10 +80,10 @@ def refresh_token(
 def logout_user(
     request: RefreshTokenRequest,
     session: SessionDependency,
-    user_id: CurrentUserIdDependency,
+    current_user: CurrentUserDependency,
 ) -> Response:
     try:
-        logout(session, user_id=user_id, request=request)
+        logout(session, user_id=current_user.id, request=request)
     except InvalidRefreshTokenError as error:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -114,3 +91,12 @@ def logout_user(
         ) from error
 
     return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+
+@router.get(
+    "/me",
+    response_model=UserPublic,
+    responses={401: {"description": "Invalid access token"}},
+)
+def get_current_user(current_user: CurrentUserDependency) -> UserPublic:
+    return UserPublic.model_validate(current_user)

@@ -1,15 +1,19 @@
 from collections.abc import Generator
 from contextlib import contextmanager
 
+from fastapi import HTTPException
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session, sessionmaker
 from sqlalchemy.pool import StaticPool
 
 from app.core.config import settings
+from app.core.deps import require_admin
 from app.database.base import Base
 from app.database.session import get_session
 from app.main import app
+from app.models.enums import UserRole
+from app.models.user import User
 
 
 @contextmanager
@@ -189,3 +193,65 @@ def test_refresh_rejects_expired_token() -> None:
 
     assert response.status_code == 401
     assert response.json() == {"detail": "Invalid refresh token"}
+
+
+def test_auth_me_returns_current_users_safe_profile() -> None:
+    with create_client() as client:
+        registration_response = client.post(
+            "/api/v1/auth/register",
+            json={
+                "name": "Ivan Ivanov",
+                "email": "ivan@example.com",
+                "password": "Secret123!",
+                "phone": "+79001234567",
+            },
+        )
+        access_token = registration_response.json()["access_token"]
+        response = client.get(
+            "/api/v1/auth/me",
+            headers={"Authorization": f"Bearer {access_token}"},
+        )
+
+    assert response.status_code == 200
+    assert response.json()["name"] == "Ivan Ivanov"
+    assert response.json()["email"] == "ivan@example.com"
+    assert response.json()["phone"] == "+79001234567"
+    assert response.json()["role"] == UserRole.CLIENT
+    assert "password_hash" not in response.json()
+
+
+def test_auth_me_rejects_request_without_access_token() -> None:
+    with create_client() as client:
+        response = client.get("/api/v1/auth/me")
+
+    assert response.status_code == 401
+    assert response.json() == {"detail": "Not authenticated"}
+
+
+def test_auth_me_rejects_invalid_access_token() -> None:
+    with create_client() as client:
+        response = client.get(
+            "/api/v1/auth/me",
+            headers={"Authorization": "Bearer invalid-token"},
+        )
+
+    assert response.status_code == 401
+    assert response.json() == {"detail": "Invalid token"}
+
+
+def test_require_admin_rejects_client_user() -> None:
+    client_user = User(
+        id=1,
+        name="Ivan Ivanov",
+        email="ivan@example.com",
+        password_hash="hash",
+        role=UserRole.CLIENT,
+    )
+
+    try:
+        require_admin(client_user)
+    except HTTPException as error:
+        assert error.status_code == 403
+        assert error.detail == "Forbidden"
+    else:
+        raise AssertionError("CLIENT user must not satisfy require_admin")
