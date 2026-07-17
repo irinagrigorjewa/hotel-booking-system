@@ -36,6 +36,17 @@ def create_access_token(*, user_id: int, role: UserRole) -> str:
     )
 
 
+def decode_access_token(access_token: str) -> int:
+    payload = jwt.decode(access_token, settings.secret_key, algorithms=["HS256"])
+    if payload.get("type") != "access":
+        raise jwt.InvalidTokenError("Invalid token type")
+
+    try:
+        return int(payload["sub"])
+    except (KeyError, TypeError, ValueError) as error:
+        raise jwt.InvalidTokenError("Invalid subject") from error
+
+
 def create_refresh_token() -> str:
     return token_urlsafe(48)
 
