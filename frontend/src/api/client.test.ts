@@ -1,13 +1,10 @@
-import {
-  AxiosError,
-  type AxiosAdapter,
-  type AxiosResponse,
-  type InternalAxiosRequestConfig,
-} from 'axios'
-import { afterEach, describe, expect, it, vi } from 'vitest'
+import { AxiosError } from 'axios'
+import { http, HttpResponse } from 'msw'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { tokenStorage } from '../auth/tokenStorage'
 import type { TokenPair } from '../types/auth'
+import { server } from '../test/server'
 import { createApiClient } from './client'
 
 const initialTokens: TokenPair = {
@@ -22,90 +19,68 @@ const refreshedTokens: TokenPair = {
   token_type: 'bearer',
 }
 
-const response = <Data>(
-  config: InternalAxiosRequestConfig,
-  status: number,
-  data: Data,
-): AxiosResponse<Data> => ({
-  config,
-  data,
-  headers: {},
-  status,
-  statusText: '',
-})
-
-const unauthorized = (config: InternalAxiosRequestConfig): Promise<never> =>
-  Promise.reject(
-    new AxiosError(
-      'Unauthorized',
-      undefined,
-      config,
-      {},
-      response(config, 401, { detail: 'Unauthorized' }),
-    ),
-  )
-
-afterEach(() => {
+beforeEach(() => {
   window.localStorage.clear()
 })
 
 describe('apiClient', () => {
   it('refreshes once and retries a protected request with the new access token', async () => {
     tokenStorage.save(initialTokens)
-    const requests: InternalAxiosRequestConfig[] = []
     const onSessionExpired = vi.fn()
-    const adapter: AxiosAdapter = async (config) => {
-      requests.push(config)
+    const protectedRequests = vi.fn()
+    const refreshRequests = vi.fn()
+    server.use(
+      http.get('*/api/v1/protected-resource', ({ request }) => {
+        protectedRequests(request)
 
-      if (config.url === '/auth/refresh') {
-        return response(config, 200, refreshedTokens)
-      }
+        if (protectedRequests.mock.calls.length === 1) {
+          return HttpResponse.json({ detail: 'Unauthorized' }, { status: 401 })
+        }
 
-      const protectedRequests = requests.filter(
-        ({ url }) => url === '/protected-resource',
-      )
+        return HttpResponse.json({ id: 1 })
+      }),
+      http.post('*/api/v1/auth/refresh', () => {
+        refreshRequests()
 
-      if (protectedRequests.length === 1) {
-        return unauthorized(config)
-      }
-
-      return response(config, 200, { id: 1 })
-    }
-    const client = createApiClient({ adapter, onSessionExpired })
+        return HttpResponse.json(refreshedTokens)
+      }),
+    )
+    const client = createApiClient({ onSessionExpired })
 
     await expect(client.get('/protected-resource')).resolves.toMatchObject({
       data: { id: 1 },
     })
 
+    expect(refreshRequests).toHaveBeenCalledTimes(1)
+    expect(protectedRequests).toHaveBeenCalledTimes(2)
     expect(
-      requests.filter(({ url }) => url === '/auth/refresh'),
-    ).toHaveLength(1)
-    expect(requests[2]?.headers.Authorization).toBe('Bearer new-access')
+      protectedRequests.mock.calls[1]?.[0].headers.get('Authorization'),
+    ).toBe('Bearer new-access')
     expect(tokenStorage.read()).toEqual(refreshedTokens)
     expect(onSessionExpired).not.toHaveBeenCalled()
   })
 
   it('shares one refresh request between parallel unauthorized requests', async () => {
     tokenStorage.save(initialTokens)
-    const requests: InternalAxiosRequestConfig[] = []
-    const adapter: AxiosAdapter = async (config) => {
-      requests.push(config)
+    const protectedRequests = vi.fn()
+    const refreshRequests = vi.fn()
+    server.use(
+      http.get('*/api/v1/protected-resource', () => {
+        protectedRequests()
 
-      if (config.url === '/auth/refresh') {
-        return response(config, 200, refreshedTokens)
-      }
+        if (protectedRequests.mock.calls.length <= 2) {
+          return HttpResponse.json({ detail: 'Unauthorized' }, { status: 401 })
+        }
 
-      const requestCount = requests.filter(
-        ({ url }) => url === '/protected-resource',
-      ).length
+        return HttpResponse.json({ id: protectedRequests.mock.calls.length })
+      }),
+      http.post('*/api/v1/auth/refresh', () => {
+        refreshRequests()
 
-      if (requestCount <= 2) {
-        return unauthorized(config)
-      }
-
-      return response(config, 200, { id: requestCount })
-    }
-    const client = createApiClient({ adapter })
+        return HttpResponse.json(refreshedTokens)
+      }),
+    )
+    const client = createApiClient()
 
     await expect(
       Promise.all([
@@ -114,33 +89,63 @@ describe('apiClient', () => {
       ]),
     ).resolves.toHaveLength(2)
 
-    expect(
-      requests.filter(({ url }) => url === '/auth/refresh'),
-    ).toHaveLength(1)
+    expect(refreshRequests).toHaveBeenCalledTimes(1)
   })
 
   it('clears the session after a second unauthorized response without another retry loop', async () => {
     tokenStorage.save(initialTokens)
-    const requests: InternalAxiosRequestConfig[] = []
     const onSessionExpired = vi.fn()
-    const adapter: AxiosAdapter = async (config) => {
-      requests.push(config)
+    const protectedRequests = vi.fn()
+    const refreshRequests = vi.fn()
+    server.use(
+      http.get('*/api/v1/protected-resource', () => {
+        protectedRequests()
 
-      if (config.url === '/auth/refresh') {
-        return response(config, 200, refreshedTokens)
-      }
+        return HttpResponse.json({ detail: 'Unauthorized' }, { status: 401 })
+      }),
+      http.post('*/api/v1/auth/refresh', () => {
+        refreshRequests()
 
-      return unauthorized(config)
-    }
-    const client = createApiClient({ adapter, onSessionExpired })
+        return HttpResponse.json(refreshedTokens)
+      }),
+    )
+    const client = createApiClient({ onSessionExpired })
 
     await expect(client.get('/protected-resource')).rejects.toBeInstanceOf(
       AxiosError,
     )
 
-    expect(
-      requests.filter(({ url }) => url === '/auth/refresh'),
-    ).toHaveLength(1)
+    expect(protectedRequests).toHaveBeenCalledTimes(2)
+    expect(refreshRequests).toHaveBeenCalledTimes(1)
+    expect(tokenStorage.read()).toBeNull()
+    expect(onSessionExpired).toHaveBeenCalledTimes(1)
+  })
+
+  it('clears the session when refreshing the token is unauthorized', async () => {
+    tokenStorage.save(initialTokens)
+    const onSessionExpired = vi.fn()
+    const protectedRequests = vi.fn()
+    const refreshRequests = vi.fn()
+    server.use(
+      http.get('*/api/v1/protected-resource', () => {
+        protectedRequests()
+
+        return HttpResponse.json({ detail: 'Unauthorized' }, { status: 401 })
+      }),
+      http.post('*/api/v1/auth/refresh', () => {
+        refreshRequests()
+
+        return HttpResponse.json({ detail: 'Refresh token is invalid' }, { status: 401 })
+      }),
+    )
+    const client = createApiClient({ onSessionExpired })
+
+    await expect(client.get('/protected-resource')).rejects.toBeInstanceOf(
+      AxiosError,
+    )
+
+    expect(protectedRequests).toHaveBeenCalledTimes(1)
+    expect(refreshRequests).toHaveBeenCalledTimes(1)
     expect(tokenStorage.read()).toBeNull()
     expect(onSessionExpired).toHaveBeenCalledTimes(1)
   })
