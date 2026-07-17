@@ -98,3 +98,94 @@ def test_login_returns_generic_error_for_invalid_credentials() -> None:
 
     assert response.status_code == 401
     assert response.json() == {"detail": "Invalid credentials"}
+
+
+def test_refresh_revokes_previous_token() -> None:
+    with create_client() as client:
+        registration_response = client.post(
+            "/api/v1/auth/register",
+            json={
+                "name": "Ivan Ivanov",
+                "email": "ivan@example.com",
+                "password": "Secret123!",
+            },
+        )
+
+        response = client.post(
+            "/api/v1/auth/refresh",
+            json={"refresh_token": registration_response.json()["refresh_token"]},
+        )
+
+    assert response.status_code == 200
+    assert response.json()["access_token"]
+    assert response.json()["refresh_token"]
+
+
+def test_refresh_rejects_previously_rotated_token() -> None:
+    with create_client() as client:
+        registration_response = client.post(
+            "/api/v1/auth/register",
+            json={
+                "name": "Ivan Ivanov",
+                "email": "ivan@example.com",
+                "password": "Secret123!",
+            },
+        )
+        refresh_token = registration_response.json()["refresh_token"]
+
+        client.post("/api/v1/auth/refresh", json={"refresh_token": refresh_token})
+        response = client.post("/api/v1/auth/refresh", json={"refresh_token": refresh_token})
+
+    assert response.status_code == 401
+    assert response.json() == {"detail": "Invalid refresh token"}
+
+
+def test_logout_revokes_current_users_refresh_token() -> None:
+    with create_client() as client:
+        registration_response = client.post(
+            "/api/v1/auth/register",
+            json={
+                "name": "Ivan Ivanov",
+                "email": "ivan@example.com",
+                "password": "Secret123!",
+            },
+        )
+        token_pair = registration_response.json()
+
+        logout_response = client.post(
+            "/api/v1/auth/logout",
+            headers={"Authorization": f"Bearer {token_pair['access_token']}"},
+            json={"refresh_token": token_pair["refresh_token"]},
+        )
+        refresh_response = client.post(
+            "/api/v1/auth/refresh",
+            json={"refresh_token": token_pair["refresh_token"]},
+        )
+
+    assert logout_response.status_code == 204
+    assert refresh_response.status_code == 401
+    assert refresh_response.json() == {"detail": "Invalid refresh token"}
+
+
+def test_refresh_rejects_expired_token() -> None:
+    previous_refresh_ttl = settings.refresh_token_expire_days
+    settings.refresh_token_expire_days = -1
+    try:
+        with create_client() as client:
+            registration_response = client.post(
+                "/api/v1/auth/register",
+                json={
+                    "name": "Ivan Ivanov",
+                    "email": "ivan@example.com",
+                    "password": "Secret123!",
+                },
+            )
+            response = client.post(
+                "/api/v1/auth/refresh",
+                json={"refresh_token": registration_response.json()["refresh_token"]},
+            )
+    finally:
+        settings.refresh_token_expire_days = previous_refresh_ttl
+
+    assert response.status_code == 401
+    assert response.json() == {"detail": "Invalid refresh token"}
