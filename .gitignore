@@ -4,3 +4,12 @@
 *.db
 .beads-credential-key
 .beads/proxieddb/
+
+# Local environment configuration
+.env
+.env.*
+!.env.example
+
+# User-uploaded media
+uploads/*
+!uploads/.gitkeep
