@@ -44,6 +44,25 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
     setUser(null)
   }, [])
 
+  useEffect(() => {
+    const handleSessionExpired = (): void => {
+      clearSession()
+    }
+    const handleTokensRefreshed = (event: Event): void => {
+      const tokenEvent = event as CustomEvent<TokenPair>
+
+      setTokens(tokenEvent.detail)
+    }
+
+    window.addEventListener('auth:session-expired', handleSessionExpired)
+    window.addEventListener('auth:tokens-refreshed', handleTokensRefreshed)
+
+    return () => {
+      window.removeEventListener('auth:session-expired', handleSessionExpired)
+      window.removeEventListener('auth:tokens-refreshed', handleTokensRefreshed)
+    }
+  }, [clearSession])
+
   const loadUser = useCallback(async (tokenPair: TokenPair): Promise<void> => {
     tokenStorage.save(tokenPair)
     setTokens(tokenPair)
