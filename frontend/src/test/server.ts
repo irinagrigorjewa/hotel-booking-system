@@ -1,7 +1,7 @@
 import { http, HttpResponse } from 'msw'
 import { setupServer } from 'msw/node'
 
-import { createHotelPage } from './hotelFixtures'
+import { createHotelDetail, createHotelPage } from './hotelFixtures'
 
 export const hotelHandlers = {
   listSuccess: http.get('*/api/v1/hotels', ({ request }) => {
@@ -43,6 +43,25 @@ export const hotelHandlers = {
   listError: http.get('*/api/v1/hotels', () =>
     HttpResponse.json({ detail: 'Server error' }, { status: 500 }),
   ),
+  detailSuccess: http.get('*/api/v1/hotels/:hotelId', ({ params }) =>
+    HttpResponse.json(
+      createHotelDetail({
+        id: Number(params.hotelId),
+        name: 'Grand Hotel',
+        city: 'Moscow',
+        description: 'Central hotel',
+      }),
+    ),
+  ),
+  detailNotFound: http.get('*/api/v1/hotels/:hotelId', () =>
+    HttpResponse.json({ detail: 'Hotel not found' }, { status: 404 }),
+  ),
+  detailError: http.get('*/api/v1/hotels/:hotelId', () =>
+    HttpResponse.json({ detail: 'Server error' }, { status: 500 }),
+  ),
 }
 
-export const server = setupServer(hotelHandlers.listSuccess)
+export const server = setupServer(
+  hotelHandlers.listSuccess,
+  hotelHandlers.detailSuccess,
+)

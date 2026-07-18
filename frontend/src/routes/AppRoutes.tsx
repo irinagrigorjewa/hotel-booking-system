@@ -3,6 +3,7 @@ import { Route, Routes } from 'react-router-dom'
 import { AuthLayout } from '../layouts/AuthLayout'
 import { PublicLayout } from '../layouts/PublicLayout'
 import { HomePage } from '../pages/HomePage'
+import { HotelDetailPage } from '../pages/HotelDetailPage'
 import { HotelsPage } from '../pages/HotelsPage'
 import { LoginPage } from '../pages/LoginPage'
 import { NotFoundPage } from '../pages/NotFoundPage'
@@ -18,7 +19,7 @@ export const AppRoutes = () => (
       <Route index element={<HomePage />} />
       <Route path="hotels" element={<HotelsPage />} />
       <Route path="hotels/map" element={<PlaceholderPage title="Карта отелей" />} />
-      <Route path="hotels/:id" element={<PlaceholderPage title="Карточка отеля" />} />
+      <Route path="hotels/:id" element={<HotelDetailPage />} />
       <Route element={<RequireAuth />}>
         <Route path="bookings/new" element={<PlaceholderPage title="New booking" />} />
         <Route path="favorites" element={<PlaceholderPage title="Favorites" />} />
