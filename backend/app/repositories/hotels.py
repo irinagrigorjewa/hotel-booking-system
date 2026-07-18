@@ -1,4 +1,5 @@
 from collections.abc import Sequence
+from decimal import Decimal
 from typing import Literal
 
 from sqlalchemy import ColumnElement, func, select
@@ -12,6 +13,55 @@ SortOrder = Literal["asc", "desc"]
 
 def get_by_id(session: Session, hotel_id: int) -> Hotel | None:
     return session.get(Hotel, hotel_id)
+
+
+def create(
+    session: Session,
+    *,
+    name: str,
+    city: str,
+    address: str,
+    description: str | None,
+    stars: int,
+    latitude: Decimal,
+    longitude: Decimal,
+) -> Hotel:
+    hotel = Hotel(
+        name=name,
+        city=city,
+        address=address,
+        description=description,
+        stars=stars,
+        latitude=latitude,
+        longitude=longitude,
+    )
+    session.add(hotel)
+    session.flush()
+    return hotel
+
+
+def update(
+    hotel: Hotel,
+    *,
+    name: str,
+    city: str,
+    address: str,
+    description: str | None,
+    stars: int,
+    latitude: Decimal,
+    longitude: Decimal,
+) -> None:
+    hotel.name = name
+    hotel.city = city
+    hotel.address = address
+    hotel.description = description
+    hotel.stars = stars
+    hotel.latitude = latitude
+    hotel.longitude = longitude
+
+
+def delete(session: Session, hotel: Hotel) -> None:
+    session.delete(hotel)
 
 
 def list_hotels(

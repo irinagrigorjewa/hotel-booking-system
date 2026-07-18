@@ -2,7 +2,7 @@ from sqlalchemy.orm import Session
 
 from app.models.hotel import Hotel
 from app.repositories import hotels
-from app.schemas.hotel import HotelDetail, HotelListItem, HotelPage
+from app.schemas.hotel import HotelCreate, HotelDetail, HotelListItem, HotelPage, HotelUpdate
 
 
 class HotelNotFoundError(Exception):
@@ -41,6 +41,34 @@ def get_hotels(
         page=page,
         size=size,
     )
+
+
+def create_hotel(session: Session, request: HotelCreate) -> HotelDetail:
+    hotel = hotels.create(session, **request.model_dump())
+    session.commit()
+    session.refresh(hotel)
+    return _to_detail(hotel)
+
+
+def update_hotel(session: Session, hotel_id: int, request: HotelUpdate) -> HotelDetail:
+    hotel = _get_hotel_or_raise(session, hotel_id)
+    hotels.update(hotel, **request.model_dump())
+    session.commit()
+    session.refresh(hotel)
+    return _to_detail(hotel)
+
+
+def delete_hotel(session: Session, hotel_id: int) -> None:
+    hotel = _get_hotel_or_raise(session, hotel_id)
+    hotels.delete(session, hotel)
+    session.commit()
+
+
+def _get_hotel_or_raise(session: Session, hotel_id: int) -> Hotel:
+    hotel = hotels.get_by_id(session, hotel_id)
+    if hotel is None:
+        raise HotelNotFoundError
+    return hotel
 
 
 def _to_list_item(hotel: Hotel) -> HotelListItem:
