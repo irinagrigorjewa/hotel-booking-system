@@ -59,9 +59,46 @@ export const hotelHandlers = {
   detailError: http.get('*/api/v1/hotels/:hotelId', () =>
     HttpResponse.json({ detail: 'Server error' }, { status: 500 }),
   ),
+  createSuccess: http.post('*/api/v1/hotels', async ({ request }) => {
+    const body = (await request.json()) as Record<string, unknown>
+
+    return HttpResponse.json(
+      createHotelDetail({
+        id: 2,
+        name: String(body.name ?? 'New Hotel'),
+        city: String(body.city ?? 'Moscow'),
+        address: String(body.address ?? 'Address'),
+        stars: Number(body.stars ?? 3),
+        latitude: String(body.latitude ?? '55.75'),
+        longitude: String(body.longitude ?? '37.61'),
+      }),
+      { status: 201 },
+    )
+  }),
+  updateSuccess: http.put('*/api/v1/hotels/:hotelId', async ({ params, request }) => {
+    const body = (await request.json()) as Record<string, unknown>
+
+    return HttpResponse.json(
+      createHotelDetail({
+        id: Number(params.hotelId),
+        name: String(body.name ?? 'Updated Hotel'),
+        city: String(body.city ?? 'Moscow'),
+        address: String(body.address ?? 'Address'),
+        stars: Number(body.stars ?? 3),
+        latitude: String(body.latitude ?? '55.75'),
+        longitude: String(body.longitude ?? '37.61'),
+      }),
+    )
+  }),
+  deleteSuccess: http.delete('*/api/v1/hotels/:hotelId', () =>
+    new HttpResponse(null, { status: 204 }),
+  ),
 }
 
 export const server = setupServer(
   hotelHandlers.listSuccess,
   hotelHandlers.detailSuccess,
+  hotelHandlers.createSuccess,
+  hotelHandlers.updateSuccess,
+  hotelHandlers.deleteSuccess,
 )
