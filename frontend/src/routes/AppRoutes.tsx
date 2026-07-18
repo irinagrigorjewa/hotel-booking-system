@@ -3,6 +3,7 @@ import { Route, Routes } from 'react-router-dom'
 import { AuthLayout } from '../layouts/AuthLayout'
 import { PublicLayout } from '../layouts/PublicLayout'
 import { AdminHotelsPage } from '../pages/AdminHotelsPage'
+import { AdminRoomTypesPage } from '../pages/AdminRoomTypesPage'
 import { HomePage } from '../pages/HomePage'
 import { HotelDetailPage } from '../pages/HotelDetailPage'
 import { HotelsPage } from '../pages/HotelsPage'
@@ -29,10 +30,7 @@ export const AppRoutes = () => (
       <Route element={<RequireAdmin />}>
         <Route path="admin" element={<PlaceholderPage title="Admin panel" />} />
         <Route path="admin/hotels" element={<AdminHotelsPage />} />
-        <Route
-          path="admin/room-types"
-          element={<PlaceholderPage title="Типы номеров" />}
-        />
+        <Route path="admin/room-types" element={<AdminRoomTypesPage />} />
       </Route>
       <Route path="*" element={<NotFoundPage />} />
     </Route>

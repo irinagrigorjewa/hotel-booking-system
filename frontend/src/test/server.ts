@@ -95,10 +95,53 @@ export const hotelHandlers = {
   ),
 }
 
+export const roomTypeHandlers = {
+  listSuccess: http.get('*/api/v1/room-types', () =>
+    HttpResponse.json({
+      items: [{ id: 1, name: 'Standard' }],
+      total: 1,
+      page: 1,
+      size: 100,
+    }),
+  ),
+  listEmpty: http.get('*/api/v1/room-types', () =>
+    HttpResponse.json({ items: [], total: 0, page: 1, size: 100 }),
+  ),
+  createSuccess: http.post('*/api/v1/room-types', async ({ request }) => {
+    const body = (await request.json()) as { name?: string }
+
+    return HttpResponse.json(
+      { id: 2, name: body.name ?? 'Deluxe' },
+      { status: 201 },
+    )
+  }),
+  createConflict: http.post('*/api/v1/room-types', () =>
+    HttpResponse.json(
+      { detail: 'Room type already exists' },
+      { status: 409 },
+    ),
+  ),
+  updateSuccess: http.put('*/api/v1/room-types/:roomTypeId', async ({ params, request }) => {
+    const body = (await request.json()) as { name?: string }
+
+    return HttpResponse.json({
+      id: Number(params.roomTypeId),
+      name: body.name ?? 'Updated',
+    })
+  }),
+  deleteSuccess: http.delete('*/api/v1/room-types/:roomTypeId', () =>
+    new HttpResponse(null, { status: 204 }),
+  ),
+}
+
 export const server = setupServer(
   hotelHandlers.listSuccess,
   hotelHandlers.detailSuccess,
   hotelHandlers.createSuccess,
   hotelHandlers.updateSuccess,
   hotelHandlers.deleteSuccess,
+  roomTypeHandlers.listSuccess,
+  roomTypeHandlers.createSuccess,
+  roomTypeHandlers.updateSuccess,
+  roomTypeHandlers.deleteSuccess,
 )
