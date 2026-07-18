@@ -1,4 +1,4 @@
-import type { HotelListItem, HotelPage } from '../types/hotel'
+import type { HotelDetail, HotelListItem, HotelPage } from '../types/hotel'
 
 export const createHotelListItem = (
   overrides: Partial<HotelListItem> = {},
@@ -27,5 +27,13 @@ export const createHotelPage = (
   total: 1,
   page: 1,
   size: 20,
+  ...overrides,
+})
+
+export const createHotelDetail = (
+  overrides: Partial<HotelDetail> = {},
+): HotelDetail => ({
+  ...createHotelListItem(),
+  images: [],
   ...overrides,
 })

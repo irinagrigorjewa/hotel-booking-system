@@ -1,0 +1,40 @@
+import { screen } from '@testing-library/react'
+import { Route, Routes } from 'react-router-dom'
+import { describe, expect, it } from 'vitest'
+
+import { hotelHandlers, server } from '../test/server'
+import { renderWithProviders } from '../test/renderWithProviders'
+import { HotelDetailPage } from './HotelDetailPage'
+
+const renderDetail = (path: string) =>
+  renderWithProviders(
+    <Routes>
+      <Route path="/hotels/:id" element={<HotelDetailPage />} />
+    </Routes>,
+    { initialEntries: [path] },
+  )
+
+describe('HotelDetailPage', () => {
+  it('renders hotel details for an existing hotel', async () => {
+    renderDetail('/hotels/1')
+
+    expect(await screen.findByRole('heading', { name: 'Grand Hotel' })).toBeInTheDocument()
+    expect(screen.getByText(/Moscow/)).toBeInTheDocument()
+    expect(screen.getByText('Central hotel')).toBeInTheDocument()
+  })
+
+  it('shows a not-found state for missing hotels', async () => {
+    server.use(hotelHandlers.detailNotFound)
+    renderDetail('/hotels/99')
+
+    expect(await screen.findByText('Отель не найден')).toBeInTheDocument()
+  })
+
+  it('shows a retryable error state for network failures', async () => {
+    server.use(hotelHandlers.detailError)
+    renderDetail('/hotels/1')
+
+    expect(await screen.findByText('Не удалось загрузить отель')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Повторить' })).toBeInTheDocument()
+  })
+})
