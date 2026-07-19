@@ -266,6 +266,92 @@ export const bookingHandlers = {
   ),
 }
 
+const sampleReview = {
+  id: 7,
+  hotel_id: 1,
+  user_id: 2,
+  user_name: 'Иван Иванов',
+  rating: 5,
+  comment: 'Отличный отель, чисто и тихо.',
+  created_at: '2026-07-10T18:00:00Z',
+  updated_at: '2026-07-10T18:00:00Z',
+}
+
+export const reviewHandlers = {
+  listSuccess: http.get('*/api/v1/hotels/:hotelId/reviews', () =>
+    HttpResponse.json({
+      items: [sampleReview],
+      total: 1,
+      page: 1,
+      size: 20,
+    }),
+  ),
+  listEmpty: http.get('*/api/v1/hotels/:hotelId/reviews', () =>
+    HttpResponse.json({ items: [], total: 0, page: 1, size: 20 }),
+  ),
+  createSuccess: http.post('*/api/v1/hotels/:hotelId/reviews', async ({ params, request }) => {
+    const body = (await request.json()) as { rating?: number; comment?: string }
+
+    return HttpResponse.json(
+      {
+        ...sampleReview,
+        id: 8,
+        hotel_id: Number(params.hotelId),
+        rating: body.rating ?? 5,
+        comment: body.comment ?? sampleReview.comment,
+      },
+      { status: 201 },
+    )
+  }),
+  createConflict: http.post('*/api/v1/hotels/:hotelId/reviews', () =>
+    HttpResponse.json({ detail: 'Review already exists' }, { status: 409 }),
+  ),
+}
+
+export const favoriteHandlers = {
+  listSuccess: http.get('*/api/v1/favorites', () =>
+    HttpResponse.json({
+      items: [
+        {
+          id: 1,
+          name: 'Grand Hotel',
+          city: 'Moscow',
+          address: 'Main st 1',
+          description: 'Central hotel',
+          stars: 4,
+          latitude: '55.75',
+          longitude: '37.61',
+          created_at: '2026-07-18T10:00:00Z',
+          avg_rating: 4.5,
+          reviews_count: 1,
+          min_price: null,
+          cover_image: null,
+          is_favorite: true,
+        },
+      ],
+      total: 1,
+      page: 1,
+      size: 20,
+    }),
+  ),
+  listEmpty: http.get('*/api/v1/favorites', () =>
+    HttpResponse.json({ items: [], total: 0, page: 1, size: 20 }),
+  ),
+  addSuccess: http.post('*/api/v1/favorites/:hotelId', ({ params }) =>
+    HttpResponse.json(
+      {
+        hotel_id: Number(params.hotelId),
+        user_id: 2,
+        created_at: '2026-07-19T12:00:00Z',
+      },
+      { status: 201 },
+    ),
+  ),
+  removeSuccess: http.delete('*/api/v1/favorites/:hotelId', () =>
+    new HttpResponse(null, { status: 204 }),
+  ),
+}
+
 export const server = setupServer(
   hotelHandlers.listSuccess,
   hotelHandlers.detailSuccess,
@@ -284,4 +370,9 @@ export const server = setupServer(
   bookingHandlers.listSuccess,
   bookingHandlers.createSuccess,
   bookingHandlers.cancelSuccess,
+  reviewHandlers.listSuccess,
+  reviewHandlers.createSuccess,
+  favoriteHandlers.listSuccess,
+  favoriteHandlers.addSuccess,
+  favoriteHandlers.removeSuccess,
 )
