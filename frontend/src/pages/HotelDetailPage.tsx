@@ -17,6 +17,7 @@ import {
 } from '../components/hotels/RoomFilters'
 import { FavoriteButton } from '../components/hotels/FavoriteButton'
 import { HotelGallery } from '../components/hotels/HotelGallery'
+import { HotelMiniMap } from '../components/hotels/HotelMiniMap'
 import { HotelReviews } from '../components/hotels/HotelReviews'
 import { RoomList } from '../components/hotels/RoomList'
 import { useHotel } from '../hooks/useHotel'
@@ -166,6 +167,12 @@ export const HotelDetailPage = () => {
         <Typography sx={{ mb: 2 }}>{hotel.description}</Typography>
       ) : null}
       <HotelGallery hotelName={hotel.name} images={hotel.images} />
+      <HotelMiniMap
+        hotelId={hotel.id}
+        latitude={String(hotel.latitude)}
+        longitude={String(hotel.longitude)}
+        name={hotel.name}
+      />
       <Typography color="text.secondary" sx={{ mb: 3 }} variant="body2">
         Координаты: {hotel.latitude}, {hotel.longitude}
       </Typography>

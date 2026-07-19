@@ -5,6 +5,7 @@ import type {
   HotelPage,
   HotelWritePayload,
 } from '../types/hotel'
+import type { HotelMapResponse } from '../types/hotelMap'
 
 const buildListParams = (
   params: HotelListParams,
@@ -49,6 +50,14 @@ export const hotelsApi = {
 
   getById: async (hotelId: number): Promise<HotelDetail> => {
     const { data } = await apiClient.get<HotelDetail>(`/hotels/${hotelId}`)
+
+    return data
+  },
+
+  getMap: async (city?: string): Promise<HotelMapResponse> => {
+    const { data } = await apiClient.get<HotelMapResponse>('/hotels/map', {
+      params: city?.trim() ? { city: city.trim() } : undefined,
+    })
 
     return data
   },
