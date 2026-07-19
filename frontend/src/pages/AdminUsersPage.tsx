@@ -1,0 +1,122 @@
+import {
+  Alert,
+  Box,
+  Button,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+  Stack,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
+  TextField,
+  Typography,
+} from '@mui/material'
+import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import { Link as RouterLink } from 'react-router-dom'
+
+import { useAuth } from '../context/AuthContext'
+import { useUserMutations, useUsers } from '../hooks/useUsers'
+import type { UserRole } from '../types/auth'
+import { getApiErrorMessage } from '../utils/getApiErrorMessage'
+
+export const AdminUsersPage = () => {
+  const { t } = useTranslation()
+  const { user: currentUser } = useAuth()
+  const [search, setSearch] = useState('')
+  const [appliedSearch, setAppliedSearch] = useState('')
+  const usersQuery = useUsers({ page: 1, size: 100, search: appliedSearch || undefined })
+  const { patchUser } = useUserMutations()
+  const [actionError, setActionError] = useState('')
+
+  const handleRoleChange = async (userId: number, role: UserRole): Promise<void> => {
+    setActionError('')
+
+    try {
+      await patchUser.mutateAsync({ userId, payload: { role } })
+    } catch (error) {
+      setActionError(getApiErrorMessage(error, t('errors.updateRoleFailed')))
+    }
+  }
+
+  return (
+    <Box>
+      <Typography component="h1" gutterBottom variant="h4">
+        {t('admin.usersTitle')}
+      </Typography>
+      <Typography sx={{ mb: 2 }}>
+        <Button component={RouterLink} to="/admin">
+          {t('admin.back')}
+        </Button>
+      </Typography>
+      <Stack direction="row" spacing={1} sx={{ mb: 2 }}>
+        <TextField
+          label={t('common.search')}
+          onChange={(event) => {
+            setSearch(event.target.value)
+          }}
+          size="small"
+          value={search}
+        />
+        <Button
+          onClick={() => {
+            setAppliedSearch(search.trim())
+          }}
+          variant="contained"
+        >
+          {t('common.apply')}
+        </Button>
+      </Stack>
+      {usersQuery.isError ? (
+        <Alert severity="error" sx={{ mb: 2 }}>
+          {t('admin.usersLoadFailed')}
+        </Alert>
+      ) : null}
+      {actionError ? (
+        <Alert severity="error" sx={{ mb: 2 }}>
+          {actionError}
+        </Alert>
+      ) : null}
+      <Table size="small">
+        <TableHead>
+          <TableRow>
+            <TableCell>{t('auth.email')}</TableCell>
+            <TableCell>{t('auth.name')}</TableCell>
+            <TableCell>{t('auth.phone')}</TableCell>
+            <TableCell>{t('profile.role')}</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {(usersQuery.data?.items ?? []).map((user) => (
+            <TableRow key={user.id}>
+              <TableCell>{user.email}</TableCell>
+              <TableCell>{user.name}</TableCell>
+              <TableCell>{user.phone ?? '—'}</TableCell>
+              <TableCell>
+                <FormControl size="small" sx={{ minWidth: 140 }}>
+                  <InputLabel id={`role-${user.id}`}>{t('profile.role')}</InputLabel>
+                  <Select
+                    disabled={patchUser.isPending || user.id === currentUser?.id}
+                    label={t('profile.role')}
+                    labelId={`role-${user.id}`}
+                    onChange={(event) => {
+                      void handleRoleChange(user.id, event.target.value as UserRole)
+                    }}
+                    value={user.role}
+                  >
+                    <MenuItem value="CLIENT">CLIENT</MenuItem>
+                    <MenuItem value="ADMIN">ADMIN</MenuItem>
+                  </Select>
+                </FormControl>
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </Box>
+  )
+}

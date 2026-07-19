@@ -9,14 +9,17 @@ import {
   TableCell,
   TableHead,
   TableRow,
+  TextField,
   Typography,
 } from '@mui/material'
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Link as RouterLink, useSearchParams } from 'react-router-dom'
 
 import { useAuth } from '../context/AuthContext'
 import { useBookingMutations } from '../hooks/useBookingMutations'
 import { useBookings } from '../hooks/useBookings'
+import { useUserMutations } from '../hooks/useUsers'
 import type { Booking } from '../types/booking'
 import { getApiErrorMessage } from '../utils/getApiErrorMessage'
 
@@ -24,16 +27,21 @@ const canCancel = (status: Booking['status']): boolean =>
   status === 'PENDING' || status === 'CONFIRMED'
 
 export const ProfilePage = () => {
-  const { user } = useAuth()
+  const { t } = useTranslation()
+  const { user, applyUser } = useAuth()
   const [searchParams] = useSearchParams()
   const showBookings = searchParams.get('tab') !== 'account'
   const { data, isLoading, isError } = useBookings({ page: 1, size: 50 })
   const { cancelBooking } = useBookingMutations()
+  const { patchMe } = useUserMutations()
   const [actionError, setActionError] = useState('')
+  const [saveMessage, setSaveMessage] = useState('')
   const [cancellingId, setCancellingId] = useState<number | null>(null)
+  const [name, setName] = useState(user?.name ?? '')
+  const [phone, setPhone] = useState(user?.phone ?? '')
 
   const handleCancel = async (bookingId: number): Promise<void> => {
-    if (!window.confirm('Отменить бронирование?')) {
+    if (!window.confirm(t('bookings.cancelConfirm'))) {
       return
     }
 
@@ -43,16 +51,32 @@ export const ProfilePage = () => {
     try {
       await cancelBooking.mutateAsync(bookingId)
     } catch (error) {
-      setActionError(getApiErrorMessage(error, 'Не удалось отменить бронирование'))
+      setActionError(getApiErrorMessage(error, t('errors.cancelBookingFailed')))
     } finally {
       setCancellingId(null)
+    }
+  }
+
+  const handleSaveProfile = async (): Promise<void> => {
+    setActionError('')
+    setSaveMessage('')
+
+    try {
+      const updated = await patchMe.mutateAsync({
+        name: name.trim(),
+        phone: phone.trim() ? phone.trim() : null,
+      })
+      applyUser(updated)
+      setSaveMessage(t('profile.saved'))
+    } catch (error) {
+      setActionError(getApiErrorMessage(error, t('errors.saveProfileFailed')))
     }
   }
 
   return (
     <Box>
       <Typography component="h1" gutterBottom variant="h4">
-        Профиль
+        {t('bookings.profileTitle')}
       </Typography>
       <Typography color="text.secondary" sx={{ mb: 2 }}>
         {user?.name} · {user?.email}
@@ -60,10 +84,17 @@ export const ProfilePage = () => {
       <Stack direction="row" spacing={1} sx={{ mb: 3 }}>
         <Button
           component={RouterLink}
+          to="/profile?tab=account"
+          variant={!showBookings ? 'contained' : 'outlined'}
+        >
+          {t('profile.tabAccount')}
+        </Button>
+        <Button
+          component={RouterLink}
           to="/profile?tab=bookings"
           variant={showBookings ? 'contained' : 'outlined'}
         >
-          Бронирования
+          {t('bookings.tab')}
         </Button>
       </Stack>
       {actionError ? (
@@ -71,26 +102,66 @@ export const ProfilePage = () => {
           {actionError}
         </Alert>
       ) : null}
-      {isLoading ? (
+      {saveMessage ? (
+        <Alert severity="success" sx={{ mb: 2 }}>
+          {saveMessage}
+        </Alert>
+      ) : null}
+      {!showBookings ? (
+        <Stack spacing={2} sx={{ maxWidth: 420 }}>
+          <TextField
+            InputProps={{ readOnly: true }}
+            label={t('auth.email')}
+            value={user?.email ?? ''}
+          />
+          <TextField
+            label={t('auth.name')}
+            onChange={(event) => {
+              setName(event.target.value)
+            }}
+            value={name}
+          />
+          <TextField
+            label={t('auth.phone')}
+            onChange={(event) => {
+              setPhone(event.target.value)
+            }}
+            value={phone}
+          />
+          <TextField
+            InputProps={{ readOnly: true }}
+            label={t('profile.role')}
+            value={user?.role ?? ''}
+          />
+          <Button
+            disabled={patchMe.isPending || name.trim().length === 0}
+            onClick={() => void handleSaveProfile()}
+            variant="contained"
+          >
+            {t('profile.save')}
+          </Button>
+        </Stack>
+      ) : null}
+      {showBookings && isLoading ? (
         <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
           <CircularProgress />
         </Box>
       ) : null}
-      {isError ? (
-        <Alert severity="error">Не удалось загрузить бронирования.</Alert>
+      {showBookings && isError ? (
+        <Alert severity="error">{t('bookings.loadFailed')}</Alert>
       ) : null}
-      {data && data.items.length === 0 ? (
-        <Alert severity="info">У вас пока нет бронирований.</Alert>
+      {showBookings && data && data.items.length === 0 ? (
+        <Alert severity="info">{t('bookings.empty')}</Alert>
       ) : null}
-      {data && data.items.length > 0 ? (
+      {showBookings && data && data.items.length > 0 ? (
         <Table size="small">
           <TableHead>
             <TableRow>
-              <TableCell>Отель</TableCell>
-              <TableCell>Номер</TableCell>
-              <TableCell>Даты</TableCell>
-              <TableCell>Сумма</TableCell>
-              <TableCell>Статус</TableCell>
+              <TableCell>{t('bookings.colHotel')}</TableCell>
+              <TableCell>{t('bookings.colRoom')}</TableCell>
+              <TableCell>{t('bookings.colDates')}</TableCell>
+              <TableCell>{t('bookings.colTotal')}</TableCell>
+              <TableCell>{t('bookings.colStatus')}</TableCell>
               <TableCell />
             </TableRow>
           </TableHead>
@@ -100,7 +171,11 @@ export const ProfilePage = () => {
                 <TableCell>{booking.room.hotel_name}</TableCell>
                 <TableCell>{booking.room.number}</TableCell>
                 <TableCell>
-                  {booking.check_in} → {booking.check_out} ({booking.nights} н.)
+                  {t('bookings.datesRow', {
+                    checkIn: booking.check_in,
+                    checkOut: booking.check_out,
+                    nights: booking.nights,
+                  })}
                 </TableCell>
                 <TableCell>{booking.total_price} ₽</TableCell>
                 <TableCell>{booking.status}</TableCell>
@@ -111,7 +186,7 @@ export const ProfilePage = () => {
                       onClick={() => void handleCancel(booking.id)}
                       size="small"
                     >
-                      Отменить
+                      {t('bookings.cancel')}
                     </Button>
                   ) : null}
                 </TableCell>

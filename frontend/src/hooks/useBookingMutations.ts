@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 
 import { bookingsApi } from '../api/bookings'
-import type { BookingCreatePayload } from '../types/booking'
+import type { Booking, BookingCreatePayload } from '../types/booking'
 
 export const useBookingMutations = () => {
   const queryClient = useQueryClient()
@@ -24,5 +24,18 @@ export const useBookingMutations = () => {
     },
   })
 
-  return { createBooking, cancelBooking }
+  const updateBookingStatus = useMutation({
+    mutationFn: ({
+      bookingId,
+      status,
+    }: {
+      bookingId: number
+      status: Booking['status']
+    }) => bookingsApi.updateStatus(bookingId, status),
+    onSuccess: async () => {
+      await invalidateBookings()
+    },
+  })
+
+  return { createBooking, cancelBooking, updateBookingStatus }
 }
