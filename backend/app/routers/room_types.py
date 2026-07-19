@@ -91,5 +91,10 @@ def delete_room_type(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Room type not found",
         ) from error
+    except room_types.RoomTypeHasRoomsError as error:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="Room type has linked rooms",
+        ) from error
 
     return Response(status_code=status.HTTP_204_NO_CONTENT)

@@ -3,6 +3,8 @@ import { render, type RenderOptions } from '@testing-library/react'
 import type { ReactElement, ReactNode } from 'react'
 import { MemoryRouter } from 'react-router-dom'
 
+import { AuthProvider } from '../context/AuthContext'
+
 const createTestQueryClient = (): QueryClient =>
   new QueryClient({
     defaultOptions: {
@@ -25,7 +27,9 @@ export const renderWithProviders = (
 
   const Wrapper = ({ children }: { children: ReactNode }) => (
     <QueryClientProvider client={queryClient}>
-      <MemoryRouter initialEntries={initialEntries}>{children}</MemoryRouter>
+      <AuthProvider>
+        <MemoryRouter initialEntries={initialEntries}>{children}</MemoryRouter>
+      </AuthProvider>
     </QueryClientProvider>
   )
 

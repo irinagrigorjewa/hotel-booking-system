@@ -2,7 +2,7 @@ import { screen } from '@testing-library/react'
 import { Route, Routes } from 'react-router-dom'
 import { describe, expect, it } from 'vitest'
 
-import { hotelHandlers, server } from '../test/server'
+import { hotelHandlers, roomHandlers, server } from '../test/server'
 import { renderWithProviders } from '../test/renderWithProviders'
 import { HotelDetailPage } from './HotelDetailPage'
 
@@ -15,12 +15,22 @@ const renderDetail = (path: string) =>
   )
 
 describe('HotelDetailPage', () => {
-  it('renders hotel details for an existing hotel', async () => {
+  it('renders hotel details and rooms for an existing hotel', async () => {
     renderDetail('/hotels/1')
 
     expect(await screen.findByRole('heading', { name: 'Grand Hotel' })).toBeInTheDocument()
     expect(screen.getByText(/Moscow/)).toBeInTheDocument()
     expect(screen.getByText('Central hotel')).toBeInTheDocument()
+    expect(await screen.findByText(/Номер 301/)).toBeInTheDocument()
+  })
+
+  it('shows empty rooms state', async () => {
+    server.use(roomHandlers.listEmpty)
+    renderDetail('/hotels/1')
+
+    expect(
+      await screen.findByText('Подходящие номера не найдены'),
+    ).toBeInTheDocument()
   })
 
   it('shows a not-found state for missing hotels', async () => {
