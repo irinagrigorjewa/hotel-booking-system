@@ -22,7 +22,7 @@ export const hotelHandlers = {
             avg_rating: null,
             reviews_count: 0,
             min_price: null,
-            cover_image: null,
+            cover_image: null as string | null,
             is_favorite: null,
           },
         ]

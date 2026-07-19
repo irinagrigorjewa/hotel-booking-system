@@ -33,7 +33,7 @@ class HotelListItem(BaseModel):
     avg_rating: float | None
     reviews_count: int
     min_price: Decimal | None
-    cover_image: None = None
+    cover_image: str | None = None
     is_favorite: bool | None
 
 
