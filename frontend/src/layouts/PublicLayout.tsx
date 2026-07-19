@@ -36,6 +36,9 @@ export const PublicLayout = () => {
           ) : null}
           {user ? (
             <>
+              <Button color="inherit" component={RouterLink} to="/favorites">
+                Избранное
+              </Button>
               <Button color="inherit" component={RouterLink} to="/profile?tab=bookings">
                 Профиль
               </Button>
