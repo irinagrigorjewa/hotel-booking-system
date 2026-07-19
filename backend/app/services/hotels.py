@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from sqlalchemy.orm import Session
 
 from app.models.enums import ImageEntityType
@@ -9,6 +11,8 @@ from app.schemas.hotel import (
     HotelDetail,
     HotelImage,
     HotelListItem,
+    HotelMapItem,
+    HotelMapResponse,
     HotelPage,
     HotelUpdate,
 )
@@ -77,6 +81,24 @@ def get_hotels(
     )
 
 
+def get_hotels_map(session: Session, *, city: str | None) -> HotelMapResponse:
+    rows = hotels.list_for_map(session, city=city)
+    return HotelMapResponse(
+        items=[
+            HotelMapItem(
+                id=hotel.id,
+                name=hotel.name,
+                latitude=hotel.latitude,
+                longitude=hotel.longitude,
+                stars=hotel.stars,
+                min_price=min_price,
+                avg_rating=avg_rating,
+            )
+            for hotel, min_price, avg_rating in rows
+        ]
+    )
+
+
 def create_hotel(session: Session, request: HotelCreate) -> HotelDetail:
     hotel = hotels.create(session, **request.model_dump())
     session.commit()
@@ -138,6 +160,7 @@ def _to_list_item(
     *,
     current_user: User | None = None,
     favorite_ids: set[int] | None = None,
+    min_price_map: dict[int, Decimal | None] | None = None,
 ) -> HotelListItem:
     image_items = _hotel_images(session, hotel.id)
     avg_rating, reviews_count = reviews.rating_stats(session, [hotel.id])[hotel.id]
@@ -149,6 +172,10 @@ def _to_list_item(
             is_favorite = (
                 favorites.get(session, user_id=current_user.id, hotel_id=hotel.id) is not None
             )
+    if min_price_map is not None:
+        min_price = min_price_map.get(hotel.id)
+    else:
+        min_price = hotels.min_prices(session, [hotel.id]).get(hotel.id)
     return HotelListItem(
         id=hotel.id,
         name=hotel.name,
@@ -161,7 +188,7 @@ def _to_list_item(
         created_at=hotel.created_at,
         avg_rating=avg_rating,
         reviews_count=reviews_count,
-        min_price=None,
+        min_price=min_price,
         cover_image=image_items[0].url if image_items else None,
         is_favorite=is_favorite,
     )

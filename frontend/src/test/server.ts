@@ -59,6 +59,27 @@ export const hotelHandlers = {
   detailError: http.get('*/api/v1/hotels/:hotelId', () =>
     HttpResponse.json({ detail: 'Server error' }, { status: 500 }),
   ),
+  mapSuccess: http.get('*/api/v1/hotels/map', ({ request }) => {
+    const city = new URL(request.url).searchParams.get('city')
+    const items = [
+      {
+        id: 1,
+        name: city ? `${city} Hotel` : 'Grand Hotel',
+        latitude: '55.7558',
+        longitude: '37.6173',
+        stars: 4,
+        min_price: '3500.00',
+        avg_rating: 4.5,
+      },
+    ]
+
+    return HttpResponse.json({
+      items: city && city.toLowerCase() !== 'moscow' ? [] : items,
+    })
+  }),
+  mapEmpty: http.get('*/api/v1/hotels/map', () =>
+    HttpResponse.json({ items: [] }),
+  ),
   createSuccess: http.post('*/api/v1/hotels', async ({ request }) => {
     const body = (await request.json()) as Record<string, unknown>
 
@@ -353,6 +374,7 @@ export const favoriteHandlers = {
 }
 
 export const server = setupServer(
+  hotelHandlers.mapSuccess,
   hotelHandlers.listSuccess,
   hotelHandlers.detailSuccess,
   hotelHandlers.createSuccess,
