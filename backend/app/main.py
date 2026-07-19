@@ -12,6 +12,7 @@ from app.routers.images import router as images_router
 from app.routers.reviews import hotels_reviews_router, reviews_router
 from app.routers.room_types import router as room_types_router
 from app.routers.rooms import router as rooms_router
+from app.routers.users import router as users_router
 
 
 settings.upload_dir.mkdir(parents=True, exist_ok=True)
@@ -26,6 +27,7 @@ app.add_middleware(
 )
 app.include_router(health_router)
 app.include_router(auth_router)
+app.include_router(users_router)
 app.include_router(hotels_router)
 app.include_router(room_types_router)
 app.include_router(rooms_router)
