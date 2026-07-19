@@ -99,7 +99,7 @@ jobs:
         working-directory: backend
 
       - name: Run backend tests
-        run: pytest -q
+        run: pytest -q --cov=app --cov-report=term-missing --cov-fail-under=80
         working-directory: backend
 
   build:
