@@ -4,17 +4,19 @@ from decimal import Decimal
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
-from app.models.enums import RoomStatus
+from app.models.enums import ImageEntityType, RoomStatus
 from app.models.room import Room
 from app.repositories import rooms
 from app.schemas.room import (
     RoomCreate,
     RoomHotelSummary,
+    RoomImage,
     RoomOut,
     RoomPage,
     RoomUpdate,
 )
 from app.schemas.room_type import RoomTypeOut
+from app.services import images as images_service
 
 
 class RoomNotFoundError(Exception):
@@ -45,7 +47,7 @@ def get_room(session: Session, room_id: int) -> RoomOut:
     room = rooms.get_by_id(session, room_id)
     if room is None:
         raise RoomNotFoundError
-    return _to_out(room)
+    return _to_out(session, room)
 
 
 def get_rooms(
@@ -75,7 +77,7 @@ def get_rooms(
         size=size,
     )
     return RoomPage(
-        items=[_to_out(item) for item in items],
+        items=[_to_out(session, item) for item in items],
         total=total,
         page=page,
         size=size,
@@ -93,7 +95,7 @@ def create_room(session: Session, request: RoomCreate) -> RoomOut:
 
     loaded = rooms.get_by_id(session, room.id)
     assert loaded is not None
-    return _to_out(loaded)
+    return _to_out(session, loaded)
 
 
 def update_room(session: Session, room_id: int, request: RoomUpdate) -> RoomOut:
@@ -109,13 +111,18 @@ def update_room(session: Session, room_id: int, request: RoomUpdate) -> RoomOut:
 
     loaded = rooms.get_by_id(session, room_id)
     assert loaded is not None
-    return _to_out(loaded)
+    return _to_out(session, loaded)
 
 
 def delete_room(session: Session, room_id: int) -> None:
     room = _get_room_or_raise(session, room_id)
     if rooms.has_active_bookings(session, room_id):
         raise RoomHasActiveBookingsError
+    images_service.delete_entity_images(
+        session,
+        entity_type=ImageEntityType.ROOM,
+        entity_id=room_id,
+    )
     rooms.delete(session, room)
     session.commit()
 
@@ -141,7 +148,15 @@ def _validate_date_filters(*, date_from: date | None, date_to: date | None) -> N
         raise InvalidDateRangeError
 
 
-def _to_out(room: Room) -> RoomOut:
+def _to_out(session: Session, room: Room) -> RoomOut:
+    image_items = [
+        RoomImage(id=image.id, url=image.url, sort_order=image.sort_order)
+        for image in images_service.list_image_dtos(
+            session,
+            entity_type=ImageEntityType.ROOM,
+            entity_id=room.id,
+        )
+    ]
     return RoomOut(
         id=room.id,
         hotel_id=room.hotel_id,
@@ -153,5 +168,5 @@ def _to_out(room: Room) -> RoomOut:
         status=RoomStatus(room.status),
         room_type=RoomTypeOut.model_validate(room.room_type),
         hotel=RoomHotelSummary.model_validate(room.hotel),
-        images=[],
+        images=image_items,
     )
