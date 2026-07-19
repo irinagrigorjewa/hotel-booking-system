@@ -2,7 +2,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from app.models.room_type import RoomType
-from app.repositories import room_types
+from app.repositories import room_types, rooms
 from app.schemas.room_type import RoomTypeCreate, RoomTypeOut, RoomTypePage
 
 
@@ -11,6 +11,10 @@ class RoomTypeAlreadyExistsError(Exception):
 
 
 class RoomTypeNotFoundError(Exception):
+    pass
+
+
+class RoomTypeHasRoomsError(Exception):
     pass
 
 
@@ -56,6 +60,8 @@ def update_room_type(
 
 def delete_room_type(session: Session, room_type_id: int) -> None:
     room_type = _get_room_type_or_raise(session, room_type_id)
+    if rooms.count_rooms_for_type(session, room_type_id) > 0:
+        raise RoomTypeHasRoomsError
     room_types.delete(session, room_type)
     session.commit()
 

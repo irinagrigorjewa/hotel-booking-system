@@ -1,4 +1,5 @@
 from decimal import Decimal
+from typing import TYPE_CHECKING
 
 from sqlalchemy import (
     CheckConstraint,
@@ -10,10 +11,14 @@ from sqlalchemy import (
     Text,
     UniqueConstraint,
 )
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.database.base import Base
 from app.models.enums import RoomStatus
+
+if TYPE_CHECKING:
+    from app.models.hotel import Hotel
+    from app.models.room_type import RoomType
 
 
 class Room(Base):
@@ -35,3 +40,6 @@ class Room(Base):
         Enum(RoomStatus, name="room_status"),
         index=True,
     )
+
+    hotel: Mapped["Hotel"] = relationship()
+    room_type: Mapped["RoomType"] = relationship()
