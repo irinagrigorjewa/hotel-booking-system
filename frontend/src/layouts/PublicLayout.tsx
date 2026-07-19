@@ -35,9 +35,14 @@ export const PublicLayout = () => {
             </>
           ) : null}
           {user ? (
-            <Button color="inherit" onClick={() => void logout()}>
-              Выйти
-            </Button>
+            <>
+              <Button color="inherit" component={RouterLink} to="/profile?tab=bookings">
+                Профиль
+              </Button>
+              <Button color="inherit" onClick={() => void logout()}>
+                Выйти
+              </Button>
+            </>
           ) : (
             <>
               <Button color="inherit" component={RouterLink} to="/login">
