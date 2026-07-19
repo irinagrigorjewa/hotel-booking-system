@@ -8,14 +8,55 @@ import {
   Typography,
 } from '@mui/material'
 import { isAxiosError } from 'axios'
-import { Link as RouterLink, useParams } from 'react-router-dom'
+import { useState } from 'react'
+import { Link as RouterLink, useParams, useSearchParams } from 'react-router-dom'
 
+import {
+  RoomFilters,
+  type RoomFiltersValue,
+} from '../components/hotels/RoomFilters'
+import { RoomList } from '../components/hotels/RoomList'
 import { useHotel } from '../hooks/useHotel'
+import { useRooms } from '../hooks/useRooms'
+import type { RoomListParams } from '../types/room'
+
+const parsePositive = (value: string): number | undefined => {
+  if (!value.trim()) {
+    return undefined
+  }
+
+  const parsed = Number(value)
+
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : undefined
+}
+
+const readFilters = (searchParams: URLSearchParams): RoomFiltersValue => ({
+  capacity: searchParams.get('capacity') ?? '',
+  price_from: searchParams.get('price_from') ?? '',
+  price_to: searchParams.get('price_to') ?? '',
+  date_from: searchParams.get('date_from') ?? '',
+  date_to: searchParams.get('date_to') ?? '',
+})
 
 export const HotelDetailPage = () => {
   const { id } = useParams()
   const hotelId = Number(id)
+  const [searchParams, setSearchParams] = useSearchParams()
+  const [draftFilters, setDraftFilters] = useState(() =>
+    readFilters(searchParams),
+  )
   const hotelQuery = useHotel(hotelId)
+  const roomParams: RoomListParams = {
+    hotel_id: hotelId,
+    capacity: parsePositive(searchParams.get('capacity') ?? ''),
+    price_from: parsePositive(searchParams.get('price_from') ?? ''),
+    price_to: parsePositive(searchParams.get('price_to') ?? ''),
+    date_from: searchParams.get('date_from') || undefined,
+    date_to: searchParams.get('date_to') || undefined,
+    page: 1,
+    size: 50,
+  }
+  const roomsQuery = useRooms(roomParams)
   const isNotFound =
     isAxiosError(hotelQuery.error) && hotelQuery.error.response?.status === 404
 
@@ -71,6 +112,26 @@ export const HotelDetailPage = () => {
 
   const hotel = hotelQuery.data
 
+  const applyFilters = (): void => {
+    const next = new URLSearchParams()
+    if (draftFilters.capacity) {
+      next.set('capacity', draftFilters.capacity)
+    }
+    if (draftFilters.price_from) {
+      next.set('price_from', draftFilters.price_from)
+    }
+    if (draftFilters.price_to) {
+      next.set('price_to', draftFilters.price_to)
+    }
+    if (draftFilters.date_from) {
+      next.set('date_from', draftFilters.date_from)
+    }
+    if (draftFilters.date_to) {
+      next.set('date_to', draftFilters.date_to)
+    }
+    setSearchParams(next)
+  }
+
   return (
     <Box>
       <Typography component="h1" gutterBottom variant="h4">
@@ -86,9 +147,25 @@ export const HotelDetailPage = () => {
       {hotel.description ? (
         <Typography sx={{ mb: 2 }}>{hotel.description}</Typography>
       ) : null}
-      <Typography color="text.secondary" variant="body2">
+      <Typography color="text.secondary" sx={{ mb: 3 }} variant="body2">
         Координаты: {hotel.latitude}, {hotel.longitude}
       </Typography>
+      <Typography component="h2" gutterBottom variant="h5">
+        Номера
+      </Typography>
+      <RoomFilters
+        onApply={applyFilters}
+        onChange={setDraftFilters}
+        value={draftFilters}
+      />
+      <RoomList
+        isError={roomsQuery.isError}
+        isLoading={roomsQuery.isLoading}
+        onRetry={() => {
+          void roomsQuery.refetch()
+        }}
+        rooms={roomsQuery.data?.items ?? []}
+      />
       <Button component={RouterLink} sx={{ mt: 3 }} to="/hotels">
         Назад к каталогу
       </Button>

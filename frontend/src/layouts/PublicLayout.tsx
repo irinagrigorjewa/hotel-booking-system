@@ -25,9 +25,14 @@ export const PublicLayout = () => {
             Карта
           </Button>
           {user?.role === 'ADMIN' ? (
-            <Button color="inherit" component={RouterLink} to="/admin/hotels">
-              Админ
-            </Button>
+            <>
+              <Button color="inherit" component={RouterLink} to="/admin/hotels">
+                Отели
+              </Button>
+              <Button color="inherit" component={RouterLink} to="/admin/rooms">
+                Номера
+              </Button>
+            </>
           ) : null}
           {user ? (
             <Button color="inherit" onClick={() => void logout()}>

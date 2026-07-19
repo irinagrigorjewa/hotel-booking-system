@@ -134,6 +134,67 @@ export const roomTypeHandlers = {
   ),
 }
 
+const sampleRoom = {
+  id: 5,
+  hotel_id: 1,
+  room_type_id: 1,
+  number: '301',
+  price: '5500.00',
+  capacity: 2,
+  description: 'City view',
+  status: 'AVAILABLE' as const,
+  room_type: { id: 1, name: 'Standard' },
+  hotel: { id: 1, name: 'Grand Hotel', city: 'Moscow' },
+  images: [],
+}
+
+export const roomHandlers = {
+  listSuccess: http.get('*/api/v1/rooms', () =>
+    HttpResponse.json({
+      items: [sampleRoom],
+      total: 1,
+      page: 1,
+      size: 50,
+    }),
+  ),
+  listEmpty: http.get('*/api/v1/rooms', () =>
+    HttpResponse.json({ items: [], total: 0, page: 1, size: 50 }),
+  ),
+  createSuccess: http.post('*/api/v1/rooms', async ({ request }) => {
+    const body = (await request.json()) as Record<string, unknown>
+
+    return HttpResponse.json(
+      {
+        ...sampleRoom,
+        id: 6,
+        number: String(body.number ?? '302'),
+        price: String(body.price ?? '5500.00'),
+        capacity: Number(body.capacity ?? 2),
+        status: String(body.status ?? 'AVAILABLE'),
+      },
+      { status: 201 },
+    )
+  }),
+  createConflict: http.post('*/api/v1/rooms', () =>
+    HttpResponse.json(
+      { detail: 'Room number already exists' },
+      { status: 409 },
+    ),
+  ),
+  updateSuccess: http.put('*/api/v1/rooms/:roomId', async ({ params, request }) => {
+    const body = (await request.json()) as Record<string, unknown>
+
+    return HttpResponse.json({
+      ...sampleRoom,
+      id: Number(params.roomId),
+      number: String(body.number ?? sampleRoom.number),
+    })
+  }),
+  deleteSuccess: http.delete('*/api/v1/rooms/:roomId', () =>
+    new HttpResponse(null, { status: 204 }),
+  ),
+}
+
 export const server = setupServer(
   hotelHandlers.listSuccess,
   hotelHandlers.detailSuccess,
@@ -144,4 +205,8 @@ export const server = setupServer(
   roomTypeHandlers.createSuccess,
   roomTypeHandlers.updateSuccess,
   roomTypeHandlers.deleteSuccess,
+  roomHandlers.listSuccess,
+  roomHandlers.createSuccess,
+  roomHandlers.updateSuccess,
+  roomHandlers.deleteSuccess,
 )
