@@ -2,7 +2,7 @@ from sqlalchemy.orm import Session
 
 from app.models.enums import ImageEntityType
 from app.models.hotel import Hotel
-from app.repositories import bookings, hotels
+from app.repositories import bookings, hotels, reviews
 from app.schemas.hotel import (
     HotelCreate,
     HotelDetail,
@@ -104,6 +104,7 @@ def _hotel_images(session: Session, hotel_id: int) -> list[HotelImage]:
 
 def _to_list_item(session: Session, hotel: Hotel) -> HotelListItem:
     image_items = _hotel_images(session, hotel.id)
+    avg_rating, reviews_count = reviews.rating_stats(session, [hotel.id])[hotel.id]
     return HotelListItem(
         id=hotel.id,
         name=hotel.name,
@@ -114,8 +115,8 @@ def _to_list_item(session: Session, hotel: Hotel) -> HotelListItem:
         latitude=hotel.latitude,
         longitude=hotel.longitude,
         created_at=hotel.created_at,
-        avg_rating=None,
-        reviews_count=0,
+        avg_rating=avg_rating,
+        reviews_count=reviews_count,
         min_price=None,
         cover_image=image_items[0].url if image_items else None,
         is_favorite=None,
