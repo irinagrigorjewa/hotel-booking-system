@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 from app.core.deps import OptionalUserDependency, require_admin
 from app.database.session import get_session
 from app.models.user import User
-from app.schemas.hotel import HotelCreate, HotelDetail, HotelPage, HotelUpdate
+from app.schemas.hotel import HotelCreate, HotelDetail, HotelMapResponse, HotelPage, HotelUpdate
 from app.services import hotels
 
 router = APIRouter(prefix="/api/v1/hotels", tags=["Hotels"])
@@ -37,6 +37,14 @@ def list_hotels(
         size=size,
         current_user=current_user,
     )
+
+
+@router.get("/map", response_model=HotelMapResponse)
+def list_hotels_map(
+    session: SessionDependency,
+    city: str | None = None,
+) -> HotelMapResponse:
+    return hotels.get_hotels_map(session, city=city)
 
 
 @router.post("", response_model=HotelDetail, status_code=status.HTTP_201_CREATED)
