@@ -1,0 +1,84 @@
+import { fireEvent, screen, waitFor } from '@testing-library/react'
+import { describe, expect, it, vi } from 'vitest'
+
+import { usersApi } from '../api/users'
+import type { User } from '../types/auth'
+import { renderWithProviders } from '../test/renderWithProviders'
+import { AdminBookingsPage } from './AdminBookingsPage'
+import { AdminHomePage } from './AdminHomePage'
+import { AdminUsersPage } from './AdminUsersPage'
+
+const auth = vi.hoisted(() => ({
+  user: {
+    id: 1,
+    name: 'Admin',
+    email: 'admin@hotel.local',
+    phone: null,
+    role: 'ADMIN',
+    created_at: '2026-07-01T00:00:00Z',
+  } as User,
+}))
+
+vi.mock('../context/AuthContext', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('../context/AuthContext')>()
+
+  return {
+    ...actual,
+    useAuth: () => ({
+      user: auth.user,
+      tokens: null,
+      loading: false,
+      error: null,
+      login: vi.fn(),
+      register: vi.fn(),
+      logout: vi.fn(),
+      restoreSession: vi.fn(),
+      applyUser: vi.fn(),
+    }),
+  }
+})
+
+describe('AdminHomePage', () => {
+  it('links to admin sections', () => {
+    renderWithProviders(<AdminHomePage />, { initialEntries: ['/admin'] })
+
+    expect(screen.getByRole('heading', { name: 'Админ-панель' })).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'Пользователи' })).toHaveAttribute(
+      'href',
+      '/admin/users',
+    )
+    expect(screen.getByRole('link', { name: 'Бронирования' })).toHaveAttribute(
+      'href',
+      '/admin/bookings',
+    )
+  })
+})
+
+describe('AdminUsersPage', () => {
+  it('lists users and changes a client role', async () => {
+    const patchSpy = vi.spyOn(usersApi, 'patchUser')
+
+    renderWithProviders(<AdminUsersPage />, { initialEntries: ['/admin/users'] })
+
+    expect(await screen.findByText('client@example.com')).toBeInTheDocument()
+
+    const roleSelects = screen.getAllByLabelText('Роль')
+    fireEvent.mouseDown(roleSelects[1])
+    fireEvent.click(await screen.findByRole('option', { name: 'ADMIN' }))
+
+    await waitFor(() => {
+      expect(patchSpy).toHaveBeenCalledWith(2, { role: 'ADMIN' })
+    })
+  })
+})
+
+describe('AdminBookingsPage', () => {
+  it('lists all bookings for admin', async () => {
+    renderWithProviders(<AdminBookingsPage />, {
+      initialEntries: ['/admin/bookings'],
+    })
+
+    expect(await screen.findByText('client@example.com')).toBeInTheDocument()
+    expect(screen.getByText(/Grand Hotel/)).toBeInTheDocument()
+  })
+})

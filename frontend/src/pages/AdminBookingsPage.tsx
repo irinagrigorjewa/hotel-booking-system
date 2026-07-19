@@ -1,0 +1,136 @@
+import {
+  Alert,
+  Box,
+  Button,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
+  Typography,
+} from '@mui/material'
+import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import { Link as RouterLink } from 'react-router-dom'
+
+import { useBookingMutations } from '../hooks/useBookingMutations'
+import { useBookings } from '../hooks/useBookings'
+import type { BookingStatus } from '../types/booking'
+import { getApiErrorMessage } from '../utils/getApiErrorMessage'
+
+const STATUSES: BookingStatus[] = ['PENDING', 'CONFIRMED', 'CANCELLED', 'COMPLETED']
+
+export const AdminBookingsPage = () => {
+  const { t } = useTranslation()
+  const [statusFilter, setStatusFilter] = useState<BookingStatus | ''>('')
+  const bookingsQuery = useBookings({
+    page: 1,
+    size: 100,
+    ...(statusFilter ? { status: statusFilter } : {}),
+  })
+  const { updateBookingStatus } = useBookingMutations()
+  const [actionError, setActionError] = useState('')
+
+  const handleStatusChange = async (
+    bookingId: number,
+    status: BookingStatus,
+  ): Promise<void> => {
+    setActionError('')
+
+    try {
+      await updateBookingStatus.mutateAsync({ bookingId, status })
+    } catch (error) {
+      setActionError(getApiErrorMessage(error, t('errors.updateBookingFailed')))
+    }
+  }
+
+  return (
+    <Box>
+      <Typography component="h1" gutterBottom variant="h4">
+        {t('admin.bookingsTitle')}
+      </Typography>
+      <Typography sx={{ mb: 2 }}>
+        <Button component={RouterLink} to="/admin">
+          {t('admin.back')}
+        </Button>
+      </Typography>
+      <FormControl size="small" sx={{ mb: 2, minWidth: 180 }}>
+        <InputLabel id="booking-status-filter">{t('bookings.colStatus')}</InputLabel>
+        <Select
+          label={t('bookings.colStatus')}
+          labelId="booking-status-filter"
+          onChange={(event) => {
+            setStatusFilter(event.target.value as BookingStatus | '')
+          }}
+          value={statusFilter}
+        >
+          <MenuItem value="">{t('common.all')}</MenuItem>
+          {STATUSES.map((status) => (
+            <MenuItem key={status} value={status}>
+              {status}
+            </MenuItem>
+          ))}
+        </Select>
+      </FormControl>
+      {bookingsQuery.isError ? (
+        <Alert severity="error" sx={{ mb: 2 }}>
+          {t('bookings.loadFailed')}
+        </Alert>
+      ) : null}
+      {actionError ? (
+        <Alert severity="error" sx={{ mb: 2 }}>
+          {actionError}
+        </Alert>
+      ) : null}
+      <Table size="small">
+        <TableHead>
+          <TableRow>
+            <TableCell>{t('admin.colUser')}</TableCell>
+            <TableCell>{t('bookings.colHotel')}</TableCell>
+            <TableCell>{t('bookings.colDates')}</TableCell>
+            <TableCell>{t('bookings.colTotal')}</TableCell>
+            <TableCell>{t('bookings.colStatus')}</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {(bookingsQuery.data?.items ?? []).map((booking) => (
+            <TableRow key={booking.id}>
+              <TableCell>{booking.user?.email ?? booking.user_id}</TableCell>
+              <TableCell>
+                {booking.room.hotel_name} · {booking.room.number}
+              </TableCell>
+              <TableCell>
+                {booking.check_in} → {booking.check_out}
+              </TableCell>
+              <TableCell>{booking.total_price} ₽</TableCell>
+              <TableCell>
+                <FormControl size="small" sx={{ minWidth: 150 }}>
+                  <Select
+                    disabled={updateBookingStatus.isPending}
+                    onChange={(event) => {
+                      void handleStatusChange(
+                        booking.id,
+                        event.target.value as BookingStatus,
+                      )
+                    }}
+                    value={booking.status}
+                  >
+                    {STATUSES.map((status) => (
+                      <MenuItem key={status} value={status}>
+                        {status}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </Box>
+  )
+}

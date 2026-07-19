@@ -11,8 +11,35 @@
     "register": "Sign up",
     "adminHotels": "Hotels",
     "adminRooms": "Rooms",
+    "admin": "Admin",
     "langRu": "RU",
     "langEn": "EN"
+  },
+  "profile": {
+    "tabAccount": "Account",
+    "role": "Role",
+    "save": "Save",
+    "saved": "Profile saved"
+  },
+  "admin": {
+    "homeTitle": "Admin panel",
+    "homeSubtitle": "Manage catalog, users, and moderation.",
+    "back": "← Back to admin",
+    "usersTitle": "Users",
+    "usersLoadFailed": "Failed to load users",
+    "bookingsTitle": "Bookings",
+    "reviewsTitle": "Review moderation",
+    "colUser": "User",
+    "selectHotel": "Select a hotel",
+    "selectHotelHint": "Select a hotel to see its reviews.",
+    "nav": {
+      "users": "Users",
+      "hotels": "Hotels",
+      "roomTypes": "Room types",
+      "rooms": "Rooms",
+      "bookings": "Bookings",
+      "reviews": "Reviews"
+    }
   },
   "common": {
     "city": "City",
@@ -143,7 +170,8 @@
     "commentMax": "At most 2000 characters",
     "loginToReview": "to leave a review",
     "deleteConfirm": "Delete this review?",
-    "loading": "Loading reviews…"
+    "loading": "Loading reviews…",
+    "rating": "Rating"
   },
   "errors": {
     "loginFailed": "Failed to sign in",
@@ -153,6 +181,9 @@
     "saveReviewFailed": "Failed to save review",
     "deleteReviewFailed": "Failed to delete review",
     "updateFavoriteFailed": "Failed to update favorites",
+    "saveProfileFailed": "Failed to save profile",
+    "updateRoleFailed": "Failed to update role",
+    "updateBookingFailed": "Failed to update booking status",
     "generic": "Something went wrong"
   },
   "apiErrors": {
@@ -171,6 +202,8 @@
     "Cannot delete: active bookings exist": "Cannot delete: active bookings exist",
     "Room has active bookings": "Room has active bookings",
     "Booking cannot be cancelled": "Booking cannot be cancelled",
-    "Invalid status transition": "Invalid status transition"
+    "Invalid status transition": "Invalid status transition",
+    "Cannot demote the last admin": "Cannot demote the last admin",
+    "User not found": "User not found"
   }
 }

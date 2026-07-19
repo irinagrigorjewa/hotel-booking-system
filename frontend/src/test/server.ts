@@ -239,7 +239,11 @@ const sampleBooking = {
     hotel_id: 1,
     hotel_name: 'Grand Hotel',
   },
-  user: null,
+  user: {
+    id: 2,
+    name: 'Client User',
+    email: 'client@example.com',
+  },
 }
 
 export const bookingHandlers = {
@@ -285,6 +289,64 @@ export const bookingHandlers = {
       status: 'CANCELLED',
     }),
   ),
+  updateStatusSuccess: http.patch('*/api/v1/bookings/:bookingId', async ({ params, request }) => {
+    const body = (await request.json()) as { status?: string }
+
+    return HttpResponse.json({
+      ...sampleBooking,
+      id: Number(params.bookingId),
+      status: body.status ?? sampleBooking.status,
+      user: sampleBooking.user,
+    })
+  }),
+}
+
+const sampleUsers = [
+  {
+    id: 1,
+    name: 'Admin',
+    email: 'admin@hotel.local',
+    phone: null,
+    role: 'ADMIN',
+    created_at: '2026-07-01T10:00:00Z',
+  },
+  {
+    id: 2,
+    name: 'Client User',
+    email: 'client@example.com',
+    phone: null,
+    role: 'CLIENT',
+    created_at: '2026-07-02T10:00:00Z',
+  },
+]
+
+export const userHandlers = {
+  listSuccess: http.get('*/api/v1/users', () =>
+    HttpResponse.json({
+      items: sampleUsers,
+      total: sampleUsers.length,
+      page: 1,
+      size: 100,
+    }),
+  ),
+  patchMeSuccess: http.patch('*/api/v1/users/me', async ({ request }) => {
+    const body = (await request.json()) as { name?: string; phone?: string | null }
+
+    return HttpResponse.json({
+      ...sampleUsers[1],
+      name: body.name ?? sampleUsers[1].name,
+      phone: body.phone === undefined ? sampleUsers[1].phone : body.phone,
+    })
+  }),
+  patchUserSuccess: http.patch('*/api/v1/users/:userId', async ({ params, request }) => {
+    const body = (await request.json()) as { role?: string }
+    const user = sampleUsers.find((item) => item.id === Number(params.userId)) ?? sampleUsers[1]
+
+    return HttpResponse.json({
+      ...user,
+      role: body.role ?? user.role,
+    })
+  }),
 }
 
 const sampleReview = {
@@ -326,6 +388,9 @@ export const reviewHandlers = {
   }),
   createConflict: http.post('*/api/v1/hotels/:hotelId/reviews', () =>
     HttpResponse.json({ detail: 'Review already exists' }, { status: 409 }),
+  ),
+  deleteSuccess: http.delete('*/api/v1/reviews/:reviewId', () =>
+    new HttpResponse(null, { status: 204 }),
   ),
 }
 
@@ -392,8 +457,13 @@ export const server = setupServer(
   bookingHandlers.listSuccess,
   bookingHandlers.createSuccess,
   bookingHandlers.cancelSuccess,
+  bookingHandlers.updateStatusSuccess,
+  userHandlers.listSuccess,
+  userHandlers.patchMeSuccess,
+  userHandlers.patchUserSuccess,
   reviewHandlers.listSuccess,
   reviewHandlers.createSuccess,
+  reviewHandlers.deleteSuccess,
   favoriteHandlers.listSuccess,
   favoriteHandlers.addSuccess,
   favoriteHandlers.removeSuccess,

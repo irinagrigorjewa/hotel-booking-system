@@ -50,4 +50,15 @@ export const bookingsApi = {
 
     return data
   },
+
+  updateStatus: async (
+    bookingId: number,
+    status: Booking['status'],
+  ): Promise<Booking> => {
+    const { data } = await apiClient.patch<Booking>(`/bookings/${bookingId}`, {
+      status,
+    })
+
+    return data
+  },
 }

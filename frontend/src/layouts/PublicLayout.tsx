@@ -28,14 +28,9 @@ export const PublicLayout = () => {
             {t('nav.map')}
           </Button>
           {user?.role === 'ADMIN' ? (
-            <>
-              <Button color="inherit" component={RouterLink} to="/admin/hotels">
-                {t('nav.adminHotels')}
-              </Button>
-              <Button color="inherit" component={RouterLink} to="/admin/rooms">
-                {t('nav.adminRooms')}
-              </Button>
-            </>
+            <Button color="inherit" component={RouterLink} to="/admin">
+              {t('nav.admin')}
+            </Button>
           ) : null}
           <LanguageSwitcher />
           {user ? (
