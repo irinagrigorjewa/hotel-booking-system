@@ -15,7 +15,9 @@ import {
   RoomFilters,
   type RoomFiltersValue,
 } from '../components/hotels/RoomFilters'
+import { FavoriteButton } from '../components/hotels/FavoriteButton'
 import { HotelGallery } from '../components/hotels/HotelGallery'
+import { HotelReviews } from '../components/hotels/HotelReviews'
 import { RoomList } from '../components/hotels/RoomList'
 import { useHotel } from '../hooks/useHotel'
 import { useRooms } from '../hooks/useRooms'
@@ -135,15 +137,30 @@ export const HotelDetailPage = () => {
 
   return (
     <Box>
-      <Typography component="h1" gutterBottom variant="h4">
-        {hotel.name}
-      </Typography>
+      <Box
+        sx={{
+          alignItems: 'flex-start',
+          display: 'flex',
+          gap: 1,
+          justifyContent: 'space-between',
+        }}
+      >
+        <Typography component="h1" gutterBottom variant="h4">
+          {hotel.name}
+        </Typography>
+        <FavoriteButton hotelId={hotel.id} isFavorite={hotel.is_favorite} />
+      </Box>
       <Typography color="text.secondary" gutterBottom>
         {hotel.city}, {hotel.address}
       </Typography>
       <Box sx={{ alignItems: 'center', display: 'flex', gap: 1, mb: 2 }}>
         <Rating readOnly value={hotel.stars} />
         <Typography>{hotel.stars} звёзд</Typography>
+        {hotel.avg_rating !== null ? (
+          <Typography color="text.secondary">
+            · отзывы {hotel.avg_rating} ({hotel.reviews_count})
+          </Typography>
+        ) : null}
       </Box>
       {hotel.description ? (
         <Typography sx={{ mb: 2 }}>{hotel.description}</Typography>
@@ -152,6 +169,7 @@ export const HotelDetailPage = () => {
       <Typography color="text.secondary" sx={{ mb: 3 }} variant="body2">
         Координаты: {hotel.latitude}, {hotel.longitude}
       </Typography>
+      <HotelReviews hotelId={hotel.id} />
       <Typography component="h2" gutterBottom variant="h5">
         Номера
       </Typography>

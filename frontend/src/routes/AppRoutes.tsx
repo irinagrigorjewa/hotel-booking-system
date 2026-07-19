@@ -6,6 +6,7 @@ import { AdminHotelsPage } from '../pages/AdminHotelsPage'
 import { AdminRoomTypesPage } from '../pages/AdminRoomTypesPage'
 import { AdminRoomsPage } from '../pages/AdminRoomsPage'
 import { BookingNewPage } from '../pages/BookingNewPage'
+import { FavoritesPage } from '../pages/FavoritesPage'
 import { HomePage } from '../pages/HomePage'
 import { HotelDetailPage } from '../pages/HotelDetailPage'
 import { HotelsPage } from '../pages/HotelsPage'
@@ -27,7 +28,7 @@ export const AppRoutes = () => (
       <Route path="hotels/:id" element={<HotelDetailPage />} />
       <Route element={<RequireAuth />}>
         <Route path="bookings/new" element={<BookingNewPage />} />
-        <Route path="favorites" element={<PlaceholderPage title="Favorites" />} />
+        <Route path="favorites" element={<FavoritesPage />} />
         <Route path="profile" element={<ProfilePage />} />
       </Route>
       <Route element={<RequireAdmin />}>
