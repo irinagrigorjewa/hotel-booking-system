@@ -1,4 +1,5 @@
 import { Alert, Box, Button, Grid, Skeleton, Typography } from '@mui/material'
+import { useTranslation } from 'react-i18next'
 
 import type { HotelListItem } from '../../types/hotel'
 import { HotelCard } from './HotelCard'
@@ -16,8 +17,11 @@ export const HotelCatalogState = ({
   isError,
   items,
   onRetry,
-  emptyMessage = 'Отели не найдены',
+  emptyMessage,
 }: HotelCatalogStateProps) => {
+  const { t } = useTranslation()
+  const emptyText = emptyMessage ?? t('hotels.notFound')
+
   if (isLoading) {
     return (
       <Grid container spacing={2}>
@@ -35,12 +39,12 @@ export const HotelCatalogState = ({
       <Alert
         action={
           <Button color="inherit" onClick={onRetry} size="small">
-            Повторить
+            {t('common.retry')}
           </Button>
         }
         severity="error"
       >
-        Не удалось загрузить отели
+        {t('hotels.loadFailed')}
       </Alert>
     )
   }
@@ -48,7 +52,7 @@ export const HotelCatalogState = ({
   if (items.length === 0) {
     return (
       <Box sx={{ py: 4, textAlign: 'center' }}>
-        <Typography color="text.secondary">{emptyMessage}</Typography>
+        <Typography color="text.secondary">{emptyText}</Typography>
       </Box>
     )
   }

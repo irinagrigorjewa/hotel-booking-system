@@ -1,4 +1,5 @@
 import { Box, Button, Link, Pagination, Typography } from '@mui/material'
+import { useTranslation } from 'react-i18next'
 import { Link as RouterLink } from 'react-router-dom'
 
 import { HotelCatalogState } from '../components/hotels/HotelCatalogState'
@@ -7,6 +8,7 @@ import { useHotelListSearchParams } from '../hooks/useHotelListSearchParams'
 import { useHotels } from '../hooks/useHotels'
 
 export const HotelsPage = () => {
+  const { t } = useTranslation()
   const { params, setFilters } = useHotelListSearchParams({
     page: 1,
     size: 20,
@@ -21,10 +23,10 @@ export const HotelsPage = () => {
   return (
     <Box>
       <Typography component="h1" gutterBottom variant="h4">
-        Отели
+        {t('hotels.title')}
       </Typography>
       <Typography color="text.secondary" sx={{ mb: 2 }}>
-        Фильтруйте каталог по городу и звёздам.
+        {t('hotels.subtitle')}
       </Typography>
       <HotelFilters
         onChange={(value) =>
@@ -46,7 +48,7 @@ export const HotelsPage = () => {
         sx={{ mb: 2 }}
         to={params.city ? `/hotels/map?city=${encodeURIComponent(params.city)}` : '/hotels/map'}
       >
-        На карте
+        {t('hotels.onMap')}
       </Button>
       <HotelCatalogState
         isError={hotelsQuery.isError}
@@ -66,7 +68,7 @@ export const HotelsPage = () => {
       ) : null}
       <Typography sx={{ mt: 3 }}>
         <Link component={RouterLink} to="/">
-          На главную
+          {t('common.notFoundHome')}
         </Link>
       </Typography>
     </Box>

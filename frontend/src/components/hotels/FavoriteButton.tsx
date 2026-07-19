@@ -1,5 +1,6 @@
 import { IconButton, Tooltip } from '@mui/material'
 import { useState, type MouseEvent } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 
 import { useAuth } from '../../context/AuthContext'
@@ -12,12 +13,14 @@ interface FavoriteButtonProps {
 }
 
 export const FavoriteButton = ({ hotelId, isFavorite }: FavoriteButtonProps) => {
+  const { t } = useTranslation()
   const { user } = useAuth()
   const navigate = useNavigate()
   const { addFavorite, removeFavorite } = useFavoriteMutations()
   const [error, setError] = useState('')
   const pending = addFavorite.isPending || removeFavorite.isPending
   const favorited = isFavorite === true
+  const label = favorited ? t('favorites.remove') : t('favorites.add')
 
   const toggle = async (event: MouseEvent): Promise<void> => {
     event.preventDefault()
@@ -36,14 +39,16 @@ export const FavoriteButton = ({ hotelId, isFavorite }: FavoriteButtonProps) => 
         await addFavorite.mutateAsync(hotelId)
       }
     } catch (err) {
-      setError(getApiErrorMessage(err, 'Не удалось обновить избранное'))
+      setError(
+        getApiErrorMessage(err, t('errors.updateFavoriteFailed'), (key) => t(key)),
+      )
     }
   }
 
   return (
-    <Tooltip title={error || (favorited ? 'Убрать из избранного' : 'В избранное')}>
+    <Tooltip title={error || label}>
       <IconButton
-        aria-label={favorited ? 'Убрать из избранного' : 'В избранное'}
+        aria-label={label}
         color={favorited ? 'error' : 'default'}
         disabled={pending}
         onClick={(event) => {

@@ -1,11 +1,13 @@
 import { Box, Button, Link, TextField, Typography } from '@mui/material'
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Link as RouterLink, useNavigate } from 'react-router-dom'
 
 import { HotelCatalogState } from '../components/hotels/HotelCatalogState'
 import { useHotels } from '../hooks/useHotels'
 
 export const HomePage = () => {
+  const { t } = useTranslation()
   const navigate = useNavigate()
   const [cityDraft, setCityDraft] = useState('')
   const [city, setCity] = useState('')
@@ -25,10 +27,10 @@ export const HomePage = () => {
   return (
     <Box>
       <Typography component="h1" gutterBottom variant="h3">
-        Hotel Booking System
+        {t('nav.brand')}
       </Typography>
       <Typography color="text.secondary" sx={{ mb: 3 }}>
-        Найдите отель для следующей поездки.
+        {t('hotels.homeTagline')}
       </Typography>
       <Box
         component="form"
@@ -39,19 +41,20 @@ export const HomePage = () => {
         sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, mb: 4 }}
       >
         <TextField
-          label="Город"
+          label={t('common.city')}
           onChange={(event) => setCityDraft(event.target.value)}
           size="small"
           value={cityDraft}
         />
         <Button type="submit" variant="contained">
-          Найти
+          {t('common.search')}
         </Button>
       </Box>
       <Typography component="h2" gutterBottom variant="h5">
-        Популярные отели
+        {t('hotels.popular')}
       </Typography>
       <HotelCatalogState
+        emptyMessage={t('hotels.notFound')}
         isError={hotelsQuery.isError}
         isLoading={hotelsQuery.isLoading}
         items={hotelsQuery.data?.items ?? []}
@@ -61,15 +64,15 @@ export const HomePage = () => {
       />
       <Box sx={{ display: 'flex', gap: 2, mt: 3 }}>
         <Button component={RouterLink} to="/hotels" variant="outlined">
-          Все отели
+          {t('hotels.allHotels')}
         </Button>
         <Button component={RouterLink} to="/hotels/map">
-          Открыть карту
+          {t('hotels.openMap')}
         </Button>
       </Box>
       <Typography sx={{ mt: 2 }}>
         <Link component={RouterLink} to="/hotels">
-          Перейти в каталог
+          {t('hotels.catalogLink')}
         </Link>
       </Typography>
     </Box>

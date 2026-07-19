@@ -7,6 +7,7 @@ import {
   TextField,
   type SelectChangeEvent,
 } from '@mui/material'
+import { useTranslation } from 'react-i18next'
 
 import type { HotelSort } from '../../types/hotel'
 
@@ -27,6 +28,8 @@ export const HotelFilters = ({
   onChange,
   showSort = true,
 }: HotelFiltersProps) => {
+  const { t } = useTranslation()
+
   const handleStarsChange = (event: SelectChangeEvent<string>): void => {
     const nextStars = event.target.value
 
@@ -55,7 +58,7 @@ export const HotelFilters = ({
       }}
     >
       <TextField
-        label="Город"
+        label={t('common.city')}
         onChange={(event) =>
           onChange({ ...value, city: event.target.value })
         }
@@ -63,14 +66,14 @@ export const HotelFilters = ({
         value={value.city}
       />
       <FormControl size="small" sx={{ minWidth: 140 }}>
-        <InputLabel id="hotel-stars-filter-label">Звёзды</InputLabel>
+        <InputLabel id="hotel-stars-filter-label">{t('common.stars')}</InputLabel>
         <Select
-          label="Звёзды"
+          label={t('common.stars')}
           labelId="hotel-stars-filter-label"
           onChange={handleStarsChange}
           value={value.stars === '' ? '' : String(value.stars)}
         >
-          <MenuItem value="">Все</MenuItem>
+          <MenuItem value="">{t('common.all')}</MenuItem>
           {[1, 2, 3, 4, 5].map((star) => (
             <MenuItem key={star} value={String(star)}>
               {star}
@@ -80,16 +83,16 @@ export const HotelFilters = ({
       </FormControl>
       {showSort ? (
         <FormControl size="small" sx={{ minWidth: 180 }}>
-          <InputLabel id="hotel-sort-filter-label">Сортировка</InputLabel>
+          <InputLabel id="hotel-sort-filter-label">{t('common.sort')}</InputLabel>
           <Select
-            label="Сортировка"
+            label={t('common.sort')}
             labelId="hotel-sort-filter-label"
             onChange={handleSortChange}
             value={value.sort}
           >
-            <MenuItem value="created_at">По дате</MenuItem>
-            <MenuItem value="stars">По звёздам</MenuItem>
-            <MenuItem value="avg_rating">По рейтингу</MenuItem>
+            <MenuItem value="created_at">{t('hotels.sortByDate')}</MenuItem>
+            <MenuItem value="stars">{t('hotels.sortByStars')}</MenuItem>
+            <MenuItem value="avg_rating">{t('hotels.sortByRating')}</MenuItem>
           </Select>
         </FormControl>
       ) : null}
