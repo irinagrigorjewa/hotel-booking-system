@@ -2,6 +2,7 @@ import '@testing-library/jest-dom/vitest'
 import { createElement, type ReactNode } from 'react'
 import { afterAll, afterEach, beforeAll, beforeEach, vi } from 'vitest'
 
+import { setAppLanguage } from '../i18n'
 import { server } from './server'
 
 vi.mock('leaflet/dist/leaflet.css', () => ({}))
@@ -27,8 +28,9 @@ beforeAll(() => {
   server.listen({ onUnhandledRequest: 'error' })
 })
 
-beforeEach(() => {
+beforeEach(async () => {
   window.localStorage.clear()
+  await setAppLanguage('ru')
 })
 
 afterEach(() => {

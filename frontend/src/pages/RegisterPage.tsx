@@ -1,6 +1,7 @@
 import { Alert, Box, Button, Link, TextField, Typography } from '@mui/material'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
+import { useTranslation } from 'react-i18next'
 import { Link as RouterLink, useNavigate } from 'react-router-dom'
 
 import { useAuth } from '../context/AuthContext'
@@ -15,6 +16,7 @@ interface RegisterFormValues {
 }
 
 export const RegisterPage = () => {
+  const { t } = useTranslation()
   const { register: registerAccount } = useAuth()
   const navigate = useNavigate()
   const [submitError, setSubmitError] = useState('')
@@ -42,17 +44,19 @@ export const RegisterPage = () => {
       })
       navigate('/', { replace: true })
     } catch (error) {
-      setSubmitError(getApiErrorMessage(error, 'Не удалось зарегистрироваться'))
+      setSubmitError(
+        getApiErrorMessage(error, t('errors.registerFailed'), (key) => t(key)),
+      )
     }
   }
 
   return (
     <Box component="form" noValidate onSubmit={handleSubmit(submit)}>
       <Typography component="h1" variant="h4">
-        Регистрация
+        {t('auth.registerTitle')}
       </Typography>
       <Typography sx={{ mb: 3 }} color="text.secondary">
-        Создайте аккаунт для бронирования номеров.
+        {t('auth.registerSubtitle')}
       </Typography>
       {submitError ? (
         <Alert severity="error" sx={{ mb: 2 }}>
@@ -64,14 +68,11 @@ export const RegisterPage = () => {
         error={Boolean(errors.name)}
         fullWidth
         helperText={errors.name?.message}
-        label="Имя"
+        label={t('auth.name')}
         margin="normal"
         {...register('name', {
-          required: 'Укажите имя',
-          maxLength: {
-            value: 100,
-            message: 'Имя не должно превышать 100 символов',
-          },
+          required: t('auth.nameRequired'),
+          maxLength: { value: 100, message: t('auth.nameMax') },
         })}
       />
       <TextField
@@ -79,14 +80,14 @@ export const RegisterPage = () => {
         error={Boolean(errors.email)}
         fullWidth
         helperText={errors.email?.message}
-        label="Email"
+        label={t('auth.email')}
         margin="normal"
         type="email"
         {...register('email', {
-          required: 'Укажите email',
+          required: t('auth.emailRequired'),
           pattern: {
             value: /^\S+@\S+\.\S+$/,
-            message: 'Введите корректный email',
+            message: t('auth.emailInvalid'),
           },
         })}
       />
@@ -95,15 +96,12 @@ export const RegisterPage = () => {
         error={Boolean(errors.password)}
         fullWidth
         helperText={errors.password?.message}
-        label="Пароль"
+        label={t('auth.password')}
         margin="normal"
         type="password"
         {...register('password', {
-          required: 'Укажите пароль',
-          minLength: {
-            value: 8,
-            message: 'Пароль должен содержать минимум 8 символов',
-          },
+          required: t('auth.passwordRequired'),
+          minLength: { value: 8, message: t('auth.passwordMin') },
         })}
       />
       <TextField
@@ -111,13 +109,13 @@ export const RegisterPage = () => {
         error={Boolean(errors.confirmPassword)}
         fullWidth
         helperText={errors.confirmPassword?.message}
-        label="Подтвердите пароль"
+        label={t('auth.confirmPassword')}
         margin="normal"
         type="password"
         {...register('confirmPassword', {
-          required: 'Подтвердите пароль',
+          required: t('auth.confirmRequired'),
           validate: (value) =>
-            value === getValues('password') || 'Пароли должны совпадать',
+            value === getValues('password') || t('auth.passwordsMismatch'),
         })}
       />
       <TextField
@@ -125,7 +123,7 @@ export const RegisterPage = () => {
         error={Boolean(errors.phone)}
         fullWidth
         helperText={errors.phone?.message}
-        label="Телефон"
+        label={t('auth.phone')}
         margin="normal"
         type="tel"
         {...register('phone')}
@@ -137,12 +135,12 @@ export const RegisterPage = () => {
         type="submit"
         variant="contained"
       >
-        {isSubmitting ? 'Создаём аккаунт...' : 'Зарегистрироваться'}
+        {isSubmitting ? t('auth.registerSubmitting') : t('auth.registerSubmit')}
       </Button>
       <Typography sx={{ mt: 2 }}>
-        Уже есть аккаунт?{' '}
+        {t('auth.hasAccount')}{' '}
         <Link component={RouterLink} to="/login">
-          Войти
+          {t('nav.login')}
         </Link>
       </Typography>
     </Box>

@@ -7,6 +7,7 @@ import {
   Rating,
   Typography,
 } from '@mui/material'
+import { useTranslation } from 'react-i18next'
 import { Link as RouterLink } from 'react-router-dom'
 
 import type { HotelListItem } from '../../types/hotel'
@@ -16,7 +17,10 @@ interface HotelCardProps {
   hotel: HotelListItem
 }
 
-export const HotelCard = ({ hotel }: HotelCardProps) => (
+export const HotelCard = ({ hotel }: HotelCardProps) => {
+  const { t } = useTranslation()
+
+  return (
   <Card component="article" sx={{ position: 'relative' }} variant="outlined">
     <Box sx={{ position: 'absolute', right: 8, top: 8, zIndex: 1 }}>
       <FavoriteButton hotelId={hotel.id} isFavorite={hotel.is_favorite} />
@@ -43,7 +47,10 @@ export const HotelCard = ({ hotel }: HotelCardProps) => (
         </Box>
         {hotel.avg_rating !== null ? (
           <Typography color="text.secondary" sx={{ mt: 0.5 }} variant="body2">
-            Рейтинг: {hotel.avg_rating} ({hotel.reviews_count})
+            {t('hotels.cardRating', {
+              rating: hotel.avg_rating,
+              count: hotel.reviews_count,
+            })}
           </Typography>
         ) : null}
         <Typography sx={{ mt: 1 }} variant="body2">
@@ -67,4 +74,5 @@ export const HotelCard = ({ hotel }: HotelCardProps) => (
       </CardContent>
     </CardActionArea>
   </Card>
-)
+  )
+}

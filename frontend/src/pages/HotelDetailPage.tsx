@@ -9,6 +9,7 @@ import {
 } from '@mui/material'
 import { isAxiosError } from 'axios'
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Link as RouterLink, useParams, useSearchParams } from 'react-router-dom'
 
 import {
@@ -43,6 +44,7 @@ const readFilters = (searchParams: URLSearchParams): RoomFiltersValue => ({
 })
 
 export const HotelDetailPage = () => {
+  const { t } = useTranslation()
   const { id } = useParams()
   const hotelId = Number(id)
   const [searchParams, setSearchParams] = useSearchParams()
@@ -66,7 +68,7 @@ export const HotelDetailPage = () => {
 
   if (!Number.isInteger(hotelId) || hotelId < 1) {
     return (
-      <Alert severity="error">Некорректный идентификатор отеля</Alert>
+      <Alert severity="error">{t('hotels.invalidId')}</Alert>
     )
   }
 
@@ -84,10 +86,10 @@ export const HotelDetailPage = () => {
     return (
       <Box>
         <Alert severity="warning" sx={{ mb: 2 }}>
-          Отель не найден
+          {t('hotels.detailNotFound')}
         </Alert>
         <Link component={RouterLink} to="/hotels">
-          Вернуться в каталог
+          {t('common.returnToCatalog')}
         </Link>
       </Box>
     )
@@ -104,12 +106,12 @@ export const HotelDetailPage = () => {
             }}
             size="small"
           >
-            Повторить
+            {t('common.retry')}
           </Button>
         }
         severity="error"
       >
-        Не удалось загрузить отель
+        {t('hotels.detailLoadFailed')}
       </Alert>
     )
   }
@@ -156,10 +158,13 @@ export const HotelDetailPage = () => {
       </Typography>
       <Box sx={{ alignItems: 'center', display: 'flex', gap: 1, mb: 2 }}>
         <Rating readOnly value={hotel.stars} />
-        <Typography>{hotel.stars} звёзд</Typography>
+        <Typography>{t('hotels.starsCount', { count: hotel.stars })}</Typography>
         {hotel.avg_rating !== null ? (
           <Typography color="text.secondary">
-            · отзывы {hotel.avg_rating} ({hotel.reviews_count})
+            {t('hotels.reviewsSummary', {
+              rating: hotel.avg_rating,
+              count: hotel.reviews_count,
+            })}
           </Typography>
         ) : null}
       </Box>
@@ -174,11 +179,11 @@ export const HotelDetailPage = () => {
         name={hotel.name}
       />
       <Typography color="text.secondary" sx={{ mb: 3 }} variant="body2">
-        Координаты: {hotel.latitude}, {hotel.longitude}
+        {t('hotels.coordinates', { lat: hotel.latitude, lng: hotel.longitude })}
       </Typography>
       <HotelReviews hotelId={hotel.id} />
       <Typography component="h2" gutterBottom variant="h5">
-        Номера
+        {t('hotels.roomsSection')}
       </Typography>
       <RoomFilters
         onApply={applyFilters}
@@ -194,7 +199,7 @@ export const HotelDetailPage = () => {
         rooms={roomsQuery.data?.items ?? []}
       />
       <Button component={RouterLink} sx={{ mt: 3 }} to="/hotels">
-        Назад к каталогу
+        {t('common.backToCatalog')}
       </Button>
     </Box>
   )

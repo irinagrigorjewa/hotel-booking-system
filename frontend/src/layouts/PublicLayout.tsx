@@ -1,58 +1,62 @@
 import { AppBar, Box, Button, Container, Toolbar, Typography } from '@mui/material'
+import { useTranslation } from 'react-i18next'
 import { Link as RouterLink, Outlet } from 'react-router-dom'
 
+import { LanguageSwitcher } from '../components/LanguageSwitcher'
 import { useAuth } from '../context/AuthContext'
 
 export const PublicLayout = () => {
   const { user, logout } = useAuth()
+  const { t } = useTranslation()
 
   return (
     <Box sx={{ minHeight: '100vh' }}>
       <AppBar color="default" elevation={1} position="static">
-        <Toolbar sx={{ gap: 1 }}>
+        <Toolbar sx={{ gap: 1, flexWrap: 'wrap' }}>
           <Typography
             component={RouterLink}
             sx={{ color: 'inherit', flexGrow: 1, textDecoration: 'none' }}
             to="/"
             variant="h6"
           >
-            Hotel Booking System
+            {t('nav.brand')}
           </Typography>
           <Button color="inherit" component={RouterLink} to="/hotels">
-            Отели
+            {t('nav.hotels')}
           </Button>
           <Button color="inherit" component={RouterLink} to="/hotels/map">
-            Карта
+            {t('nav.map')}
           </Button>
           {user?.role === 'ADMIN' ? (
             <>
               <Button color="inherit" component={RouterLink} to="/admin/hotels">
-                Отели
+                {t('nav.adminHotels')}
               </Button>
               <Button color="inherit" component={RouterLink} to="/admin/rooms">
-                Номера
+                {t('nav.adminRooms')}
               </Button>
             </>
           ) : null}
+          <LanguageSwitcher />
           {user ? (
             <>
               <Button color="inherit" component={RouterLink} to="/favorites">
-                Избранное
+                {t('nav.favorites')}
               </Button>
               <Button color="inherit" component={RouterLink} to="/profile?tab=bookings">
-                Профиль
+                {t('nav.profile')}
               </Button>
               <Button color="inherit" onClick={() => void logout()}>
-                Выйти
+                {t('nav.logout')}
               </Button>
             </>
           ) : (
             <>
               <Button color="inherit" component={RouterLink} to="/login">
-                Вход
+                {t('nav.login')}
               </Button>
               <Button color="inherit" component={RouterLink} to="/register">
-                Регистрация
+                {t('nav.register')}
               </Button>
             </>
           )}
