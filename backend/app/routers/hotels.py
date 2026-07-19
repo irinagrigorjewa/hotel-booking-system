@@ -3,7 +3,7 @@ from typing import Annotated, Literal
 from fastapi import APIRouter, Depends, HTTPException, Query, Response, status
 from sqlalchemy.orm import Session
 
-from app.core.deps import require_admin
+from app.core.deps import OptionalUserDependency, require_admin
 from app.database.session import get_session
 from app.models.user import User
 from app.schemas.hotel import HotelCreate, HotelDetail, HotelPage, HotelUpdate
@@ -19,6 +19,7 @@ SizeQuery = Annotated[int, Query(ge=1, le=100)]
 @router.get("", response_model=HotelPage)
 def list_hotels(
     session: SessionDependency,
+    current_user: OptionalUserDependency,
     city: str | None = None,
     stars: Annotated[int | None, Query(ge=1, le=5)] = None,
     sort: Literal["created_at", "stars", "avg_rating"] = "created_at",
@@ -34,6 +35,7 @@ def list_hotels(
         order=order,
         page=page,
         size=size,
+        current_user=current_user,
     )
 
 
@@ -47,9 +49,13 @@ def create_hotel(
 
 
 @router.get("/{hotel_id}", response_model=HotelDetail, responses={404: {"description": "Hotel not found"}})
-def get_hotel(hotel_id: int, session: SessionDependency) -> HotelDetail:
+def get_hotel(
+    hotel_id: int,
+    session: SessionDependency,
+    current_user: OptionalUserDependency,
+) -> HotelDetail:
     try:
-        return hotels.get_hotel(session, hotel_id)
+        return hotels.get_hotel(session, hotel_id, current_user=current_user)
     except hotels.HotelNotFoundError as error:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,

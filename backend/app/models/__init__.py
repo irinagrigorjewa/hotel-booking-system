@@ -1,6 +1,7 @@
 """SQLAlchemy ORM model modules."""
 
 from app.models.booking import Booking
+from app.models.favorite import Favorite
 from app.models.hotel import Hotel
 from app.models.image import Image
 from app.models.refresh_token import RefreshToken
@@ -11,6 +12,7 @@ from app.models.user import User
 
 __all__ = [
     "Booking",
+    "Favorite",
     "Hotel",
     "Image",
     "RefreshToken",

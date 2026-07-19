@@ -44,7 +44,21 @@ def get_current_user(
     return user
 
 
+def get_optional_user(
+    credentials: Annotated[HTTPAuthorizationCredentials | None, Depends(bearer_scheme)],
+    session: SessionDependency,
+) -> User | None:
+    if credentials is None:
+        return None
+
+    try:
+        return get_current_user(credentials, session)
+    except HTTPException:
+        return None
+
+
 CurrentUserDependency = Annotated[User, Depends(get_current_user)]
+OptionalUserDependency = Annotated[User | None, Depends(get_optional_user)]
 
 
 def require_admin(current_user: CurrentUserDependency) -> User:
