@@ -1,5 +1,8 @@
+from __future__ import annotations
+
 from datetime import date, datetime
 from decimal import Decimal
+from typing import TYPE_CHECKING
 
 from sqlalchemy import (
     CheckConstraint,
@@ -11,10 +14,14 @@ from sqlalchemy import (
     Numeric,
     func,
 )
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.database.base import Base
 from app.models.enums import BookingStatus
+
+if TYPE_CHECKING:
+    from app.models.room import Room
+    from app.models.user import User
 
 
 class Booking(Base):
@@ -45,3 +52,6 @@ class Booking(Base):
         DateTime(timezone=True),
         server_default=func.now(),
     )
+
+    room: Mapped["Room"] = relationship()
+    user: Mapped["User"] = relationship()

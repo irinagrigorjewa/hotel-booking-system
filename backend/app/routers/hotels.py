@@ -77,7 +77,10 @@ def update_hotel(
     "/{hotel_id}",
     status_code=status.HTTP_204_NO_CONTENT,
     response_class=Response,
-    responses={404: {"description": "Hotel not found"}},
+    responses={
+        404: {"description": "Hotel not found"},
+        409: {"description": "Active bookings exist"},
+    },
 )
 def delete_hotel(
     hotel_id: int,
@@ -90,6 +93,11 @@ def delete_hotel(
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Hotel not found",
+        ) from error
+    except hotels.HotelHasActiveBookingsError as error:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="Cannot delete: active bookings exist",
         ) from error
 
     return Response(status_code=status.HTTP_204_NO_CONTENT)

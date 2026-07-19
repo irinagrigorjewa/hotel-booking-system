@@ -2,7 +2,7 @@ from sqlalchemy.orm import Session
 
 from app.models.enums import ImageEntityType
 from app.models.hotel import Hotel
-from app.repositories import hotels
+from app.repositories import bookings, hotels
 from app.schemas.hotel import (
     HotelCreate,
     HotelDetail,
@@ -15,6 +15,10 @@ from app.services import images as images_service
 
 
 class HotelNotFoundError(Exception):
+    pass
+
+
+class HotelHasActiveBookingsError(Exception):
     pass
 
 
@@ -69,6 +73,8 @@ def update_hotel(session: Session, hotel_id: int, request: HotelUpdate) -> Hotel
 
 def delete_hotel(session: Session, hotel_id: int) -> None:
     hotel = _get_hotel_or_raise(session, hotel_id)
+    if bookings.hotel_has_active_bookings(session, hotel_id):
+        raise HotelHasActiveBookingsError
     images_service.delete_entity_images(
         session,
         entity_type=ImageEntityType.HOTEL,
