@@ -4,6 +4,7 @@ import { AuthLayout } from '../layouts/AuthLayout'
 import { PublicLayout } from '../layouts/PublicLayout'
 import { AdminHotelsPage } from '../pages/AdminHotelsPage'
 import { AdminRoomTypesPage } from '../pages/AdminRoomTypesPage'
+import { AdminRoomsPage } from '../pages/AdminRoomsPage'
 import { HomePage } from '../pages/HomePage'
 import { HotelDetailPage } from '../pages/HotelDetailPage'
 import { HotelsPage } from '../pages/HotelsPage'
@@ -31,6 +32,7 @@ export const AppRoutes = () => (
         <Route path="admin" element={<PlaceholderPage title="Admin panel" />} />
         <Route path="admin/hotels" element={<AdminHotelsPage />} />
         <Route path="admin/room-types" element={<AdminRoomTypesPage />} />
+        <Route path="admin/rooms" element={<AdminRoomsPage />} />
       </Route>
       <Route path="*" element={<NotFoundPage />} />
     </Route>
