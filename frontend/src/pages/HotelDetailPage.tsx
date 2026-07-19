@@ -15,6 +15,7 @@ import {
   RoomFilters,
   type RoomFiltersValue,
 } from '../components/hotels/RoomFilters'
+import { HotelGallery } from '../components/hotels/HotelGallery'
 import { RoomList } from '../components/hotels/RoomList'
 import { useHotel } from '../hooks/useHotel'
 import { useRooms } from '../hooks/useRooms'
@@ -147,6 +148,7 @@ export const HotelDetailPage = () => {
       {hotel.description ? (
         <Typography sx={{ mb: 2 }}>{hotel.description}</Typography>
       ) : null}
+      <HotelGallery hotelName={hotel.name} images={hotel.images} />
       <Typography color="text.secondary" sx={{ mb: 3 }} variant="body2">
         Координаты: {hotel.latitude}, {hotel.longitude}
       </Typography>
