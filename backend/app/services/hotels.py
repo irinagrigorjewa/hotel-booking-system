@@ -2,7 +2,8 @@ from sqlalchemy.orm import Session
 
 from app.models.enums import ImageEntityType
 from app.models.hotel import Hotel
-from app.repositories import bookings, hotels, reviews
+from app.models.user import User
+from app.repositories import bookings, favorites, hotels, reviews
 from app.schemas.hotel import (
     HotelCreate,
     HotelDetail,
@@ -22,11 +23,15 @@ class HotelHasActiveBookingsError(Exception):
     pass
 
 
-def get_hotel(session: Session, hotel_id: int) -> HotelDetail:
+def get_hotel(
+    session: Session,
+    hotel_id: int,
+    current_user: User | None = None,
+) -> HotelDetail:
     hotel = hotels.get_by_id(session, hotel_id)
     if hotel is None:
         raise HotelNotFoundError
-    return _to_detail(session, hotel)
+    return _to_detail(session, hotel, current_user=current_user)
 
 
 def get_hotels(
@@ -38,6 +43,7 @@ def get_hotels(
     order: hotels.SortOrder,
     page: int,
     size: int,
+    current_user: User | None = None,
 ) -> HotelPage:
     hotel_items, total = hotels.list_hotels(
         session,
@@ -48,8 +54,23 @@ def get_hotels(
         page=page,
         size=size,
     )
+    favorite_ids: set[int] = set()
+    if current_user is not None:
+        favorite_ids = favorites.favorite_hotel_ids(
+            session,
+            user_id=current_user.id,
+            hotel_ids=[hotel.id for hotel in hotel_items],
+        )
     return HotelPage(
-        items=[_to_list_item(session, hotel) for hotel in hotel_items],
+        items=[
+            _to_list_item(
+                session,
+                hotel,
+                current_user=current_user,
+                favorite_ids=favorite_ids,
+            )
+            for hotel in hotel_items
+        ],
         total=total,
         page=page,
         size=size,
@@ -84,6 +105,15 @@ def delete_hotel(session: Session, hotel_id: int) -> None:
     session.commit()
 
 
+def to_list_item(
+    session: Session,
+    hotel: Hotel,
+    *,
+    current_user: User | None = None,
+) -> HotelListItem:
+    return _to_list_item(session, hotel, current_user=current_user)
+
+
 def _get_hotel_or_raise(session: Session, hotel_id: int) -> Hotel:
     hotel = hotels.get_by_id(session, hotel_id)
     if hotel is None:
@@ -102,9 +132,23 @@ def _hotel_images(session: Session, hotel_id: int) -> list[HotelImage]:
     ]
 
 
-def _to_list_item(session: Session, hotel: Hotel) -> HotelListItem:
+def _to_list_item(
+    session: Session,
+    hotel: Hotel,
+    *,
+    current_user: User | None = None,
+    favorite_ids: set[int] | None = None,
+) -> HotelListItem:
     image_items = _hotel_images(session, hotel.id)
     avg_rating, reviews_count = reviews.rating_stats(session, [hotel.id])[hotel.id]
+    is_favorite: bool | None = None
+    if current_user is not None:
+        if favorite_ids is not None:
+            is_favorite = hotel.id in favorite_ids
+        else:
+            is_favorite = (
+                favorites.get(session, user_id=current_user.id, hotel_id=hotel.id) is not None
+            )
     return HotelListItem(
         id=hotel.id,
         name=hotel.name,
@@ -119,10 +163,15 @@ def _to_list_item(session: Session, hotel: Hotel) -> HotelListItem:
         reviews_count=reviews_count,
         min_price=None,
         cover_image=image_items[0].url if image_items else None,
-        is_favorite=None,
+        is_favorite=is_favorite,
     )
 
 
-def _to_detail(session: Session, hotel: Hotel) -> HotelDetail:
-    list_item = _to_list_item(session, hotel)
+def _to_detail(
+    session: Session,
+    hotel: Hotel,
+    *,
+    current_user: User | None = None,
+) -> HotelDetail:
+    list_item = _to_list_item(session, hotel, current_user=current_user)
     return HotelDetail(**list_item.model_dump(), images=_hotel_images(session, hotel.id))

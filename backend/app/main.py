@@ -5,6 +5,7 @@ from fastapi.staticfiles import StaticFiles
 from app.core.config import settings
 from app.routers.auth import router as auth_router
 from app.routers.bookings import router as bookings_router
+from app.routers.favorites import router as favorites_router
 from app.routers.health import router as health_router
 from app.routers.hotels import router as hotels_router
 from app.routers.images import router as images_router
@@ -32,4 +33,5 @@ app.include_router(images_router)
 app.include_router(bookings_router)
 app.include_router(hotels_reviews_router)
 app.include_router(reviews_router)
+app.include_router(favorites_router)
 app.mount("/media", StaticFiles(directory=settings.upload_dir), name="media")
