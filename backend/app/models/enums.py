@@ -16,3 +16,8 @@ class BookingStatus(StrEnum):
     CONFIRMED = "CONFIRMED"
     CANCELLED = "CANCELLED"
     COMPLETED = "COMPLETED"
+
+
+class ImageEntityType(StrEnum):
+    HOTEL = "HOTEL"
+    ROOM = "ROOM"
