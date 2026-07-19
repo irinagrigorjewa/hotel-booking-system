@@ -9,6 +9,7 @@ import { BookingNewPage } from '../pages/BookingNewPage'
 import { FavoritesPage } from '../pages/FavoritesPage'
 import { HomePage } from '../pages/HomePage'
 import { HotelDetailPage } from '../pages/HotelDetailPage'
+import { HotelsMapPage } from '../pages/HotelsMapPage'
 import { HotelsPage } from '../pages/HotelsPage'
 import { LoginPage } from '../pages/LoginPage'
 import { NotFoundPage } from '../pages/NotFoundPage'
@@ -24,7 +25,7 @@ export const AppRoutes = () => (
     <Route element={<PublicLayout />}>
       <Route index element={<HomePage />} />
       <Route path="hotels" element={<HotelsPage />} />
-      <Route path="hotels/map" element={<PlaceholderPage title="Карта отелей" />} />
+      <Route path="hotels/map" element={<HotelsMapPage />} />
       <Route path="hotels/:id" element={<HotelDetailPage />} />
       <Route element={<RequireAuth />}>
         <Route path="bookings/new" element={<BookingNewPage />} />
