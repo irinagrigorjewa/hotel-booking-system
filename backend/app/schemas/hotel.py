@@ -52,3 +52,17 @@ class HotelPage(BaseModel):
     total: int
     page: int
     size: int
+
+
+class HotelMapItem(BaseModel):
+    id: int
+    name: str
+    latitude: Decimal
+    longitude: Decimal
+    stars: int
+    min_price: Decimal | None
+    avg_rating: float | None
+
+
+class HotelMapResponse(BaseModel):
+    items: list[HotelMapItem]

@@ -7,6 +7,7 @@ from sqlalchemy.orm import Session
 
 from app.models.hotel import Hotel
 from app.models.review import Review
+from app.models.room import Room
 
 HotelSort = Literal["created_at", "stars", "avg_rating"]
 SortOrder = Literal["asc", "desc"]
@@ -88,6 +89,46 @@ def list_hotels(
         .limit(size)
     )
     return session.scalars(query).all(), total
+
+
+def list_for_map(
+    session: Session,
+    *,
+    city: str | None,
+) -> Sequence[tuple[Hotel, Decimal | None, float | None]]:
+    filters = _build_filters(city=city, stars=None)
+    min_price = func.min(Room.price).label("min_price")
+    avg_rating = func.avg(Review.rating).label("avg_rating")
+    rows = session.execute(
+        select(Hotel, min_price, avg_rating)
+        .outerjoin(Room, Room.hotel_id == Hotel.id)
+        .outerjoin(Review, Review.hotel_id == Hotel.id)
+        .where(*filters)
+        .group_by(Hotel.id)
+        .order_by(Hotel.id.asc())
+    ).all()
+    result: list[tuple[Hotel, Decimal | None, float | None]] = []
+    for hotel, price, rating in rows:
+        avg = round(float(rating), 1) if rating is not None else None
+        result.append((hotel, price, avg))
+    return result
+
+
+def min_prices(
+    session: Session,
+    hotel_ids: Sequence[int],
+) -> dict[int, Decimal | None]:
+    if not hotel_ids:
+        return {}
+    rows = session.execute(
+        select(Room.hotel_id, func.min(Room.price))
+        .where(Room.hotel_id.in_(hotel_ids))
+        .group_by(Room.hotel_id)
+    ).all()
+    prices: dict[int, Decimal | None] = {hotel_id: None for hotel_id in hotel_ids}
+    for hotel_id, price in rows:
+        prices[hotel_id] = price
+    return prices
 
 
 def _build_filters(*, city: str | None, stars: int | None) -> list[ColumnElement[bool]]:
