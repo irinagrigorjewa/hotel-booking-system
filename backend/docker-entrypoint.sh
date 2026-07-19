@@ -17,4 +17,5 @@ until python -c "import os; from sqlalchemy import create_engine; create_engine(
 done
 
 alembic upgrade head
+python -m app.seed
 exec "$@"
