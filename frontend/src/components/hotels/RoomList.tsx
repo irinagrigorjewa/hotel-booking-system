@@ -6,6 +6,7 @@ import {
   CardContent,
   Typography,
 } from '@mui/material'
+import { useTranslation } from 'react-i18next'
 import { Link as RouterLink } from 'react-router-dom'
 
 import { useAuth } from '../../context/AuthContext'
@@ -24,10 +25,11 @@ export const RoomList = ({
   isError,
   onRetry,
 }: RoomListProps) => {
+  const { t } = useTranslation()
   const { user } = useAuth()
 
   if (isLoading) {
-    return <Typography color="text.secondary">Загрузка номеров…</Typography>
+    return <Typography color="text.secondary">{t('hotels.roomsLoading')}</Typography>
   }
 
   if (isError) {
@@ -35,21 +37,19 @@ export const RoomList = ({
       <Alert
         action={
           <Button color="inherit" onClick={onRetry} size="small">
-            Повторить
+            {t('common.retry')}
           </Button>
         }
         severity="error"
       >
-        Не удалось загрузить номера
+        {t('hotels.roomsLoadFailed')}
       </Alert>
     )
   }
 
   if (rooms.length === 0) {
     return (
-      <Typography color="text.secondary">
-        Подходящие номера не найдены
-      </Typography>
+      <Typography color="text.secondary">{t('hotels.noMatchingRooms')}</Typography>
     )
   }
 
@@ -64,10 +64,17 @@ export const RoomList = ({
           <Card key={room.id} variant="outlined">
             <CardContent>
               <Typography component="h3" variant="h6">
-                Номер {room.number} · {room.room_type.name}
+                {t('hotels.roomTitle', {
+                  number: room.number,
+                  type: room.room_type.name,
+                })}
               </Typography>
               <Typography color="text.secondary" variant="body2">
-                {room.price} ₽ / ночь · до {room.capacity} гостей · {room.status}
+                {t('hotels.roomPriceLine', {
+                  price: room.price,
+                  capacity: room.capacity,
+                  status: room.status,
+                })}
               </Typography>
               {room.description ? (
                 <Typography sx={{ mt: 1 }} variant="body2">
@@ -81,11 +88,11 @@ export const RoomList = ({
                   to={bookTo}
                   variant="contained"
                 >
-                  Забронировать
+                  {t('hotels.book')}
                 </Button>
               ) : (
                 <Typography color="warning.main" sx={{ mt: 2 }} variant="body2">
-                  Номер на обслуживании
+                  {t('hotels.roomMaintenance')}
                 </Typography>
               )}
             </CardContent>

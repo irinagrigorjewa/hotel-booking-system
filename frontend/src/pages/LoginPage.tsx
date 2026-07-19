@@ -1,6 +1,7 @@
 import { Alert, Box, Button, Link, TextField, Typography } from '@mui/material'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
+import { useTranslation } from 'react-i18next'
 import { Link as RouterLink, useLocation, useNavigate } from 'react-router-dom'
 
 import { useAuth } from '../context/AuthContext'
@@ -20,6 +21,7 @@ const getReturnUrl = (search: string): string => {
 }
 
 export const LoginPage = () => {
+  const { t } = useTranslation()
   const { login } = useAuth()
   const navigate = useNavigate()
   const location = useLocation()
@@ -37,17 +39,19 @@ export const LoginPage = () => {
       await login(values)
       navigate(getReturnUrl(location.search), { replace: true })
     } catch (error) {
-      setSubmitError(getApiErrorMessage(error, 'Не удалось выполнить вход'))
+      setSubmitError(
+        getApiErrorMessage(error, t('errors.loginFailed'), (key) => t(key)),
+      )
     }
   }
 
   return (
     <Box component="form" noValidate onSubmit={handleSubmit(submit)}>
       <Typography component="h1" variant="h4">
-        Вход
+        {t('auth.loginTitle')}
       </Typography>
       <Typography sx={{ mb: 3 }} color="text.secondary">
-        Войдите, чтобы управлять бронированиями.
+        {t('auth.loginSubtitle')}
       </Typography>
       {submitError ? (
         <Alert severity="error" sx={{ mb: 2 }}>
@@ -59,14 +63,14 @@ export const LoginPage = () => {
         error={Boolean(errors.email)}
         fullWidth
         helperText={errors.email?.message}
-        label="Email"
+        label={t('auth.email')}
         margin="normal"
         type="email"
         {...register('email', {
-          required: 'Укажите email',
+          required: t('auth.emailRequired'),
           pattern: {
             value: /^\S+@\S+\.\S+$/,
-            message: 'Введите корректный email',
+            message: t('auth.emailInvalid'),
           },
         })}
       />
@@ -75,30 +79,27 @@ export const LoginPage = () => {
         error={Boolean(errors.password)}
         fullWidth
         helperText={errors.password?.message}
-        label="Пароль"
+        label={t('auth.password')}
         margin="normal"
         type="password"
         {...register('password', {
-          required: 'Укажите пароль',
-          minLength: {
-            value: 8,
-            message: 'Пароль должен содержать минимум 8 символов',
-          },
+          required: t('auth.passwordRequired'),
+          minLength: { value: 8, message: t('auth.passwordMin') },
         })}
       />
       <Button
         disabled={isSubmitting}
         fullWidth
-        sx={{ mt: 3 }}
+        sx={{ mt: 2 }}
         type="submit"
         variant="contained"
       >
-        {isSubmitting ? 'Выполняется вход...' : 'Войти'}
+        {isSubmitting ? t('auth.loginSubmitting') : t('auth.loginSubmit')}
       </Button>
       <Typography sx={{ mt: 2 }}>
-        Нет аккаунта?{' '}
+        {t('auth.noAccount')}{' '}
         <Link component={RouterLink} to="/register">
-          Зарегистрироваться
+          {t('nav.register')}
         </Link>
       </Typography>
     </Box>

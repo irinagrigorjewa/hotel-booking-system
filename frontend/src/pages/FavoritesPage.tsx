@@ -1,18 +1,20 @@
 import { Box, Typography } from '@mui/material'
+import { useTranslation } from 'react-i18next'
 
 import { HotelCatalogState } from '../components/hotels/HotelCatalogState'
 import { useFavorites } from '../hooks/useFavorites'
 
 export const FavoritesPage = () => {
+  const { t } = useTranslation()
   const { data, isLoading, isError, refetch } = useFavorites()
 
   return (
     <Box>
       <Typography component="h1" gutterBottom variant="h4">
-        Избранное
+        {t('favorites.title')}
       </Typography>
       <HotelCatalogState
-        emptyMessage="В избранном пока пусто"
+        emptyMessage={t('favorites.empty')}
         isError={isError}
         isLoading={isLoading}
         items={data?.items ?? []}

@@ -43,7 +43,7 @@ describe('App', () => {
     renderAtPath('/missing')
 
     expect(
-      screen.getByRole('heading', { name: 'Page not found' }),
+      screen.getByRole('heading', { name: 'Страница не найдена' }),
     ).toBeInTheDocument()
   })
 })
