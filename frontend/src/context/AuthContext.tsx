@@ -25,6 +25,7 @@ interface AuthContextValue {
   register: (credentials: RegisterRequest) => Promise<void>
   logout: () => Promise<void>
   restoreSession: () => Promise<void>
+  applyUser: (nextUser: User) => void
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null)
@@ -147,6 +148,10 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
     }
   }, [clearSession, tokens])
 
+  const applyUser = useCallback((nextUser: User): void => {
+    setUser(nextUser)
+  }, [])
+
   return (
     <AuthContext.Provider
       value={{
@@ -158,6 +163,7 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
         register,
         logout,
         restoreSession,
+        applyUser,
       }}
     >
       {children}

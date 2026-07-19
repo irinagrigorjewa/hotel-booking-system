@@ -1,7 +1,7 @@
 import { fireEvent, screen, waitFor } from '@testing-library/react'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 
-import { bookingsApi } from '../api/bookings'
+import { usersApi } from '../api/users'
 import type { User } from '../types/auth'
 import { renderWithProviders } from '../test/renderWithProviders'
 import { ProfilePage } from './ProfilePage'
@@ -15,6 +15,7 @@ const auth = vi.hoisted(() => ({
     role: 'CLIENT',
     created_at: '2026-07-17T00:00:00Z',
   } as User,
+  applyUser: vi.fn(),
 }))
 
 vi.mock('../context/AuthContext', async (importOriginal) => {
@@ -31,30 +32,33 @@ vi.mock('../context/AuthContext', async (importOriginal) => {
       register: vi.fn(),
       logout: vi.fn(),
       restoreSession: vi.fn(),
-      applyUser: vi.fn(),
+      applyUser: auth.applyUser,
     }),
   }
 })
 
-describe('ProfilePage', () => {
-  beforeEach(() => {
-    vi.spyOn(window, 'confirm').mockReturnValue(true)
-  })
-
-  it('lists bookings and cancels a confirmed one', async () => {
-    const cancelSpy = vi.spyOn(bookingsApi, 'cancel')
+describe('ProfilePage account', () => {
+  it('saves name and phone via PATCH /users/me', async () => {
+    const patchSpy = vi.spyOn(usersApi, 'patchMe')
 
     renderWithProviders(<ProfilePage />, {
-      initialEntries: ['/profile?tab=bookings'],
+      initialEntries: ['/profile?tab=account'],
     })
 
-    expect(await screen.findByText('Grand Hotel')).toBeInTheDocument()
-    expect(screen.getByText('CONFIRMED')).toBeInTheDocument()
-
-    fireEvent.click(screen.getByRole('button', { name: 'Отменить' }))
+    fireEvent.change(screen.getByLabelText('Имя'), {
+      target: { value: 'Updated Client' },
+    })
+    fireEvent.change(screen.getByLabelText('Телефон'), {
+      target: { value: '+79001112233' },
+    })
+    fireEvent.click(screen.getByRole('button', { name: 'Сохранить' }))
 
     await waitFor(() => {
-      expect(cancelSpy).toHaveBeenCalledWith(100)
+      expect(patchSpy).toHaveBeenCalledWith({
+        name: 'Updated Client',
+        phone: '+79001112233',
+      })
     })
+    expect(auth.applyUser).toHaveBeenCalled()
   })
 })

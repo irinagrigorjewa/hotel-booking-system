@@ -11,8 +11,35 @@
     "register": "Регистрация",
     "adminHotels": "Отели",
     "adminRooms": "Номера",
+    "admin": "Админ",
     "langRu": "RU",
     "langEn": "EN"
+  },
+  "profile": {
+    "tabAccount": "Аккаунт",
+    "role": "Роль",
+    "save": "Сохранить",
+    "saved": "Профиль сохранён"
+  },
+  "admin": {
+    "homeTitle": "Админ-панель",
+    "homeSubtitle": "Управление каталогом, пользователями и модерация.",
+    "back": "← К админке",
+    "usersTitle": "Пользователи",
+    "usersLoadFailed": "Не удалось загрузить пользователей",
+    "bookingsTitle": "Бронирования",
+    "reviewsTitle": "Модерация отзывов",
+    "colUser": "Пользователь",
+    "selectHotel": "Выберите отель",
+    "selectHotelHint": "Выберите отель, чтобы увидеть отзывы.",
+    "nav": {
+      "users": "Пользователи",
+      "hotels": "Отели",
+      "roomTypes": "Типы номеров",
+      "rooms": "Номера",
+      "bookings": "Бронирования",
+      "reviews": "Отзывы"
+    }
   },
   "common": {
     "city": "Город",
@@ -143,7 +170,8 @@
     "commentMax": "Максимум 2000 символов",
     "loginToReview": "чтобы оставить отзыв",
     "deleteConfirm": "Удалить отзыв?",
-    "loading": "Загрузка отзывов…"
+    "loading": "Загрузка отзывов…",
+    "rating": "Оценка"
   },
   "errors": {
     "loginFailed": "Не удалось выполнить вход",
@@ -153,6 +181,9 @@
     "saveReviewFailed": "Не удалось сохранить отзыв",
     "deleteReviewFailed": "Не удалось удалить отзыв",
     "updateFavoriteFailed": "Не удалось обновить избранное",
+    "saveProfileFailed": "Не удалось сохранить профиль",
+    "updateRoleFailed": "Не удалось изменить роль",
+    "updateBookingFailed": "Не удалось изменить статус бронирования",
     "generic": "Произошла ошибка"
   },
   "apiErrors": {
@@ -171,6 +202,8 @@
     "Cannot delete: active bookings exist": "Нельзя удалить: есть активные бронирования",
     "Room has active bookings": "У номера есть активные бронирования",
     "Booking cannot be cancelled": "Бронирование нельзя отменить",
-    "Invalid status transition": "Недопустимый переход статуса"
+    "Invalid status transition": "Недопустимый переход статуса",
+    "Cannot demote the last admin": "Нельзя снять роль у единственного администратора",
+    "User not found": "Пользователь не найден"
   }
 }
