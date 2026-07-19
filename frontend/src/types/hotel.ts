@@ -13,7 +13,7 @@ export interface HotelListItem {
   avg_rating: number | null
   reviews_count: number
   min_price: string | null
-  cover_image: null
+  cover_image: string | null
   is_favorite: boolean | null
 }
 

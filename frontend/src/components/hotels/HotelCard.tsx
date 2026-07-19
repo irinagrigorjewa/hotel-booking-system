@@ -3,6 +3,7 @@ import {
   Card,
   CardActionArea,
   CardContent,
+  CardMedia,
   Rating,
   Typography,
 } from '@mui/material'
@@ -17,6 +18,14 @@ interface HotelCardProps {
 export const HotelCard = ({ hotel }: HotelCardProps) => (
   <Card component="article" variant="outlined">
     <CardActionArea component={RouterLink} to={`/hotels/${hotel.id}`}>
+      {hotel.cover_image ? (
+        <CardMedia
+          alt={hotel.name}
+          component="img"
+          height="140"
+          image={hotel.cover_image}
+        />
+      ) : null}
       <CardContent>
         <Typography component="h2" gutterBottom variant="h6">
           {hotel.name}

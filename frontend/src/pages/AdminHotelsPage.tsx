@@ -15,6 +15,7 @@ import { useState } from 'react'
 import { Link as RouterLink } from 'react-router-dom'
 
 import { HotelForm } from '../components/admin/hotels/HotelForm'
+import { HotelImageUpload } from '../components/admin/hotels/HotelImageUpload'
 import { useHotelMutations } from '../hooks/useHotelMutations'
 import { useHotels } from '../hooks/useHotels'
 import type { HotelListItem, HotelWritePayload } from '../types/hotel'
@@ -130,6 +131,7 @@ export const AdminHotelsPage = () => {
                 {hotel.latitude}, {hotel.longitude}
               </TableCell>
               <TableCell align="right">
+                <HotelImageUpload hotelId={hotel.id} />
                 <Button onClick={() => setEditingHotel(hotel)} size="small">
                   Изменить
                 </Button>
