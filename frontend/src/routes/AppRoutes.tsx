@@ -5,12 +5,14 @@ import { PublicLayout } from '../layouts/PublicLayout'
 import { AdminHotelsPage } from '../pages/AdminHotelsPage'
 import { AdminRoomTypesPage } from '../pages/AdminRoomTypesPage'
 import { AdminRoomsPage } from '../pages/AdminRoomsPage'
+import { BookingNewPage } from '../pages/BookingNewPage'
 import { HomePage } from '../pages/HomePage'
 import { HotelDetailPage } from '../pages/HotelDetailPage'
 import { HotelsPage } from '../pages/HotelsPage'
 import { LoginPage } from '../pages/LoginPage'
 import { NotFoundPage } from '../pages/NotFoundPage'
 import { PlaceholderPage } from '../pages/PlaceholderPage'
+import { ProfilePage } from '../pages/ProfilePage'
 import { RegisterPage } from '../pages/RegisterPage'
 import { GuestOnly } from './GuestOnly'
 import { RequireAdmin } from './RequireAdmin'
@@ -24,9 +26,9 @@ export const AppRoutes = () => (
       <Route path="hotels/map" element={<PlaceholderPage title="Карта отелей" />} />
       <Route path="hotels/:id" element={<HotelDetailPage />} />
       <Route element={<RequireAuth />}>
-        <Route path="bookings/new" element={<PlaceholderPage title="New booking" />} />
+        <Route path="bookings/new" element={<BookingNewPage />} />
         <Route path="favorites" element={<PlaceholderPage title="Favorites" />} />
-        <Route path="profile" element={<PlaceholderPage title="Profile" />} />
+        <Route path="profile" element={<ProfilePage />} />
       </Route>
       <Route element={<RequireAdmin />}>
         <Route path="admin" element={<PlaceholderPage title="Admin panel" />} />
