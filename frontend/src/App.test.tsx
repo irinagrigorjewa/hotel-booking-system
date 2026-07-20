@@ -1,9 +1,11 @@
+import { ThemeProvider } from '@mui/material'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { render, screen, waitFor } from '@testing-library/react'
 import { afterEach, describe, expect, it } from 'vitest'
 
 import { App } from './App'
 import { AuthProvider } from './context/AuthContext'
+import { theme } from './theme/theme'
 
 const renderAtPath = (path: string) => {
   window.history.pushState({}, '', path)
@@ -15,9 +17,11 @@ const renderAtPath = (path: string) => {
 
   return render(
     <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <App />
-      </AuthProvider>
+      <ThemeProvider theme={theme}>
+        <AuthProvider>
+          <App />
+        </AuthProvider>
+      </ThemeProvider>
     </QueryClientProvider>,
   )
 }

@@ -106,6 +106,7 @@
     "reviewsSummary": "· отзывы {{rating}} ({{count}})",
     "coordinates": "Координаты: {{lat}}, {{lng}}",
     "cardRating": "Рейтинг: {{rating}} ({{count}})",
+    "noPhoto": "Нет фото",
     "sortByDate": "По дате",
     "sortByStars": "По звёздам",
     "sortByRating": "По рейтингу",

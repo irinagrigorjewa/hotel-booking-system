@@ -106,6 +106,7 @@
     "reviewsSummary": "· reviews {{rating}} ({{count}})",
     "coordinates": "Coordinates: {{lat}}, {{lng}}",
     "cardRating": "Rating: {{rating}} ({{count}})",
+    "noPhoto": "No photo",
     "sortByDate": "By date",
     "sortByStars": "By stars",
     "sortByRating": "By rating",
