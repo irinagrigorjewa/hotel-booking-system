@@ -17,6 +17,27 @@ interface RoomListProps {
   isLoading: boolean
   isError: boolean
   onRetry: () => void
+  dateFrom?: string
+  dateTo?: string
+}
+
+const buildBookPath = (
+  room: Room,
+  dateFrom?: string,
+  dateTo?: string,
+): string => {
+  const params = new URLSearchParams({
+    room_id: String(room.id),
+    hotel_id: String(room.hotel_id),
+  })
+  if (dateFrom) {
+    params.set('date_from', dateFrom)
+  }
+  if (dateTo) {
+    params.set('date_to', dateTo)
+  }
+
+  return `/bookings/new?${params.toString()}`
 }
 
 export const RoomList = ({
@@ -24,6 +45,8 @@ export const RoomList = ({
   isLoading,
   isError,
   onRetry,
+  dateFrom,
+  dateTo,
 }: RoomListProps) => {
   const { t } = useTranslation()
   const { user } = useAuth()
@@ -56,9 +79,10 @@ export const RoomList = ({
   return (
     <Box sx={{ display: 'grid', gap: 2 }}>
       {rooms.map((room) => {
+        const bookPath = buildBookPath(room, dateFrom, dateTo)
         const bookTo = user
-          ? `/bookings/new?room_id=${room.id}&hotel_id=${room.hotel_id}`
-          : `/login?returnUrl=${encodeURIComponent(`/bookings/new?room_id=${room.id}&hotel_id=${room.hotel_id}`)}`
+          ? bookPath
+          : `/login?returnUrl=${encodeURIComponent(bookPath)}`
 
         return (
           <Card key={room.id} variant="outlined">
