@@ -11,6 +11,7 @@ import { useTranslation } from 'react-i18next'
 import { Link as RouterLink } from 'react-router-dom'
 
 import type { HotelListItem } from '../../types/hotel'
+import { mediaUrl } from '../../utils/mediaUrl'
 import { FavoriteButton } from './FavoriteButton'
 
 interface HotelCardProps {
@@ -19,6 +20,7 @@ interface HotelCardProps {
 
 export const HotelCard = ({ hotel }: HotelCardProps) => {
   const { t } = useTranslation()
+  const coverSrc = mediaUrl(hotel.cover_image)
 
   return (
   <Card component="article" sx={{ position: 'relative' }} variant="outlined">
@@ -26,12 +28,12 @@ export const HotelCard = ({ hotel }: HotelCardProps) => {
       <FavoriteButton hotelId={hotel.id} isFavorite={hotel.is_favorite} />
     </Box>
     <CardActionArea component={RouterLink} to={`/hotels/${hotel.id}`}>
-      {hotel.cover_image ? (
+      {coverSrc ? (
         <CardMedia
           alt={hotel.name}
           component="img"
           height="140"
-          image={hotel.cover_image}
+          image={coverSrc}
         />
       ) : null}
       <CardContent>
