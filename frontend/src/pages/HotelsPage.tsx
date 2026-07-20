@@ -1,9 +1,11 @@
 import { Box, Button, Link, Pagination, Typography } from '@mui/material'
+import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link as RouterLink } from 'react-router-dom'
 
 import { HotelCatalogState } from '../components/hotels/HotelCatalogState'
 import { HotelFilters } from '../components/hotels/HotelFilters'
+import { useDebouncedValue } from '../hooks/useDebouncedValue'
 import { useHotelListSearchParams } from '../hooks/useHotelListSearchParams'
 import { useHotels } from '../hooks/useHotels'
 
@@ -14,11 +16,26 @@ export const HotelsPage = () => {
     size: 20,
     sort: 'created_at',
   })
+  const [cityDraft, setCityDraft] = useState(params.city ?? '')
+  const debouncedCity = useDebouncedValue(cityDraft, 350)
   const hotelsQuery = useHotels(params)
   const totalPages = Math.max(
     1,
     Math.ceil((hotelsQuery.data?.total ?? 0) / (params.size ?? 20)),
   )
+
+  useEffect(() => {
+    setCityDraft(params.city ?? '')
+  }, [params.city])
+
+  useEffect(() => {
+    const next = debouncedCity.trim()
+    const current = (params.city ?? '').trim()
+    if (next === current) {
+      return
+    }
+    setFilters({ city: debouncedCity, resetPage: true })
+  }, [debouncedCity, params.city, setFilters])
 
   return (
     <Box>
@@ -29,16 +46,21 @@ export const HotelsPage = () => {
         {t('hotels.subtitle')}
       </Typography>
       <HotelFilters
-        onChange={(value) =>
-          setFilters({
-            city: value.city,
-            stars: value.stars,
-            sort: value.sort,
-            resetPage: true,
-          })
-        }
+        onChange={(value) => {
+          setCityDraft(value.city)
+          if (
+            value.stars !== (params.stars ?? '') ||
+            value.sort !== (params.sort ?? 'created_at')
+          ) {
+            setFilters({
+              stars: value.stars,
+              sort: value.sort,
+              resetPage: true,
+            })
+          }
+        }}
         value={{
-          city: params.city ?? '',
+          city: cityDraft,
           stars: params.stars ?? '',
           sort: params.sort ?? 'created_at',
         }}

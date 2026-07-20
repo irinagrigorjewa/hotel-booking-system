@@ -85,6 +85,11 @@ def test_hotels_map_returns_items_with_optional_city_filter(
     assert Decimal(items[0]["min_price"]) == Decimal("3500.00")
     assert items[0]["avg_rating"] is None
 
+    partial = client.get("/api/v1/hotels/map", params={"city": "mos"})
+    assert partial.status_code == 200
+    assert len(partial.json()["items"]) == 1
+    assert partial.json()["items"][0]["name"] == "Hotel Moscow"
+
 
 def test_hotels_map_does_not_collide_with_hotel_id_route(
     client: TestClient,

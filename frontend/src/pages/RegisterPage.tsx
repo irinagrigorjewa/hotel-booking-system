@@ -143,6 +143,11 @@ export const RegisterPage = () => {
           {t('nav.login')}
         </Link>
       </Typography>
+      <Typography sx={{ mt: 1.5 }}>
+        <Link component={RouterLink} to="/">
+          {t('auth.toHome')}
+        </Link>
+      </Typography>
     </Box>
   )
 }

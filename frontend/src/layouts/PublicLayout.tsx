@@ -10,12 +10,12 @@ export const PublicLayout = () => {
   const { t } = useTranslation()
 
   return (
-    <Box sx={{ minHeight: '100vh' }}>
-      <AppBar color="default" elevation={1} position="static">
+    <Box sx={{ bgcolor: 'background.default', minHeight: '100vh' }}>
+      <AppBar color="primary" elevation={1} position="sticky">
         <Toolbar sx={{ gap: 1, flexWrap: 'wrap' }}>
           <Typography
             component={RouterLink}
-            sx={{ color: 'inherit', flexGrow: 1, textDecoration: 'none' }}
+            sx={{ color: 'inherit', flexGrow: 1, fontWeight: 700, textDecoration: 'none' }}
             to="/"
             variant="h6"
           >

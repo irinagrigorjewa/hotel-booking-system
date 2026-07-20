@@ -78,8 +78,8 @@
 
 | Роль | Email | Пароль |
 |------|-------|--------|
-| Админ | `admin@hotel.local` | `Admin123!` |
-| Клиент | `client@hotel.local` | `Client123!` |
+| Админ | `admin@example.com` | `Admin123!` |
+| Клиент | `client@example.com` | `Client123!` |
 
 Как войти:
 

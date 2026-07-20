@@ -13,6 +13,7 @@
 | 7 | Качество, Docker, CI | [07-quality-docker-ci.md](07-quality-docker-ci.md) |
 | 8 | План поставки | [08-delivery-plan.md](08-delivery-plan.md) |
 | 9 | Acceptance criteria | [09-acceptance-criteria.md](09-acceptance-criteria.md) |
+| 10 | UX-улучшения | [10-ux-improvements.md](10-ux-improvements.md) |
 
 ## Рекомендуемый порядок чтения
 

@@ -12,7 +12,7 @@ const auth = vi.hoisted(() => ({
   user: {
     id: 1,
     name: 'Admin',
-    email: 'admin@hotel.local',
+    email: 'admin@example.com',
     phone: null,
     role: 'ADMIN',
     created_at: '2026-07-01T00:00:00Z',
@@ -81,4 +81,24 @@ describe('AdminBookingsPage', () => {
     expect(await screen.findByText('client@example.com')).toBeInTheDocument()
     expect(screen.getByText(/Grand Hotel/)).toBeInTheDocument()
   })
+
+  it('offers only allowed status transitions for CONFIRMED', async () => {
+    renderWithProviders(<AdminBookingsPage />, {
+      initialEntries: ['/admin/bookings'],
+    })
+
+    await screen.findByText('client@example.com')
+
+    const comboboxes = screen.getAllByRole('combobox')
+    const statusSelect = comboboxes[comboboxes.length - 1]
+    expect(statusSelect).toHaveTextContent('CONFIRMED')
+    fireEvent.mouseDown(statusSelect)
+
+    const options = await screen.findAllByRole('option')
+    const labels = options.map((option) => option.textContent)
+
+    expect(labels).toEqual(['CONFIRMED', 'CANCELLED', 'COMPLETED'])
+    expect(screen.queryByRole('option', { name: 'PENDING' })).not.toBeInTheDocument()
+  })
 })
+

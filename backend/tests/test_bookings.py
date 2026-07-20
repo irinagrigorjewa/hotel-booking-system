@@ -1,13 +1,18 @@
+import inspect
 from datetime import UTC, date, datetime, timedelta
 from decimal import Decimal
 
 import pytest
 from fastapi.testclient import TestClient
-from sqlalchemy.orm import Session, sessionmaker
+from sqlalchemy import select
+from sqlalchemy.dialects import postgresql
+from sqlalchemy.orm import Session, joinedload, sessionmaker
 
 from app.core.security import create_access_token
 from app.models.enums import RoomStatus, UserRole
+from app.models.room import Room
 from app.models.user import User
+from app.repositories import bookings as bookings_repo
 
 HOTEL_PAYLOAD = {
     "name": "Hotel Moscow",
@@ -126,6 +131,32 @@ def test_client_can_create_list_get_and_cancel_booking(
     cancelled = client.patch(f"/api/v1/bookings/{body['id']}/cancel", headers=headers)
     assert cancelled.status_code == 200
     assert cancelled.json()["status"] == "CANCELLED"
+
+
+def test_lock_room_for_update_has_no_outer_join() -> None:
+    """Postgres: FOR UPDATE cannot be applied to the nullable side of an outer join.
+
+    joinedload(Room.hotel) emits LEFT OUTER JOIN; lock_room must lock rooms only.
+    """
+    anti_pattern = (
+        select(Room)
+        .options(joinedload(Room.hotel))
+        .where(Room.id == 1)
+        .with_for_update()
+    )
+    anti_sql = str(anti_pattern.compile(dialect=postgresql.dialect()))
+    assert "FOR UPDATE" in anti_sql
+    assert "LEFT OUTER JOIN" in anti_sql
+
+    good = select(Room).where(Room.id == 1).with_for_update()
+    good_sql = str(good.compile(dialect=postgresql.dialect()))
+    assert "FOR UPDATE" in good_sql
+    assert "OUTER JOIN" not in good_sql
+
+    source = inspect.getsource(bookings_repo.lock_room)
+    assert "with_for_update" in source
+    assert "joinedload(" not in source
+    assert ".options(" not in source
 
 
 def test_booking_overlap_returns_409(

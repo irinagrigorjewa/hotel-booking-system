@@ -305,7 +305,7 @@ const sampleUsers = [
   {
     id: 1,
     name: 'Admin',
-    email: 'admin@hotel.local',
+    email: 'admin@example.com',
     phone: null,
     role: 'ADMIN',
     created_at: '2026-07-01T10:00:00Z',

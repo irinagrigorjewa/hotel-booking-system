@@ -20,6 +20,10 @@ import { Link as RouterLink } from 'react-router-dom'
 import { useBookingMutations } from '../hooks/useBookingMutations'
 import { useBookings } from '../hooks/useBookings'
 import type { BookingStatus } from '../types/booking'
+import {
+  ALLOWED_STATUS_TRANSITIONS,
+  statusSelectOptions,
+} from '../utils/bookingStatusTransitions'
 import { getApiErrorMessage } from '../utils/getApiErrorMessage'
 
 const STATUSES: BookingStatus[] = ['PENDING', 'CONFIRMED', 'CANCELLED', 'COMPLETED']
@@ -110,7 +114,10 @@ export const AdminBookingsPage = () => {
               <TableCell>
                 <FormControl size="small" sx={{ minWidth: 150 }}>
                   <Select
-                    disabled={updateBookingStatus.isPending}
+                    disabled={
+                      updateBookingStatus.isPending ||
+                      ALLOWED_STATUS_TRANSITIONS[booking.status].length === 0
+                    }
                     onChange={(event) => {
                       void handleStatusChange(
                         booking.id,
@@ -119,7 +126,7 @@ export const AdminBookingsPage = () => {
                     }}
                     value={booking.status}
                   >
-                    {STATUSES.map((status) => (
+                    {statusSelectOptions(booking.status).map((status) => (
                       <MenuItem key={status} value={status}>
                         {status}
                       </MenuItem>

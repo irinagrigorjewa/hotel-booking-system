@@ -42,18 +42,30 @@ docs/                    # техническая спецификация и п
    docker compose up --build
    ```
 
-При старте backend выполняет миграции Alembic и **идемпотентный seed** (пропускается, если уже есть `admin@hotel.local`). Остановить стек можно сочетанием `Ctrl+C`.
+При старте backend выполняет миграции Alembic и **идемпотентный seed** (пропускается, если уже есть `admin@example.com`). Остановить стек можно сочетанием `Ctrl+C`.
 
 ## Seed-учётки и демо-данные
 
 | Роль | Email | Пароль |
 | --- | --- | --- |
-| ADMIN | `admin@hotel.local` | `Admin123!` |
-| CLIENT | `client@hotel.local` | `Client123!` |
+| ADMIN | `admin@example.com` | `Admin123!` |
+| CLIENT | `client@example.com` | `Client123!` |
 
 Seed также создаёт ≥ 2 отеля с координатами, типы номеров, ≥ 3 номера, cover-фото и ≥ 1 отзыв.
 
 Повторный запуск seed безопасен: данные не дублируются.
+
+Если БД уже засеяна старыми email (`@hotel.local`), обновить учётки или пересоздать volume:
+
+```bash
+# Вариант A — обновить email на месте (данные сохраняются)
+docker compose exec db psql -U "${POSTGRES_USER:-hotel}" -d "${POSTGRES_DB:-hotel}" -c \
+  "UPDATE users SET email = 'admin@example.com' WHERE email = 'admin@hotel.local';
+   UPDATE users SET email = 'client@example.com' WHERE email = 'client@hotel.local';"
+
+# Вариант B — полный reseed (сброс volume + seed при старте backend)
+docker compose down -v && docker compose up --build
+```
 
 ## Доступные сервисы
 
@@ -123,5 +135,16 @@ GitHub Actions запускается для push и pull request в `develop`, 
 ## Документация
 
 - Техническая спецификация: `docs/technical/`
+- UX-улучшения и журнал фиксов: `docs/technical/10-ux-improvements.md`
 - Пользовательские гайды: `docs/user/`
 - Исходная спека: `DESC.md`
+
+## Troubleshooting
+
+### Фото отелей не отображаются
+
+1. Backend отдаёт файлы: `http://localhost:8000/media/...` (путь из ответа API).
+2. В Docker frontend проксирует `/media` на backend (`frontend/nginx.conf`).
+3. В dev (`npm run dev`) Vite проксирует `/media` на `localhost:8000` — backend должен быть запущен.
+4. UI собирает URL через `mediaUrl()` (`frontend/src/utils/mediaUrl.ts`) из `VITE_API_BASE_URL`.
+5. Проверьте volume `uploads_data` и seed (cover-фото создаются при первом старте).

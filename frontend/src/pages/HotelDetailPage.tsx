@@ -191,6 +191,8 @@ export const HotelDetailPage = () => {
         value={draftFilters}
       />
       <RoomList
+        dateFrom={searchParams.get('date_from') || undefined}
+        dateTo={searchParams.get('date_to') || undefined}
         isError={roomsQuery.isError}
         isLoading={roomsQuery.isLoading}
         onRetry={() => {

@@ -8,7 +8,7 @@ export const LanguageSwitcher = () => {
   const current = i18n.language.startsWith('en') ? 'en' : 'ru'
 
   return (
-    <ButtonGroup size="small" variant="outlined">
+    <ButtonGroup color="inherit" size="small" variant="outlined">
       <Button
         aria-pressed={current === 'ru'}
         onClick={() => {
