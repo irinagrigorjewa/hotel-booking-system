@@ -23,11 +23,10 @@ def get_by_id(session: Session, booking_id: int) -> Booking | None:
 
 
 def lock_room(session: Session, room_id: int) -> Room | None:
+    # Lock only the rooms row. Eager-loading hotel here would emit LEFT OUTER JOIN,
+    # and Postgres rejects FOR UPDATE on the nullable side of an outer join.
     return session.scalar(
-        select(Room)
-        .options(joinedload(Room.hotel))
-        .where(Room.id == room_id)
-        .with_for_update()
+        select(Room).where(Room.id == room_id).with_for_update()
     )
 
 
