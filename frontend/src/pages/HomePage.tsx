@@ -4,15 +4,16 @@ import { useTranslation } from 'react-i18next'
 import { Link as RouterLink, useNavigate } from 'react-router-dom'
 
 import { HotelCatalogState } from '../components/hotels/HotelCatalogState'
+import { useDebouncedValue } from '../hooks/useDebouncedValue'
 import { useHotels } from '../hooks/useHotels'
 
 export const HomePage = () => {
   const { t } = useTranslation()
   const navigate = useNavigate()
   const [cityDraft, setCityDraft] = useState('')
-  const [city, setCity] = useState('')
+  const debouncedCity = useDebouncedValue(cityDraft, 350)
   const hotelsQuery = useHotels({
-    city: city || undefined,
+    city: debouncedCity.trim() || undefined,
     page: 1,
     size: 6,
     sort: 'avg_rating',
@@ -20,7 +21,6 @@ export const HomePage = () => {
 
   const search = (): void => {
     const nextCity = cityDraft.trim()
-    setCity(nextCity)
     navigate(nextCity ? `/hotels?city=${encodeURIComponent(nextCity)}` : '/hotels')
   }
 
