@@ -29,18 +29,50 @@ curl -I http://localhost:5173/media/hotels/...   # Compose/nginx или Vite pro
 
 ---
 
+## 4. MUI theme + public polish (2026-07-20)
+
+**Цель:** брендированная MUI-тема на публичных экранах без редизайна admin tables/drawer.
+
+**Тема** (`frontend/src/theme/theme.ts` + `ThemeProvider`/`CssBaseline` в `main.tsx`):
+
+| Токен | Значение |
+|-------|----------|
+| `palette.primary` | indigo `#3949ab` |
+| `palette.secondary` | teal `#00897b` |
+| `shape.borderRadius` | `12` |
+| `MuiButton.textTransform` | `none` |
+
+**Публичный UI:**
+
+| Экран / компонент | Изменение |
+|-------------------|-----------|
+| `PublicLayout` | sticky `AppBar` `color="primary"` |
+| `HomePage` | hero-блок (primary фон, поиск city + CTA secondary) |
+| `HotelCard` | hover elevation; placeholder «Нет фото» / `No photo` если `mediaUrl(cover)` пуст |
+| `AuthLayout` | бренд-ссылка `primary.main` (навигация r07.2 сохранена) |
+
+Admin CRUD / tables / drawer **не** переделывались — наследуют палитру темы без отдельного layout redesign.
+
+**Проверка:**
+
+```bash
+cd frontend && npx vitest run src/App.test.tsx src/pages/HomePage.test.tsx src/components/hotels/HotelCard.test.tsx
+cd frontend && npx tsc --noEmit
+# ручной обход: /, /hotels, /hotels/map, /login — AppBar primary; карточки с hover/placeholder
+```
+
+---
+
 ## Связанные тесты
 
 ```bash
 cd frontend && npx vitest run src/utils/mediaUrl.test.ts
+cd frontend && npx vitest run src/App.test.tsx src/pages/HomePage.test.tsx src/components/hotels/HotelCard.test.tsx
 ```
 
 ---
 
 ## Что остаётся в backlog
 
-- Навигация на экранах login/register (бренд → `/`, LanguageSwitcher)
-- Поиск по городу: partial match + debounce
-- MUI theme / public polish (без admin redesign)
 - Отдельный `AdminLayout` с drawer
 - Полный редизайн admin-таблиц

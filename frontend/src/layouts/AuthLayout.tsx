@@ -18,7 +18,7 @@ export const AuthLayout = () => {
         <Toolbar sx={{ gap: 2, justifyContent: 'space-between' }}>
           <Typography
             component={RouterLink}
-            sx={{ color: 'text.primary', textDecoration: 'none' }}
+            sx={{ color: 'primary.main', fontWeight: 700, textDecoration: 'none' }}
             to="/"
             variant="h6"
           >

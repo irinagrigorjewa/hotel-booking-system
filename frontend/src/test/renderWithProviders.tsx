@@ -1,3 +1,4 @@
+import { ThemeProvider } from '@mui/material'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { render, type RenderOptions } from '@testing-library/react'
 import type { ReactElement, ReactNode } from 'react'
@@ -6,6 +7,7 @@ import { MemoryRouter } from 'react-router-dom'
 
 import { AuthProvider } from '../context/AuthContext'
 import i18n from '../i18n'
+import { theme } from '../theme/theme'
 
 const createTestQueryClient = (): QueryClient =>
   new QueryClient({
@@ -30,9 +32,11 @@ export const renderWithProviders = (
   const Wrapper = ({ children }: { children: ReactNode }) => (
     <I18nextProvider i18n={i18n}>
       <QueryClientProvider client={queryClient}>
-        <AuthProvider>
-          <MemoryRouter initialEntries={initialEntries}>{children}</MemoryRouter>
-        </AuthProvider>
+        <ThemeProvider theme={theme}>
+          <AuthProvider>
+            <MemoryRouter initialEntries={initialEntries}>{children}</MemoryRouter>
+          </AuthProvider>
+        </ThemeProvider>
       </QueryClientProvider>
     </I18nextProvider>
   )
