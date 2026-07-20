@@ -5,6 +5,7 @@ from decimal import Decimal
 from sqlalchemy import ColumnElement, Select, exists, func, select
 from sqlalchemy.orm import Session, joinedload
 
+from app.core.text import escape_like
 from app.models.booking import Booking
 from app.models.enums import BookingStatus, RoomStatus
 from app.models.hotel import Hotel
@@ -166,7 +167,7 @@ def _build_filters(
     if hotel_id is not None:
         filters.append(Room.hotel_id == hotel_id)
     if city is not None:
-        filters.append(func.lower(Hotel.city) == city.lower())
+        filters.append(Hotel.city.ilike(f"%{escape_like(city)}%", escape="\\"))
     if capacity is not None:
         filters.append(Room.capacity >= capacity)
     if price_from is not None:

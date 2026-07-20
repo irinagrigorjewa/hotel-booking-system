@@ -171,6 +171,61 @@ def test_list_filters_by_hotel_capacity_price_and_city(
     assert payload["total"] == 1
     assert payload["items"][0]["number"] == "201"
 
+    partial = client.get(
+        "/api/v1/rooms",
+        params={"hotel_id": seeded["hotel_id"], "city": "mos"},
+    )
+    assert partial.status_code == 200
+    assert partial.json()["total"] == 2
+
+
+def test_list_rooms_city_filter_escapes_like_wildcards(
+    client: TestClient,
+    admin_headers: dict[str, str],
+) -> None:
+    percent_hotel = client.post(
+        "/api/v1/hotels",
+        json={**HOTEL_PAYLOAD, "name": "Percent City", "city": "100%"},
+        headers=admin_headers,
+    )
+    other_hotel = client.post(
+        "/api/v1/hotels",
+        json={**HOTEL_PAYLOAD, "name": "Plain Hundred", "city": "100", "latitude": "55.76"},
+        headers=admin_headers,
+    )
+    room_type = client.post(
+        "/api/v1/room-types",
+        json={"name": "Standard"},
+        headers=admin_headers,
+    )
+    assert percent_hotel.status_code == 201
+    assert other_hotel.status_code == 201
+    assert room_type.status_code == 201
+
+    room_type_id = room_type.json()["id"]
+    for hotel_id, number in (
+        (percent_hotel.json()["id"], "101"),
+        (other_hotel.json()["id"], "201"),
+    ):
+        created = client.post(
+            "/api/v1/rooms",
+            json={
+                "hotel_id": hotel_id,
+                "room_type_id": room_type_id,
+                "number": number,
+                "price": "4000.00",
+                "capacity": 2,
+                "status": "AVAILABLE",
+            },
+            headers=admin_headers,
+        )
+        assert created.status_code == 201
+
+    filtered = client.get("/api/v1/rooms", params={"city": "100%"})
+    assert filtered.status_code == 200
+    assert filtered.json()["total"] == 1
+    assert filtered.json()["items"][0]["hotel"]["city"] == "100%"
+
 
 def test_date_filter_excludes_overlapping_and_maintenance(
     client: TestClient,
