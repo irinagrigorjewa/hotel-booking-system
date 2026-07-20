@@ -78,6 +78,7 @@
     "registerSubmitting": "Создаём аккаунт…",
     "noAccount": "Нет аккаунта?",
     "hasAccount": "Уже есть аккаунт?",
+    "toHome": "На главную",
     "emailRequired": "Укажите email",
     "emailInvalid": "Введите корректный email",
     "passwordRequired": "Укажите пароль",

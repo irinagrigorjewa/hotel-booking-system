@@ -78,6 +78,7 @@
     "registerSubmitting": "Creating account…",
     "noAccount": "No account?",
     "hasAccount": "Already have an account?",
+    "toHome": "Back to home",
     "emailRequired": "Enter email",
     "emailInvalid": "Enter a valid email",
     "passwordRequired": "Enter password",
