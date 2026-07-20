@@ -5,6 +5,7 @@ from typing import Literal
 from sqlalchemy import ColumnElement, Select, func, select
 from sqlalchemy.orm import Session
 
+from app.core.text import escape_like
 from app.models.hotel import Hotel
 from app.models.review import Review
 from app.models.room import Room
@@ -134,7 +135,7 @@ def min_prices(
 def _build_filters(*, city: str | None, stars: int | None) -> list[ColumnElement[bool]]:
     filters: list[ColumnElement[bool]] = []
     if city is not None:
-        filters.append(func.lower(Hotel.city) == city.lower())
+        filters.append(Hotel.city.ilike(f"%{escape_like(city)}%", escape="\\"))
     if stars is not None:
         filters.append(Hotel.stars == stars)
     return filters

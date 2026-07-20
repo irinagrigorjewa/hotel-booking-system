@@ -2,7 +2,7 @@ from collections.abc import Generator
 
 import pytest
 from fastapi.testclient import TestClient
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, event
 from sqlalchemy.orm import Session, sessionmaker
 from sqlalchemy.pool import StaticPool
 
@@ -12,6 +12,15 @@ from app.database.session import get_session
 from app.main import app
 
 
+def _register_unicode_lower(dbapi_connection: object, _connection_record: object) -> None:
+    # SQLite's built-in lower() is ASCII-only; Python lower matches Postgres ILIKE for Cyrillic.
+    dbapi_connection.create_function(  # type: ignore[attr-defined]
+        "lower",
+        1,
+        lambda value: value.lower() if isinstance(value, str) else value,
+    )
+
+
 @pytest.fixture
 def test_session_factory() -> Generator[sessionmaker[Session], None, None]:
     engine = create_engine(
@@ -19,6 +28,7 @@ def test_session_factory() -> Generator[sessionmaker[Session], None, None]:
         connect_args={"check_same_thread": False},
         poolclass=StaticPool,
     )
+    event.listen(engine, "connect", _register_unicode_lower)
     Base.metadata.create_all(engine)
     session_factory = sessionmaker(bind=engine, autocommit=False, autoflush=False)
 

@@ -650,7 +650,7 @@ Query-параметры:
 
 | Параметр | Тип | Описание |
 |----------|-----|----------|
-| `city` | string | Точное или case-insensitive совпадение города |
+| `city` | string | Partial match по подстроке, case-insensitive (`ILIKE %value%`, `%`/`_` экранируются) |
 | `stars` | int | Фильтр по звёздам (1–5) |
 | `sort` | string | `created_at` \| `stars` \| `avg_rating` |
 | `order` | string | `asc` \| `desc` |
@@ -674,7 +674,7 @@ Query-параметры:
 
 | Параметр | Тип | Описание |
 |----------|-----|----------|
-| `city` | string | optional filter |
+| `city` | string | optional; partial `ILIKE %value%` (как у `GET /hotels`) |
 
 **Response `200 OK`:**
 
@@ -935,7 +935,7 @@ Query-параметры:
 | Параметр | Тип | Описание |
 |----------|-----|----------|
 | `hotel_id` | int | Фильтр по отелю |
-| `city` | string | Город отеля |
+| `city` | string | Город отеля; partial `ILIKE %value%` (как у `GET /hotels`) |
 | `capacity` | int | `capacity >= value` |
 | `price_from` | decimal | `price >=` |
 | `price_to` | decimal | `price <=` |

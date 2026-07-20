@@ -54,6 +54,42 @@ def test_list_hotels_filters_sorts_and_paginates(
     assert response.json()["items"][0]["is_favorite"] is None
 
 
+def test_list_hotels_city_partial_match_case_insensitive(
+    client: TestClient,
+    test_session_factory: sessionmaker[Session],
+) -> None:
+    with test_session_factory() as session:
+        create_hotel(session, name="Hotel Moscow", city="Moscow", stars=4)
+        create_hotel(session, name="Hotel Moskva", city="Москва", stars=4)
+        create_hotel(session, name="Hotel Kazan", city="Kazan", stars=3)
+
+    latin = client.get("/api/v1/hotels", params={"city": "mos"})
+    assert latin.status_code == 200
+    assert latin.json()["total"] == 1
+    assert latin.json()["items"][0]["city"] == "Moscow"
+
+    cyrillic = client.get("/api/v1/hotels", params={"city": "моск"})
+    assert cyrillic.status_code == 200
+    assert cyrillic.json()["total"] == 1
+    assert cyrillic.json()["items"][0]["city"] == "Москва"
+
+
+def test_list_hotels_city_filter_escapes_like_wildcards(
+    client: TestClient,
+    test_session_factory: sessionmaker[Session],
+) -> None:
+    with test_session_factory() as session:
+        create_hotel(session, name="Literal Percent", city="100%", stars=3)
+        create_hotel(session, name="One Hundred", city="100", stars=3)
+        create_hotel(session, name="Moscow", city="Moscow", stars=4)
+
+    response = client.get("/api/v1/hotels", params={"city": "100%"})
+
+    assert response.status_code == 200
+    assert response.json()["total"] == 1
+    assert response.json()["items"][0]["city"] == "100%"
+
+
 def test_get_hotel_returns_stage_three_detail(
     client: TestClient,
     test_session_factory: sessionmaker[Session],
