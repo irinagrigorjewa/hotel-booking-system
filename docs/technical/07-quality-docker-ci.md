@@ -592,8 +592,8 @@ README должен быть достаточен для запуска с ну�
   - [ ] URL frontend, backend, Swagger (`http://localhost:8000/docs`).
 - [ ] **Переменные окружения:** таблица из `.env.example` (`POSTGRES_*`, `DATABASE_URL`, `SECRET_KEY`, TTL токенов, `CORS_ORIGINS`, `UPLOAD_DIR`, `MAX_UPLOAD_SIZE_MB`, порты).
 - [ ] **Seed-аккаунты:**
-  - [ ] ADMIN: `admin@hotel.local` / `Admin123!`
-  - [ ] CLIENT: `client@hotel.local` / `Client123!`
+  - [ ] ADMIN: `admin@example.com` / `Admin123!`
+  - [ ] CLIENT: `client@example.com` / `Client123!`
   - [ ] Что создаётся: ≥2 отеля с lat/lng, room types, rooms, фото, ≥1 отзыв.
 - [ ] **Фото / media:** куда заливает админ; лимиты (JPEG/PNG/WebP, 5 MB, max 10); как открыть `/media/...` через backend URL; volume `uploads`.
 - [ ] **i18n:** ru/en; переключатель в Navbar; ключ `localStorage` `i18n_lang`; где лежат `locales/ru.json`, `locales/en.json`.

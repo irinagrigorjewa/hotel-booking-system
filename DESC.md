@@ -256,8 +256,8 @@ AND new.check_in < existing.check_out
 
 ### Seed при первом запуске
 
-- `ADMIN`: `admin@hotel.local` / `Admin123!`
-- `CLIENT`: `client@hotel.local` / `Client123!`
+- `ADMIN`: `admin@example.com` / `Admin123!`
+- `CLIENT`: `client@example.com` / `Client123!`
 - ≥ 2 отеля с валидными lat/lng (например Москва / СПб), ≥ 1 RoomType, ≥ 3 номера
 - ≥ 1 seed-фото на отель (файлы в `uploads/` или URL placeholder из static)
 - ≥ 1 отзыв от CLIENT

@@ -19,8 +19,8 @@ from app.models.room_type import RoomType
 from app.models.user import User
 from app.repositories.users import get_by_email
 
-ADMIN_EMAIL = "admin@hotel.local"
-CLIENT_EMAIL = "client@hotel.local"
+ADMIN_EMAIL = "admin@example.com"
+CLIENT_EMAIL = "client@example.com"
 ADMIN_PASSWORD = "Admin123!"
 CLIENT_PASSWORD = "Client123!"
 

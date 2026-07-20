@@ -19,7 +19,7 @@
 ### Порядок проверки
 
 1. **Поднять стенд:** `docker compose up --build` (AC-11). Дождаться healthy backend, frontend, Postgres; volume `uploads` смонтирован.
-2. **Seed:** убедиться, что доступны `admin@hotel.local` / `Admin123!` и `client@hotel.local` / `Client123!`, ≥ 2 отеля с lat/lng, номера, seed-фото, ≥ 1 отзыв.
+2. **Seed:** убедиться, что доступны `admin@example.com` / `Admin123!` и `client@example.com` / `Client123!`, ≥ 2 отеля с lat/lng, номера, seed-фото, ≥ 1 отзыв.
 3. **Ops / качество:** CI на PR зелёный (AC-12), coverage ≥ 80% (AC-13), README достаточен (AC-14) — можно частично параллельно со стендом.
 4. **Критичные инварианты (обязательны для go):** auth/refresh (AC-02), overlap бронирований (AC-03), 409 при удалении с активными бронями (AC-10), изоляция броней по ролям (AC-09).
 5. **Функциональный обход UC:** AC-01 (все UC-01…UC-20 на стенде), затем фото, отзывы, избранное, карта, i18n (AC-04…AC-08).
