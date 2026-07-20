@@ -6,11 +6,12 @@ import {
   TextField,
   Typography,
 } from '@mui/material'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useSearchParams } from 'react-router-dom'
 
 import { HotelsMapView } from '../components/hotels/HotelsMapView'
+import { useDebouncedValue } from '../hooks/useDebouncedValue'
 import { useHotelsMap } from '../hooks/useHotelsMap'
 
 export const HotelsMapPage = () => {
@@ -18,7 +19,25 @@ export const HotelsMapPage = () => {
   const [searchParams, setSearchParams] = useSearchParams()
   const cityFilter = searchParams.get('city') ?? ''
   const [cityDraft, setCityDraft] = useState(cityFilter)
+  const debouncedCity = useDebouncedValue(cityDraft, 350)
   const mapQuery = useHotelsMap(cityFilter || undefined)
+
+  useEffect(() => {
+    setCityDraft(cityFilter)
+  }, [cityFilter])
+
+  useEffect(() => {
+    const next = debouncedCity.trim()
+    const current = cityFilter.trim()
+    if (next === current) {
+      return
+    }
+    if (next) {
+      setSearchParams({ city: next })
+    } else {
+      setSearchParams({})
+    }
+  }, [debouncedCity, cityFilter, setSearchParams])
 
   const applyCity = (): void => {
     const next = cityDraft.trim()

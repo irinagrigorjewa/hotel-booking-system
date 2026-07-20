@@ -17,20 +17,27 @@ describe('HotelsPage', () => {
     )
   })
 
-  it('updates the city filter and resets the page in the URL', async () => {
+  it('updates the city filter after debounce and resets the page in the URL', async () => {
     renderWithProviders(<HotelsPage />, {
       initialEntries: ['/hotels?page=2&city=Moscow'],
     })
 
     expect(await screen.findByDisplayValue('Moscow')).toBeInTheDocument()
+    expect(await screen.findByRole('heading', { name: 'Moscow Hotel' })).toBeInTheDocument()
 
     fireEvent.change(screen.getByLabelText('Город'), {
       target: { value: 'Kazan' },
     })
 
-    await waitFor(() => {
-      expect(screen.getByRole('heading', { name: 'Kazan Hotel' })).toBeInTheDocument()
-    })
+    expect(screen.getByDisplayValue('Kazan')).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Moscow Hotel' })).toBeInTheDocument()
+
+    await waitFor(
+      () => {
+        expect(screen.getByRole('heading', { name: 'Kazan Hotel' })).toBeInTheDocument()
+      },
+      { timeout: 2000 },
+    )
   })
 
   it('shows loading error retry for catalog failures', async () => {
