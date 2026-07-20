@@ -92,4 +92,21 @@ describe('LoginPage', () => {
 
     expect(await screen.findByText('Invalid credentials')).toBeInTheDocument()
   })
+
+  it('links back to the home page and to register', () => {
+    render(
+      <MemoryRouter>
+        <LoginPage />
+      </MemoryRouter>,
+    )
+
+    expect(screen.getByRole('link', { name: 'На главную' })).toHaveAttribute(
+      'href',
+      '/',
+    )
+    expect(screen.getByRole('link', { name: 'Регистрация' })).toHaveAttribute(
+      'href',
+      '/register',
+    )
+  })
 })

@@ -114,4 +114,21 @@ describe('RegisterPage', () => {
       await screen.findByText('Email already registered'),
     ).toBeInTheDocument()
   })
+
+  it('links back to the home page and to login', () => {
+    render(
+      <MemoryRouter>
+        <RegisterPage />
+      </MemoryRouter>,
+    )
+
+    expect(screen.getByRole('link', { name: 'На главную' })).toHaveAttribute(
+      'href',
+      '/',
+    )
+    expect(screen.getByRole('link', { name: 'Вход' })).toHaveAttribute(
+      'href',
+      '/login',
+    )
+  })
 })
