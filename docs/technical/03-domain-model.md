@@ -783,8 +783,8 @@ class Booking(Base):
 
 | role | email | password (plaintext только в seed) | name |
 |------|-------|--------------------------------------|------|
-| ADMIN | `admin@hotel.local` | `Admin123!` | Admin |
-| CLIENT | `client@hotel.local` | `Client123!` | Client |
+| ADMIN | `admin@example.com` | `Admin123!` | Admin |
+| CLIENT | `client@example.com` | `Client123!` | Client |
 
 Пароли хешировать bcrypt (Passlib) перед insert.
 
@@ -834,7 +834,7 @@ class Booking(Base):
 ### Идемпотентность
 
 ```
-IF EXISTS (SELECT 1 FROM users WHERE email = 'admin@hotel.local') THEN skip seed
+IF EXISTS (SELECT 1 FROM users WHERE email = 'admin@example.com') THEN skip seed
 ELSE insert all seed data in one transaction
 ```
 
