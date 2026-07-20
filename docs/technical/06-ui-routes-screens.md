@@ -254,7 +254,7 @@ flowchart TD
 
 1. Панель фильтров: `city`, `stars`.
 2. Сортировка: `created_at` \| `stars` \| `avg_rating`.
-3. Список/сетка карточек: name, city, stars, min_price, cover, avg_rating, `reviews_count`, кнопка избранного (если auth и `is_favorite`).
+3. Список/сетка карточек: name, city, stars, min_price, cover (`mediaUrl(cover_image)`), avg_rating, `reviews_count`, кнопка избранного (если auth и `is_favorite`).
 4. Пагинация MUI (`page`, `size`).
 5. Кнопка/таб «На карте» → `/hotels/map?city=…`.
 

@@ -87,7 +87,7 @@ sequenceDiagram
 
 1. Frontend **не** имеет прямого доступа к PostgreSQL и к volume `uploads`.
 2. Все мутации домена идут через Backend REST.
-3. URL фото в JSON указывают на backend static (`/media/...`); браузер загружает их с backend (или через тот же origin/прокси в Compose).
+3. URL фото в JSON указывают на `/media/...`. В dev Vite и в Compose nginx проксируют `/media` на backend; helper `mediaUrl()` на фронте собирает абсолютный URL при необходимости.
 4. Миграции схемы — только Alembic на старте/в CI, не «ручной» SQL из приложения вне repositories.
 
 ---

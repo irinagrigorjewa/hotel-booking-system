@@ -123,5 +123,16 @@ GitHub Actions запускается для push и pull request в `develop`, 
 ## Документация
 
 - Техническая спецификация: `docs/technical/`
+- UX-улучшения и журнал фиксов: `docs/technical/10-ux-improvements.md`
 - Пользовательские гайды: `docs/user/`
 - Исходная спека: `DESC.md`
+
+## Troubleshooting
+
+### Фото отелей не отображаются
+
+1. Backend отдаёт файлы: `http://localhost:8000/media/...` (путь из ответа API).
+2. В Docker frontend проксирует `/media` на backend (`frontend/nginx.conf`).
+3. В dev (`npm run dev`) Vite проксирует `/media` на `localhost:8000` — backend должен быть запущен.
+4. UI собирает URL через `mediaUrl()` (`frontend/src/utils/mediaUrl.ts`) из `VITE_API_BASE_URL`.
+5. Проверьте volume `uploads_data` и seed (cover-фото создаются при первом старте).
