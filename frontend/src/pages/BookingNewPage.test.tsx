@@ -77,4 +77,23 @@ describe('BookingNewPage', () => {
 
     expect(screen.getByText('Выберите номер на странице отеля.')).toBeInTheDocument()
   })
+
+  it('prefills check-in/out from date_from/date_to query params', async () => {
+    const today = utcTodayIso()
+    const checkIn = addDays(today, 10)
+    const checkOut = addDays(today, 15)
+
+    renderWithProviders(<BookingNewPage />, {
+      initialEntries: [
+        `/bookings/new?room_id=5&date_from=${checkIn}&date_to=${checkOut}`,
+      ],
+    })
+
+    await screen.findByText(/Grand Hotel · номер 301/)
+
+    expect(screen.getByLabelText('Заезд')).toHaveValue(checkIn)
+    expect(screen.getByLabelText('Выезд')).toHaveValue(checkOut)
+    expect(await screen.findByText(/Ночей: 5 · Итого: 27500.00 ₽/)).toBeInTheDocument()
+  })
 })
+

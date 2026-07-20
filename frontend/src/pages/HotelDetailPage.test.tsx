@@ -47,4 +47,17 @@ describe('HotelDetailPage', () => {
     expect(await screen.findByText('Не удалось загрузить отель')).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Повторить' })).toBeInTheDocument()
   })
+
+  it('passes date filters into Book returnUrl', async () => {
+    renderDetail('/hotels/1?date_from=2026-08-10&date_to=2026-08-15')
+
+    const bookLink = await screen.findByRole('link', { name: 'Забронировать' })
+    const href = bookLink.getAttribute('href') ?? ''
+    expect(href).toMatch(/^\/login\?returnUrl=/)
+    const returnUrl = decodeURIComponent(href.split('returnUrl=')[1] ?? '')
+    expect(returnUrl).toContain('date_from=2026-08-10')
+    expect(returnUrl).toContain('date_to=2026-08-15')
+    expect(returnUrl).toContain('room_id=5')
+  })
 })
+
