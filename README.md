@@ -130,7 +130,9 @@ ruff check .
 pytest -q --cov=app --cov-fail-under=80
 ```
 
-GitHub Actions запускается для push и pull request в `develop`, `master` и `main`. Он проверяет TypeScript, backend lint, frontend- и backend-тесты (coverage ≥ 80%), затем production build и сборку Docker-образов.
+GitHub Actions запускается для push и pull request в `develop` и `master`. Он проверяет TypeScript, backend lint, frontend- и backend-тесты (coverage ≥ 80%), затем production build и сборку Docker-образов.
+
+Текущий backend test-suite использует изолированную SQLite fixture из `backend/tests/conftest.py`, поэтому для этих quality gates отдельный PostgreSQL service в CI не требуется. Runtime и Compose-окружение проекта по-прежнему используют PostgreSQL.
 
 ## Документация
 

@@ -476,7 +476,7 @@ Job `docker-build` собирает оба Dockerfile **без push** в registr
 
 ## 7.6. CI pipeline (GitHub Actions)
 
-Триггеры: **push** и **pull_request** в ветку `main`.
+Триггеры: **push** и **pull_request** в ветки `develop` и `master`.
 
 Файл: `.github/workflows/ci.yml`.
 
@@ -484,7 +484,7 @@ Job `docker-build` собирает оба Dockerfile **без push** в registr
 
 ```mermaid
 flowchart TD
-  A[Push / PR → main] --> B[lint]
+  A[Push / PR → develop/master] --> B[lint]
   A --> C[frontend-tests]
   A --> D[backend-tests]
   B --> E{Lint OK?}
@@ -512,7 +512,7 @@ flowchart TD
 |---|--------|-------------|-----------------|
 | 1 | `lint` | Checkout → setup Node/Python → ESLint + Prettier check (FE) → ruff/black (BE) → `tsc --noEmit` | Да |
 | 2 | `frontend-tests` | `npm ci` → `npm test -- --coverage` (если настроен) / `vitest run` | Да |
-| 3 | `backend-tests` | setup Python 3.12 → deps → Postgres service (или SQLite только если совместим; предпочтительно Postgres) → `pytest --cov-fail-under=80` | Да |
+| 3 | `backend-tests` | setup Python 3.12 → deps → `pytest --cov-fail-under=80` на изолированной SQLite fixture | Да |
 | 4 | `build` | FE: `npm run build`; BE: проверка импорта app / `python -m compileall` | Да |
 | 5 | `docker-build` | `docker build -f frontend/Dockerfile` + `docker build -f backend/Dockerfile` (или `docker compose build`) | Да |
 
@@ -525,8 +525,8 @@ flowchart TD
 
 **backend-tests:**
 
-- Service container `postgres:16` с теми же env, что в `.env.example`.
-- `DATABASE_URL` на `localhost:5432`.
+- Python 3.12 и зависимости из `backend/requirements.txt`.
+- Текущий test-suite подменяет приложение изолированной SQLite fixture в `backend/tests/conftest.py`, поэтому отдельный Postgres service для CI не нужен.
 - `SECRET_KEY` тестовый, не production.
 - `UPLOAD_DIR` → tmp в runner.
 

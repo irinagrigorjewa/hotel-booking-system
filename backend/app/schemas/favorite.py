@@ -2,7 +2,7 @@ from datetime import datetime
 
 from pydantic import BaseModel
 
-from app.schemas.hotel import HotelListItem, HotelPage
+from app.schemas.hotel import HotelPage
 
 
 class FavoriteCreated(BaseModel):

@@ -2,16 +2,15 @@ name: CI
 
 on:
   push:
-    branches: [develop, master, main]
+    branches: [develop, master]
   pull_request:
-    branches: [develop, master, main]
+    branches: [develop, master]
 
 permissions:
   contents: read
 
 env:
   CI: "true"
-  DATABASE_URL: postgresql+psycopg://ci_user:ci_password@localhost:5432/hotel_booking_test
   SECRET_KEY: ci-only-secret
   CORS_ORIGINS: http://localhost:5173
   UPLOAD_DIR: /tmp/hotel-booking-uploads
@@ -71,20 +70,6 @@ jobs:
 
   backend-tests:
     runs-on: ubuntu-latest
-    services:
-      postgres:
-        image: postgres:16-alpine
-        env:
-          POSTGRES_USER: ci_user
-          POSTGRES_PASSWORD: ci_password
-          POSTGRES_DB: hotel_booking_test
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd "pg_isready -U ci_user -d hotel_booking_test"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
     steps:
       - uses: actions/checkout@v4
 
