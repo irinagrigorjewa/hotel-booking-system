@@ -3,9 +3,10 @@ import { useEffect } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 
+import { STAR_OPTIONS } from '../../../constants/domainOptions'
+import type { HotelListItem, HotelWritePayload } from '../../../types/hotel'
 import { AdminFormActions } from '../shared/AdminFormActions'
 import { AdminFormError } from '../shared/AdminFormError'
-import type { HotelListItem, HotelWritePayload } from '../../../types/hotel'
 
 export interface HotelFormValues {
   name: string
@@ -144,7 +145,7 @@ export const HotelForm = ({
             select
             value={field.value}
           >
-            {[1, 2, 3, 4, 5].map((star) => (
+            {STAR_OPTIONS.map((star) => (
               <MenuItem key={star} value={star}>
                 {star}
               </MenuItem>

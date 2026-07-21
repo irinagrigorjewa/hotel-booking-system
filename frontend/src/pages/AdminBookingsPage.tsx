@@ -15,6 +15,7 @@ import { useTranslation } from 'react-i18next'
 
 import { AdminErrorAlert } from '../components/admin/shared/AdminErrorAlert'
 import { AdminPageHeader } from '../components/admin/shared/AdminPageHeader'
+import { BOOKING_STATUS_OPTIONS } from '../constants/domainOptions'
 import { useNotify } from '../context/NotificationContext'
 import { useBookingMutations } from '../hooks/useBookingMutations'
 import { useBookings } from '../hooks/useBookings'
@@ -23,8 +24,6 @@ import {
   ALLOWED_STATUS_TRANSITIONS,
   statusSelectOptions,
 } from '../utils/bookingStatusTransitions'
-
-const STATUSES: BookingStatus[] = ['PENDING', 'CONFIRMED', 'CANCELLED', 'COMPLETED']
 
 export const AdminBookingsPage = () => {
   const { t } = useTranslation()
@@ -66,7 +65,7 @@ export const AdminBookingsPage = () => {
           value={statusFilter}
         >
           <MenuItem value="">{t('common.all')}</MenuItem>
-          {STATUSES.map((status) => (
+          {BOOKING_STATUS_OPTIONS.map((status) => (
             <MenuItem key={status} value={status}>
               {t(`enums.booking.${status}`)}
             </MenuItem>
