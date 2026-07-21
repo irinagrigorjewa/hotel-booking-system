@@ -7,10 +7,7 @@ from sqlalchemy.orm import Session, sessionmaker
 
 from app.core.security import create_access_token
 from app.models.booking import Booking
-from app.models.enums import BookingStatus, RoomStatus, UserRole
-from app.models.hotel import Hotel
-from app.models.room import Room
-from app.models.room_type import RoomType
+from app.models.enums import BookingStatus, UserRole
 from app.models.user import User
 
 HOTEL_PAYLOAD = {

@@ -13,25 +13,24 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { RoomForm } from '../components/admin/rooms/RoomForm'
-import { AdminErrorAlert } from '../components/admin/shared/AdminErrorAlert'
 import { AdminFormSection } from '../components/admin/shared/AdminFormSection'
 import { AdminPageHeader } from '../components/admin/shared/AdminPageHeader'
+import { useNotify } from '../context/NotificationContext'
 import { useHotels } from '../hooks/useHotels'
 import { useRoomMutations } from '../hooks/useRoomMutations'
 import { useRoomTypes } from '../hooks/useRoomTypes'
 import { useRooms } from '../hooks/useRooms'
 import type { Room, RoomWritePayload } from '../types/room'
-import { getApiErrorMessage } from '../utils/getApiErrorMessage'
 
 export const AdminRoomsPage = () => {
   const { t } = useTranslation()
+  const { notifySuccess, notifyApiError } = useNotify()
   const hotelsQuery = useHotels({ page: 1, size: 100, sort: 'created_at' })
   const roomTypesQuery = useRoomTypes()
   const roomsQuery = useRooms({ page: 1, size: 100 })
   const { createRoom, updateRoom, deleteRoom } = useRoomMutations()
   const [editing, setEditing] = useState<Room | null>(null)
   const [formError, setFormError] = useState('')
-  const [actionError, setActionError] = useState('')
 
   const isSubmitting = createRoom.isPending || updateRoom.isPending
 
@@ -45,28 +44,26 @@ export const AdminRoomsPage = () => {
       } else {
         await createRoom.mutateAsync(payload)
       }
+      notifySuccess('notifications.roomSaved')
     } catch (error) {
       if (isAxiosError(error) && error.response?.status === 409) {
         setFormError(t('admin.roomsDuplicateNumber'))
         return
       }
 
-      setFormError(getApiErrorMessage(error, t('admin.roomsSaveFailed'), (key) => t(key)))
+      notifyApiError(error, 'admin.roomsSaveFailed')
     }
   }
 
   const handleDelete = async (roomId: number): Promise<void> => {
-    setActionError('')
-
     try {
       await deleteRoom.mutateAsync(roomId)
       if (editing?.id === roomId) {
         setEditing(null)
       }
+      notifySuccess('notifications.roomDeleted')
     } catch (error) {
-      setActionError(
-        getApiErrorMessage(error, t('admin.roomsDeleteFailed'), (key) => t(key)),
-      )
+      notifyApiError(error, 'admin.roomsDeleteFailed')
     }
   }
 
@@ -79,7 +76,6 @@ export const AdminRoomsPage = () => {
         ]}
         title={t('admin.roomsTitle')}
       />
-      {actionError ? <AdminErrorAlert message={actionError} /> : null}
       <AdminFormSection
         title={editing ? t('admin.roomsEditTitle') : t('admin.roomsNewTitle')}
       >
@@ -120,7 +116,7 @@ export const AdminRoomsPage = () => {
               <TableCell>{room.room_type.name}</TableCell>
               <TableCell>{room.price}</TableCell>
               <TableCell>{room.capacity}</TableCell>
-              <TableCell>{room.status}</TableCell>
+              <TableCell>{t(`enums.room.${room.status}`)}</TableCell>
               <TableCell align="right">
                 <Button onClick={() => setEditing(room)} size="small">
                   {t('common.edit')}

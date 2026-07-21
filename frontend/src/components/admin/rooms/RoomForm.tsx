@@ -206,8 +206,8 @@ export const RoomForm = ({
         name="status"
         render={({ field }) => (
           <TextField {...field} fullWidth label={t('admin.colStatus')} margin="normal" select>
-            <MenuItem value="AVAILABLE">{t('admin.form.statusAvailable')}</MenuItem>
-            <MenuItem value="MAINTENANCE">{t('admin.form.statusMaintenance')}</MenuItem>
+            <MenuItem value="AVAILABLE">{t('enums.room.AVAILABLE')}</MenuItem>
+            <MenuItem value="MAINTENANCE">{t('enums.room.MAINTENANCE')}</MenuItem>
           </TextField>
         )}
       />

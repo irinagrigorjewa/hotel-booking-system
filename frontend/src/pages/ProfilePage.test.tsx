@@ -2,6 +2,7 @@ import { fireEvent, screen, waitFor } from '@testing-library/react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { bookingsApi } from '../api/bookings'
+import { usersApi } from '../api/users'
 import type { User } from '../types/auth'
 import { renderWithProviders } from '../test/renderWithProviders'
 import { ProfilePage } from './ProfilePage'
@@ -49,12 +50,36 @@ describe('ProfilePage', () => {
     })
 
     expect(await screen.findByText('Grand Hotel')).toBeInTheDocument()
-    expect(screen.getByText('CONFIRMED')).toBeInTheDocument()
+    expect(screen.getByText('Подтверждено')).toBeInTheDocument()
 
     fireEvent.click(screen.getByRole('button', { name: 'Отменить' }))
 
     await waitFor(() => {
       expect(cancelSpy).toHaveBeenCalledWith(100)
     })
+
+    expect(await screen.findByRole('alert')).toHaveTextContent('Бронирование отменено')
+  })
+
+  it('saves profile and shows success notification', async () => {
+    const patchSpy = vi.spyOn(usersApi, 'patchMe')
+
+    renderWithProviders(<ProfilePage />, {
+      initialEntries: ['/profile?tab=account'],
+    })
+
+    fireEvent.change(screen.getByLabelText('Имя'), {
+      target: { value: 'Updated Client' },
+    })
+    fireEvent.click(screen.getByRole('button', { name: 'Сохранить' }))
+
+    await waitFor(() => {
+      expect(patchSpy).toHaveBeenCalledWith({
+        name: 'Updated Client',
+        phone: null,
+      })
+    })
+
+    expect(await screen.findByRole('alert')).toHaveTextContent('Профиль сохранён')
   })
 })

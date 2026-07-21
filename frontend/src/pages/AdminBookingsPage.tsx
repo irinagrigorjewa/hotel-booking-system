@@ -1,7 +1,5 @@
 import {
-  Alert,
   Box,
-  Button,
   FormControl,
   InputLabel,
   MenuItem,
@@ -11,12 +9,14 @@ import {
   TableCell,
   TableHead,
   TableRow,
-  Typography,
 } from '@mui/material'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Link as RouterLink } from 'react-router-dom'
 
+import { AdminErrorAlert } from '../components/admin/shared/AdminErrorAlert'
+import { AdminPageHeader } from '../components/admin/shared/AdminPageHeader'
+import { BOOKING_STATUS_OPTIONS } from '../constants/domainOptions'
+import { useNotify } from '../context/NotificationContext'
 import { useBookingMutations } from '../hooks/useBookingMutations'
 import { useBookings } from '../hooks/useBookings'
 import type { BookingStatus } from '../types/booking'
@@ -24,12 +24,10 @@ import {
   ALLOWED_STATUS_TRANSITIONS,
   statusSelectOptions,
 } from '../utils/bookingStatusTransitions'
-import { getApiErrorMessage } from '../utils/getApiErrorMessage'
-
-const STATUSES: BookingStatus[] = ['PENDING', 'CONFIRMED', 'CANCELLED', 'COMPLETED']
 
 export const AdminBookingsPage = () => {
   const { t } = useTranslation()
+  const { notifySuccess, notifyApiError } = useNotify()
   const [statusFilter, setStatusFilter] = useState<BookingStatus | ''>('')
   const bookingsQuery = useBookings({
     page: 1,
@@ -37,31 +35,25 @@ export const AdminBookingsPage = () => {
     ...(statusFilter ? { status: statusFilter } : {}),
   })
   const { updateBookingStatus } = useBookingMutations()
-  const [actionError, setActionError] = useState('')
 
   const handleStatusChange = async (
     bookingId: number,
     status: BookingStatus,
   ): Promise<void> => {
-    setActionError('')
-
     try {
       await updateBookingStatus.mutateAsync({ bookingId, status })
+      notifySuccess('notifications.bookingStatusUpdated')
     } catch (error) {
-      setActionError(getApiErrorMessage(error, t('errors.updateBookingFailed')))
+      notifyApiError(error, 'errors.updateBookingFailed')
     }
   }
 
   return (
     <Box>
-      <Typography component="h1" gutterBottom variant="h4">
-        {t('admin.bookingsTitle')}
-      </Typography>
-      <Typography sx={{ mb: 2 }}>
-        <Button component={RouterLink} to="/admin">
-          {t('admin.back')}
-        </Button>
-      </Typography>
+      <AdminPageHeader
+        links={[{ label: t('admin.back'), to: '/admin' }]}
+        title={t('admin.bookingsTitle')}
+      />
       <FormControl size="small" sx={{ mb: 2, minWidth: 180 }}>
         <InputLabel id="booking-status-filter">{t('bookings.colStatus')}</InputLabel>
         <Select
@@ -73,22 +65,21 @@ export const AdminBookingsPage = () => {
           value={statusFilter}
         >
           <MenuItem value="">{t('common.all')}</MenuItem>
-          {STATUSES.map((status) => (
+          {BOOKING_STATUS_OPTIONS.map((status) => (
             <MenuItem key={status} value={status}>
-              {status}
+              {t(`enums.booking.${status}`)}
             </MenuItem>
           ))}
         </Select>
       </FormControl>
       {bookingsQuery.isError ? (
-        <Alert severity="error" sx={{ mb: 2 }}>
-          {t('bookings.loadFailed')}
-        </Alert>
-      ) : null}
-      {actionError ? (
-        <Alert severity="error" sx={{ mb: 2 }}>
-          {actionError}
-        </Alert>
+        <AdminErrorAlert
+          message={t('bookings.loadFailed')}
+          onRetry={() => {
+            void bookingsQuery.refetch()
+          }}
+          retryLabel={t('common.retry')}
+        />
       ) : null}
       <Table size="small">
         <TableHead>
@@ -128,7 +119,7 @@ export const AdminBookingsPage = () => {
                   >
                     {statusSelectOptions(booking.status).map((status) => (
                       <MenuItem key={status} value={status}>
-                        {status}
+                        {t(`enums.booking.${status}`)}
                       </MenuItem>
                     ))}
                   </Select>

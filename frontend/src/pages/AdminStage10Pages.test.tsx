@@ -1,6 +1,7 @@
 import { fireEvent, screen, waitFor } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
 
+import { bookingsApi } from '../api/bookings'
 import { usersApi } from '../api/users'
 import type { User } from '../types/auth'
 import { renderWithProviders } from '../test/renderWithProviders'
@@ -64,11 +65,13 @@ describe('AdminUsersPage', () => {
 
     const roleSelects = screen.getAllByLabelText('Роль')
     fireEvent.mouseDown(roleSelects[1])
-    fireEvent.click(await screen.findByRole('option', { name: 'ADMIN' }))
+    fireEvent.click(await screen.findByRole('option', { name: 'Админ' }))
 
     await waitFor(() => {
       expect(patchSpy).toHaveBeenCalledWith(2, { role: 'ADMIN' })
     })
+
+    expect(await screen.findByRole('alert')).toHaveTextContent('Роль обновлена')
   })
 })
 
@@ -91,14 +94,37 @@ describe('AdminBookingsPage', () => {
 
     const comboboxes = screen.getAllByRole('combobox')
     const statusSelect = comboboxes[comboboxes.length - 1]
-    expect(statusSelect).toHaveTextContent('CONFIRMED')
+    expect(statusSelect).toHaveTextContent('Подтверждено')
     fireEvent.mouseDown(statusSelect)
 
     const options = await screen.findAllByRole('option')
     const labels = options.map((option) => option.textContent)
 
-    expect(labels).toEqual(['CONFIRMED', 'CANCELLED', 'COMPLETED'])
-    expect(screen.queryByRole('option', { name: 'PENDING' })).not.toBeInTheDocument()
+    expect(labels).toEqual(['Подтверждено', 'Отменено', 'Завершено'])
+    expect(screen.queryByRole('option', { name: 'Ожидает' })).not.toBeInTheDocument()
+  })
+
+  it('updates booking status and shows success notification', async () => {
+    const updateSpy = vi.spyOn(bookingsApi, 'updateStatus')
+
+    renderWithProviders(<AdminBookingsPage />, {
+      initialEntries: ['/admin/bookings'],
+    })
+
+    await screen.findByText('client@example.com')
+
+    const comboboxes = screen.getAllByRole('combobox')
+    const statusSelect = comboboxes[comboboxes.length - 1]
+    fireEvent.mouseDown(statusSelect)
+    fireEvent.click(await screen.findByRole('option', { name: 'Завершено' }))
+
+    await waitFor(() => {
+      expect(updateSpy).toHaveBeenCalled()
+    })
+
+    expect(await screen.findByRole('alert')).toHaveTextContent(
+      'Статус бронирования обновлён',
+    )
   })
 })
 

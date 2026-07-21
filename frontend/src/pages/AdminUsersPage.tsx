@@ -1,5 +1,4 @@
 import {
-  Alert,
   Box,
   Button,
   FormControl,
@@ -13,46 +12,41 @@ import {
   TableHead,
   TableRow,
   TextField,
-  Typography,
 } from '@mui/material'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Link as RouterLink } from 'react-router-dom'
 
+import { AdminErrorAlert } from '../components/admin/shared/AdminErrorAlert'
+import { AdminPageHeader } from '../components/admin/shared/AdminPageHeader'
 import { useAuth } from '../context/AuthContext'
+import { useNotify } from '../context/NotificationContext'
 import { useUserMutations, useUsers } from '../hooks/useUsers'
 import type { UserRole } from '../types/auth'
-import { getApiErrorMessage } from '../utils/getApiErrorMessage'
 
 export const AdminUsersPage = () => {
   const { t } = useTranslation()
+  const { notifySuccess, notifyApiError } = useNotify()
   const { user: currentUser } = useAuth()
   const [search, setSearch] = useState('')
   const [appliedSearch, setAppliedSearch] = useState('')
   const usersQuery = useUsers({ page: 1, size: 100, search: appliedSearch || undefined })
   const { patchUser } = useUserMutations()
-  const [actionError, setActionError] = useState('')
 
   const handleRoleChange = async (userId: number, role: UserRole): Promise<void> => {
-    setActionError('')
-
     try {
       await patchUser.mutateAsync({ userId, payload: { role } })
+      notifySuccess('notifications.roleUpdated')
     } catch (error) {
-      setActionError(getApiErrorMessage(error, t('errors.updateRoleFailed')))
+      notifyApiError(error, 'errors.updateRoleFailed')
     }
   }
 
   return (
     <Box>
-      <Typography component="h1" gutterBottom variant="h4">
-        {t('admin.usersTitle')}
-      </Typography>
-      <Typography sx={{ mb: 2 }}>
-        <Button component={RouterLink} to="/admin">
-          {t('admin.back')}
-        </Button>
-      </Typography>
+      <AdminPageHeader
+        links={[{ label: t('admin.back'), to: '/admin' }]}
+        title={t('admin.usersTitle')}
+      />
       <Stack direction="row" spacing={1} sx={{ mb: 2 }}>
         <TextField
           label={t('common.search')}
@@ -72,14 +66,13 @@ export const AdminUsersPage = () => {
         </Button>
       </Stack>
       {usersQuery.isError ? (
-        <Alert severity="error" sx={{ mb: 2 }}>
-          {t('admin.usersLoadFailed')}
-        </Alert>
-      ) : null}
-      {actionError ? (
-        <Alert severity="error" sx={{ mb: 2 }}>
-          {actionError}
-        </Alert>
+        <AdminErrorAlert
+          message={t('admin.usersLoadFailed')}
+          onRetry={() => {
+            void usersQuery.refetch()
+          }}
+          retryLabel={t('common.retry')}
+        />
       ) : null}
       <Table size="small">
         <TableHead>
@@ -108,8 +101,8 @@ export const AdminUsersPage = () => {
                     }}
                     value={user.role}
                   >
-                    <MenuItem value="CLIENT">CLIENT</MenuItem>
-                    <MenuItem value="ADMIN">ADMIN</MenuItem>
+                    <MenuItem value="CLIENT">{t('enums.role.CLIENT')}</MenuItem>
+                    <MenuItem value="ADMIN">{t('enums.role.ADMIN')}</MenuItem>
                   </Select>
                 </FormControl>
               </TableCell>

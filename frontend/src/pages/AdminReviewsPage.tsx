@@ -11,19 +11,20 @@ import {
   TableCell,
   TableHead,
   TableRow,
-  Typography,
 } from '@mui/material'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Link as RouterLink } from 'react-router-dom'
 
 import { reviewsApi } from '../api/reviews'
+import { AdminErrorAlert } from '../components/admin/shared/AdminErrorAlert'
+import { AdminPageHeader } from '../components/admin/shared/AdminPageHeader'
+import { useNotify } from '../context/NotificationContext'
 import { useHotels } from '../hooks/useHotels'
 import { useReviews } from '../hooks/useReviews'
-import { getApiErrorMessage } from '../utils/getApiErrorMessage'
 
 export const AdminReviewsPage = () => {
   const { t } = useTranslation()
+  const { notifySuccess, notifyApiError } = useNotify()
   const hotelsQuery = useHotels({ page: 1, size: 100, sort: 'created_at' })
   const [hotelId, setHotelId] = useState<number | ''>('')
   const selectedHotelId = typeof hotelId === 'number' ? hotelId : 0
@@ -31,33 +32,27 @@ export const AdminReviewsPage = () => {
     page: 1,
     size: 50,
   })
-  const [actionError, setActionError] = useState('')
 
   const handleDelete = async (reviewId: number): Promise<void> => {
     if (!window.confirm(t('reviews.deleteConfirm'))) {
       return
     }
 
-    setActionError('')
-
     try {
       await reviewsApi.remove(reviewId)
       await reviewsQuery.refetch()
+      notifySuccess('notifications.reviewDeleted')
     } catch (error) {
-      setActionError(getApiErrorMessage(error, t('errors.deleteReviewFailed')))
+      notifyApiError(error, 'errors.deleteReviewFailed')
     }
   }
 
   return (
     <Box>
-      <Typography component="h1" gutterBottom variant="h4">
-        {t('admin.reviewsTitle')}
-      </Typography>
-      <Typography sx={{ mb: 2 }}>
-        <Button component={RouterLink} to="/admin">
-          {t('admin.back')}
-        </Button>
-      </Typography>
+      <AdminPageHeader
+        links={[{ label: t('admin.back'), to: '/admin' }]}
+        title={t('admin.reviewsTitle')}
+      />
       <FormControl size="small" sx={{ mb: 2, minWidth: 260 }}>
         <InputLabel id="admin-review-hotel">{t('bookings.colHotel')}</InputLabel>
         <Select
@@ -77,16 +72,17 @@ export const AdminReviewsPage = () => {
           ))}
         </Select>
       </FormControl>
-      {actionError ? (
-        <Alert severity="error" sx={{ mb: 2 }}>
-          {actionError}
-        </Alert>
-      ) : null}
       {typeof hotelId !== 'number' ? (
         <Alert severity="info">{t('admin.selectHotelHint')}</Alert>
       ) : null}
       {typeof hotelId === 'number' && reviewsQuery.isError ? (
-        <Alert severity="error">{t('reviews.loadFailed')}</Alert>
+        <AdminErrorAlert
+          message={t('reviews.loadFailed')}
+          onRetry={() => {
+            void reviewsQuery.refetch()
+          }}
+          retryLabel={t('common.retry')}
+        />
       ) : null}
       {typeof hotelId === 'number' ? (
         <Table size="small">

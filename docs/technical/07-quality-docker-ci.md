@@ -286,7 +286,7 @@ pytest --cov=app --cov-report=term-missing --cov-fail-under=80
 |--------|---------------|-------------|------------|
 | `db` | `postgres:16-alpine` (или 15+) | `5432` (опц. только internal) | PostgreSQL |
 | `backend` | `backend/Dockerfile` | `${BACKEND_PORT:-8000}` | FastAPI, Alembic migrate on start, `/media` |
-| `frontend` | `frontend/Dockerfile` | `${FRONTEND_PORT:-5173}` или `80` | SPA; API через backend URL |
+| `frontend` | `frontend/Dockerfile` | `${FRONTEND_PORT:-5173}` или `80` | SPA (nginx); same-origin `/api/` и `/media/` → `backend:8000` |
 
 Зависимости:
 
@@ -403,7 +403,7 @@ services:
     build:
       context: ./frontend
       args:
-        VITE_API_BASE_URL: http://localhost:${BACKEND_PORT:-8000}/api/v1
+        VITE_API_BASE_URL: /api/v1
     ports:
       - "${FRONTEND_PORT:-5173}:80"
     depends_on:
@@ -446,9 +446,10 @@ docker compose up --build
 | Практика | Деталь |
 |----------|--------|
 | Stage `build` | `npm ci` / `pnpm i --frozen-lockfile` → `npm run build` |
-| Build args | `VITE_API_BASE_URL` на этапе сборки |
+| Build args | `VITE_API_BASE_URL` на этапе сборки (Compose/CI: `/api/v1` — relative, same-origin) |
 | Stage `runtime` | `nginx:alpine` + `dist/` в `/usr/share/nginx/html` |
 | SPA routing | `try_files $uri /index.html` |
+| nginx proxy | `location /api/` и `location /media/` → `http://backend:8000` (`frontend/nginx.conf`) |
 | Кэш зависимостей | Копировать lockfile + package.json до исходников |
 | Не включать | Dev-сервер Vite в production-образе |
 
@@ -476,7 +477,7 @@ Job `docker-build` собирает оба Dockerfile **без push** в registr
 
 ## 7.6. CI pipeline (GitHub Actions)
 
-Триггеры: **push** и **pull_request** в ветку `main`.
+Триггеры: **push** и **pull_request** в ветки `develop` и `master`.
 
 Файл: `.github/workflows/ci.yml`.
 
@@ -484,7 +485,7 @@ Job `docker-build` собирает оба Dockerfile **без push** в registr
 
 ```mermaid
 flowchart TD
-  A[Push / PR → main] --> B[lint]
+  A[Push / PR → develop/master] --> B[lint]
   A --> C[frontend-tests]
   A --> D[backend-tests]
   B --> E{Lint OK?}
@@ -512,7 +513,7 @@ flowchart TD
 |---|--------|-------------|-----------------|
 | 1 | `lint` | Checkout → setup Node/Python → ESLint + Prettier check (FE) → ruff/black (BE) → `tsc --noEmit` | Да |
 | 2 | `frontend-tests` | `npm ci` → `npm test -- --coverage` (если настроен) / `vitest run` | Да |
-| 3 | `backend-tests` | setup Python 3.12 → deps → Postgres service (или SQLite только если совместим; предпочтительно Postgres) → `pytest --cov-fail-under=80` | Да |
+| 3 | `backend-tests` | setup Python 3.12 → deps → `pytest --cov-fail-under=80` на изолированной SQLite fixture | Да |
 | 4 | `build` | FE: `npm run build`; BE: проверка импорта app / `python -m compileall` | Да |
 | 5 | `docker-build` | `docker build -f frontend/Dockerfile` + `docker build -f backend/Dockerfile` (или `docker compose build`) | Да |
 
@@ -525,8 +526,8 @@ flowchart TD
 
 **backend-tests:**
 
-- Service container `postgres:16` с теми же env, что в `.env.example`.
-- `DATABASE_URL` на `localhost:5432`.
+- Python 3.12 и зависимости из `backend/requirements.txt`.
+- Текущий test-suite подменяет приложение изолированной SQLite fixture в `backend/tests/conftest.py`, поэтому отдельный Postgres service для CI не нужен.
 - `SECRET_KEY` тестовый, не production.
 - `UPLOAD_DIR` → tmp в runner.
 

@@ -97,7 +97,7 @@ export const RoomList = ({
                 {t('hotels.roomPriceLine', {
                   price: room.price,
                   capacity: room.capacity,
-                  status: room.status,
+                  status: t(`enums.room.${room.status}`),
                 })}
               </Typography>
               {room.description ? (

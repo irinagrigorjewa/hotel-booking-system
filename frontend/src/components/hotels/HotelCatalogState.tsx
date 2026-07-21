@@ -1,6 +1,7 @@
 import { Alert, Box, Button, Grid, Skeleton, Typography } from '@mui/material'
 import { useTranslation } from 'react-i18next'
 
+import { SKELETON_CARD_KEYS } from '../../constants/domainOptions'
 import type { HotelListItem } from '../../types/hotel'
 import { HotelCard } from './HotelCard'
 
@@ -25,7 +26,7 @@ export const HotelCatalogState = ({
   if (isLoading) {
     return (
       <Grid container spacing={2}>
-        {Array.from({ length: 6 }, (_, index) => (
+        {SKELETON_CARD_KEYS.map((index) => (
           <Grid key={index} size={{ xs: 12, sm: 6, md: 4 }}>
             <Skeleton height={180} variant="rounded" />
           </Grid>

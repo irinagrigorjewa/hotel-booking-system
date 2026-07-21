@@ -152,7 +152,37 @@
     "passwordsMismatch": "Passwords must match",
     "providerRequired": "useAuth must be used within an AuthProvider"
   },
+  "rooms": {
+    "filters": {
+      "capacity": "Capacity",
+      "priceFrom": "Price from",
+      "priceTo": "Price to",
+      "checkIn": "Check-in",
+      "checkOut": "Check-out",
+      "apply": "Apply"
+    }
+  },
+  "enums": {
+    "booking": {
+      "PENDING": "Pending",
+      "CONFIRMED": "Confirmed",
+      "CANCELLED": "Cancelled",
+      "COMPLETED": "Completed"
+    },
+    "role": {
+      "CLIENT": "Client",
+      "ADMIN": "Admin"
+    },
+    "room": {
+      "AVAILABLE": "Available",
+      "MAINTENANCE": "Under maintenance"
+    }
+  },
   "hotels": {
+    "gallery": {
+      "ariaLabel": "Hotel gallery",
+      "photoAlt": "{{hotelName}} photo {{order}}"
+    },
     "homeTagline": "Find a hotel for your next trip.",
     "popular": "Popular hotels",
     "allHotels": "All hotels",
@@ -241,11 +271,21 @@
   },
   "notifications": {
     "bookingCreated": "Booking created",
+    "bookingCancelled": "Booking cancelled",
+    "bookingStatusUpdated": "Booking status updated",
     "reviewCreated": "Review submitted",
     "reviewDeleted": "Review deleted",
     "favoriteAdded": "Added to favorites",
     "favoriteRemoved": "Removed from favorites",
-    "imageUploaded": "Photo uploaded"
+    "imageUploaded": "Photo uploaded",
+    "hotelSaved": "Hotel saved",
+    "hotelDeleted": "Hotel deleted",
+    "roomSaved": "Room saved",
+    "roomDeleted": "Room deleted",
+    "roomTypeSaved": "Room type saved",
+    "roomTypeDeleted": "Room type deleted",
+    "roleUpdated": "Role updated",
+    "profileSaved": "Profile saved"
   },
   "errors": {
     "loginFailed": "Failed to sign in",
