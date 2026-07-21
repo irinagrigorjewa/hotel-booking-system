@@ -9,6 +9,7 @@ import {
 } from '@mui/material'
 import { useTranslation } from 'react-i18next'
 
+import { STAR_OPTIONS } from '../../constants/domainOptions'
 import type { HotelSort } from '../../types/hotel'
 
 export interface HotelFiltersValue {
@@ -74,7 +75,7 @@ export const HotelFilters = ({
           value={value.stars === '' ? '' : String(value.stars)}
         >
           <MenuItem value="">{t('common.all')}</MenuItem>
-          {[1, 2, 3, 4, 5].map((star) => (
+          {STAR_OPTIONS.map((star) => (
             <MenuItem key={star} value={String(star)}>
               {star}
             </MenuItem>
