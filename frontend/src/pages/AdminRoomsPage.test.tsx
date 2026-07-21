@@ -21,6 +21,8 @@ describe('AdminRoomsPage', () => {
     await waitFor(() => {
       expect(screen.getByLabelText('Номер')).toHaveValue('')
     })
+
+    expect(await screen.findByRole('alert')).toHaveTextContent('Номер сохранён')
   })
 
   it('shows a conflict error for duplicate room numbers', async () => {

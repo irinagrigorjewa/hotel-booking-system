@@ -271,11 +271,21 @@
   },
   "notifications": {
     "bookingCreated": "Booking created",
+    "bookingCancelled": "Booking cancelled",
+    "bookingStatusUpdated": "Booking status updated",
     "reviewCreated": "Review submitted",
     "reviewDeleted": "Review deleted",
     "favoriteAdded": "Added to favorites",
     "favoriteRemoved": "Removed from favorites",
-    "imageUploaded": "Photo uploaded"
+    "imageUploaded": "Photo uploaded",
+    "hotelSaved": "Hotel saved",
+    "hotelDeleted": "Hotel deleted",
+    "roomSaved": "Room saved",
+    "roomDeleted": "Room deleted",
+    "roomTypeSaved": "Room type saved",
+    "roomTypeDeleted": "Room type deleted",
+    "roleUpdated": "Role updated",
+    "profileSaved": "Profile saved"
   },
   "errors": {
     "loginFailed": "Failed to sign in",

@@ -17,25 +17,24 @@ import { useTranslation } from 'react-i18next'
 import { Link as RouterLink, useSearchParams } from 'react-router-dom'
 
 import { useAuth } from '../context/AuthContext'
+import { useNotify } from '../context/NotificationContext'
 import { useBookingMutations } from '../hooks/useBookingMutations'
 import { useBookings } from '../hooks/useBookings'
 import { useUserMutations } from '../hooks/useUsers'
 import type { Booking } from '../types/booking'
-import { getApiErrorMessage } from '../utils/getApiErrorMessage'
 
 const canCancel = (status: Booking['status']): boolean =>
   status === 'PENDING' || status === 'CONFIRMED'
 
 export const ProfilePage = () => {
   const { t } = useTranslation()
+  const { notifySuccess, notifyApiError } = useNotify()
   const { user, applyUser } = useAuth()
   const [searchParams] = useSearchParams()
   const showBookings = searchParams.get('tab') !== 'account'
   const { data, isLoading, isError } = useBookings({ page: 1, size: 50 })
   const { cancelBooking } = useBookingMutations()
   const { patchMe } = useUserMutations()
-  const [actionError, setActionError] = useState('')
-  const [saveMessage, setSaveMessage] = useState('')
   const [cancellingId, setCancellingId] = useState<number | null>(null)
   const [name, setName] = useState(user?.name ?? '')
   const [phone, setPhone] = useState(user?.phone ?? '')
@@ -45,31 +44,28 @@ export const ProfilePage = () => {
       return
     }
 
-    setActionError('')
     setCancellingId(bookingId)
 
     try {
       await cancelBooking.mutateAsync(bookingId)
+      notifySuccess('notifications.bookingCancelled')
     } catch (error) {
-      setActionError(getApiErrorMessage(error, t('errors.cancelBookingFailed')))
+      notifyApiError(error, 'errors.cancelBookingFailed')
     } finally {
       setCancellingId(null)
     }
   }
 
   const handleSaveProfile = async (): Promise<void> => {
-    setActionError('')
-    setSaveMessage('')
-
     try {
       const updated = await patchMe.mutateAsync({
         name: name.trim(),
         phone: phone.trim() ? phone.trim() : null,
       })
       applyUser(updated)
-      setSaveMessage(t('profile.saved'))
+      notifySuccess('notifications.profileSaved')
     } catch (error) {
-      setActionError(getApiErrorMessage(error, t('errors.saveProfileFailed')))
+      notifyApiError(error, 'errors.saveProfileFailed')
     }
   }
 
@@ -97,16 +93,6 @@ export const ProfilePage = () => {
           {t('bookings.tab')}
         </Button>
       </Stack>
-      {actionError ? (
-        <Alert severity="error" sx={{ mb: 2 }}>
-          {actionError}
-        </Alert>
-      ) : null}
-      {saveMessage ? (
-        <Alert severity="success" sx={{ mb: 2 }}>
-          {saveMessage}
-        </Alert>
-      ) : null}
       {!showBookings ? (
         <Stack spacing={2} sx={{ maxWidth: 420 }}>
           <TextField

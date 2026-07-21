@@ -56,5 +56,7 @@ describe('AdminHotelsPage', () => {
     await waitFor(() => {
       expect(screen.queryByDisplayValue('Aurora')).not.toBeInTheDocument()
     })
+
+    expect(await screen.findByRole('alert')).toHaveTextContent('Отель сохранён')
   })
 })

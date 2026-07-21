@@ -271,11 +271,21 @@
   },
   "notifications": {
     "bookingCreated": "Бронирование создано",
+    "bookingCancelled": "Бронирование отменено",
+    "bookingStatusUpdated": "Статус бронирования обновлён",
     "reviewCreated": "Отзыв отправлен",
     "reviewDeleted": "Отзыв удалён",
     "favoriteAdded": "Добавлено в избранное",
     "favoriteRemoved": "Удалено из избранного",
-    "imageUploaded": "Фото загружено"
+    "imageUploaded": "Фото загружено",
+    "hotelSaved": "Отель сохранён",
+    "hotelDeleted": "Отель удалён",
+    "roomSaved": "Номер сохранён",
+    "roomDeleted": "Номер удалён",
+    "roomTypeSaved": "Тип номера сохранён",
+    "roomTypeDeleted": "Тип номера удалён",
+    "roleUpdated": "Роль обновлена",
+    "profileSaved": "Профиль сохранён"
   },
   "errors": {
     "loginFailed": "Не удалось выполнить вход",

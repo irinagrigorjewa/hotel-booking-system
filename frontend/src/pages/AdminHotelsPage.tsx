@@ -16,18 +16,18 @@ import { HotelImageUpload } from '../components/admin/hotels/HotelImageUpload'
 import { AdminErrorAlert } from '../components/admin/shared/AdminErrorAlert'
 import { AdminFormSection } from '../components/admin/shared/AdminFormSection'
 import { AdminPageHeader } from '../components/admin/shared/AdminPageHeader'
+import { useNotify } from '../context/NotificationContext'
 import { useHotelMutations } from '../hooks/useHotelMutations'
 import { useHotels } from '../hooks/useHotels'
 import type { HotelListItem, HotelWritePayload } from '../types/hotel'
-import { getApiErrorMessage } from '../utils/getApiErrorMessage'
 
 export const AdminHotelsPage = () => {
   const { t } = useTranslation()
+  const { notifySuccess, notifyApiError } = useNotify()
   const hotelsQuery = useHotels({ page: 1, size: 100, sort: 'created_at' })
   const { createHotel, updateHotel, deleteHotel } = useHotelMutations()
   const [editingHotel, setEditingHotel] = useState<HotelListItem | null>(null)
   const [formError, setFormError] = useState('')
-  const [actionError, setActionError] = useState('')
 
   const isSubmitting = createHotel.isPending || updateHotel.isPending
 
@@ -41,23 +41,21 @@ export const AdminHotelsPage = () => {
       } else {
         await createHotel.mutateAsync(payload)
       }
+      notifySuccess('notifications.hotelSaved')
     } catch (error) {
-      setFormError(getApiErrorMessage(error, t('admin.hotelsSaveFailed'), (key) => t(key)))
+      notifyApiError(error, 'admin.hotelsSaveFailed')
     }
   }
 
   const handleDelete = async (hotelId: number): Promise<void> => {
-    setActionError('')
-
     try {
       await deleteHotel.mutateAsync(hotelId)
       if (editingHotel?.id === hotelId) {
         setEditingHotel(null)
       }
+      notifySuccess('notifications.hotelDeleted')
     } catch (error) {
-      setActionError(
-        getApiErrorMessage(error, t('admin.hotelsDeleteFailed'), (key) => t(key)),
-      )
+      notifyApiError(error, 'admin.hotelsDeleteFailed')
     }
   }
 
@@ -76,7 +74,6 @@ export const AdminHotelsPage = () => {
           retryLabel={t('common.retry')}
         />
       ) : null}
-      {actionError ? <AdminErrorAlert message={actionError} /> : null}
       <AdminFormSection
         title={editingHotel ? t('admin.hotelsEditTitle') : t('admin.hotelsNewTitle')}
       >

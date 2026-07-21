@@ -20,26 +20,25 @@ import { useTranslation } from 'react-i18next'
 import { Link as RouterLink } from 'react-router-dom'
 
 import { useAuth } from '../context/AuthContext'
+import { useNotify } from '../context/NotificationContext'
 import { useUserMutations, useUsers } from '../hooks/useUsers'
 import type { UserRole } from '../types/auth'
-import { getApiErrorMessage } from '../utils/getApiErrorMessage'
 
 export const AdminUsersPage = () => {
   const { t } = useTranslation()
+  const { notifySuccess, notifyApiError } = useNotify()
   const { user: currentUser } = useAuth()
   const [search, setSearch] = useState('')
   const [appliedSearch, setAppliedSearch] = useState('')
   const usersQuery = useUsers({ page: 1, size: 100, search: appliedSearch || undefined })
   const { patchUser } = useUserMutations()
-  const [actionError, setActionError] = useState('')
 
   const handleRoleChange = async (userId: number, role: UserRole): Promise<void> => {
-    setActionError('')
-
     try {
       await patchUser.mutateAsync({ userId, payload: { role } })
+      notifySuccess('notifications.roleUpdated')
     } catch (error) {
-      setActionError(getApiErrorMessage(error, t('errors.updateRoleFailed')))
+      notifyApiError(error, 'errors.updateRoleFailed')
     }
   }
 
@@ -74,11 +73,6 @@ export const AdminUsersPage = () => {
       {usersQuery.isError ? (
         <Alert severity="error" sx={{ mb: 2 }}>
           {t('admin.usersLoadFailed')}
-        </Alert>
-      ) : null}
-      {actionError ? (
-        <Alert severity="error" sx={{ mb: 2 }}>
-          {actionError}
         </Alert>
       ) : null}
       <Table size="small">
