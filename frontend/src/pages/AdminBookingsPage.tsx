@@ -1,7 +1,5 @@
 import {
-  Alert,
   Box,
-  Button,
   FormControl,
   InputLabel,
   MenuItem,
@@ -11,12 +9,12 @@ import {
   TableCell,
   TableHead,
   TableRow,
-  Typography,
 } from '@mui/material'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Link as RouterLink } from 'react-router-dom'
 
+import { AdminErrorAlert } from '../components/admin/shared/AdminErrorAlert'
+import { AdminPageHeader } from '../components/admin/shared/AdminPageHeader'
 import { useNotify } from '../context/NotificationContext'
 import { useBookingMutations } from '../hooks/useBookingMutations'
 import { useBookings } from '../hooks/useBookings'
@@ -53,14 +51,10 @@ export const AdminBookingsPage = () => {
 
   return (
     <Box>
-      <Typography component="h1" gutterBottom variant="h4">
-        {t('admin.bookingsTitle')}
-      </Typography>
-      <Typography sx={{ mb: 2 }}>
-        <Button component={RouterLink} to="/admin">
-          {t('admin.back')}
-        </Button>
-      </Typography>
+      <AdminPageHeader
+        links={[{ label: t('admin.back'), to: '/admin' }]}
+        title={t('admin.bookingsTitle')}
+      />
       <FormControl size="small" sx={{ mb: 2, minWidth: 180 }}>
         <InputLabel id="booking-status-filter">{t('bookings.colStatus')}</InputLabel>
         <Select
@@ -80,9 +74,13 @@ export const AdminBookingsPage = () => {
         </Select>
       </FormControl>
       {bookingsQuery.isError ? (
-        <Alert severity="error" sx={{ mb: 2 }}>
-          {t('bookings.loadFailed')}
-        </Alert>
+        <AdminErrorAlert
+          message={t('bookings.loadFailed')}
+          onRetry={() => {
+            void bookingsQuery.refetch()
+          }}
+          retryLabel={t('common.retry')}
+        />
       ) : null}
       <Table size="small">
         <TableHead>
