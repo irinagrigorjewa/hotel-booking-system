@@ -6,6 +6,7 @@ import {
   useState,
   type PropsWithChildren,
 } from 'react'
+import i18n from '../i18n'
 
 import {
   getCurrentUser,
@@ -31,7 +32,7 @@ interface AuthContextValue {
 const AuthContext = createContext<AuthContextValue | null>(null)
 
 const toError = (error: unknown): Error =>
-  error instanceof Error ? error : new Error('Unable to complete authentication request')
+  error instanceof Error ? error : new Error(i18n.t('errors.authRequestFailed'))
 
 export const AuthProvider = ({ children }: PropsWithChildren) => {
   const [user, setUser] = useState<User | null>(null)
@@ -175,7 +176,7 @@ export const useAuth = (): AuthContextValue => {
   const context = useContext(AuthContext)
 
   if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider')
+    throw new Error(i18n.t('auth.providerRequired'))
   }
 
   return context

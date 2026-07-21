@@ -66,7 +66,7 @@ describe('BookingNewPage', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Забронировать' }))
 
     expect(
-      await screen.findByText('Booking dates overlap with an existing booking'),
+      await screen.findByText('Даты пересекаются с существующим бронированием'),
     ).toBeInTheDocument()
   })
 

@@ -1,9 +1,6 @@
 import {
-  Alert,
   Box,
   Button,
-  Link,
-  Paper,
   Table,
   TableBody,
   TableCell,
@@ -12,16 +9,20 @@ import {
   Typography,
 } from '@mui/material'
 import { useState } from 'react'
-import { Link as RouterLink } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 
 import { HotelForm } from '../components/admin/hotels/HotelForm'
 import { HotelImageUpload } from '../components/admin/hotels/HotelImageUpload'
+import { AdminErrorAlert } from '../components/admin/shared/AdminErrorAlert'
+import { AdminFormSection } from '../components/admin/shared/AdminFormSection'
+import { AdminPageHeader } from '../components/admin/shared/AdminPageHeader'
 import { useHotelMutations } from '../hooks/useHotelMutations'
 import { useHotels } from '../hooks/useHotels'
 import type { HotelListItem, HotelWritePayload } from '../types/hotel'
 import { getApiErrorMessage } from '../utils/getApiErrorMessage'
 
 export const AdminHotelsPage = () => {
+  const { t } = useTranslation()
   const hotelsQuery = useHotels({ page: 1, size: 100, sort: 'created_at' })
   const { createHotel, updateHotel, deleteHotel } = useHotelMutations()
   const [editingHotel, setEditingHotel] = useState<HotelListItem | null>(null)
@@ -41,7 +42,7 @@ export const AdminHotelsPage = () => {
         await createHotel.mutateAsync(payload)
       }
     } catch (error) {
-      setFormError(getApiErrorMessage(error, 'Не удалось сохранить отель'))
+      setFormError(getApiErrorMessage(error, t('admin.hotelsSaveFailed'), (key) => t(key)))
     }
   }
 
@@ -54,48 +55,31 @@ export const AdminHotelsPage = () => {
         setEditingHotel(null)
       }
     } catch (error) {
-      setActionError(getApiErrorMessage(error, 'Не удалось удалить отель'))
+      setActionError(
+        getApiErrorMessage(error, t('admin.hotelsDeleteFailed'), (key) => t(key)),
+      )
     }
   }
 
   return (
     <Box>
-      <Typography component="h1" gutterBottom variant="h4">
-        Админ: отели
-      </Typography>
-      <Typography sx={{ mb: 2 }}>
-        <Link component={RouterLink} to="/admin/room-types">
-          Типы номеров
-        </Link>
-      </Typography>
+      <AdminPageHeader
+        links={[{ label: t('admin.nav.roomTypes'), to: '/admin/room-types' }]}
+        title={t('admin.hotelsTitle')}
+      />
       {hotelsQuery.isError ? (
-        <Alert
-          action={
-            <Button
-              color="inherit"
-              onClick={() => {
-                void hotelsQuery.refetch()
-              }}
-              size="small"
-            >
-              Повторить
-            </Button>
-          }
-          severity="error"
-          sx={{ mb: 2 }}
-        >
-          Не удалось загрузить список отелей
-        </Alert>
+        <AdminErrorAlert
+          message={t('admin.hotelsLoadFailed')}
+          onRetry={() => {
+            void hotelsQuery.refetch()
+          }}
+          retryLabel={t('common.retry')}
+        />
       ) : null}
-      {actionError ? (
-        <Alert severity="error" sx={{ mb: 2 }}>
-          {actionError}
-        </Alert>
-      ) : null}
-      <Paper sx={{ mb: 3, p: 2 }} variant="outlined">
-        <Typography component="h2" gutterBottom variant="h6">
-          {editingHotel ? 'Редактирование отеля' : 'Новый отель'}
-        </Typography>
+      {actionError ? <AdminErrorAlert message={actionError} /> : null}
+      <AdminFormSection
+        title={editingHotel ? t('admin.hotelsEditTitle') : t('admin.hotelsNewTitle')}
+      >
         <HotelForm
           initialHotel={editingHotel}
           isSubmitting={isSubmitting}
@@ -110,15 +94,15 @@ export const AdminHotelsPage = () => {
           onSubmit={handleSubmit}
           submitError={formError}
         />
-      </Paper>
+      </AdminFormSection>
       <Table>
         <TableHead>
           <TableRow>
-            <TableCell>Название</TableCell>
-            <TableCell>Город</TableCell>
-            <TableCell>Звёзды</TableCell>
-            <TableCell>Координаты</TableCell>
-            <TableCell align="right">Действия</TableCell>
+            <TableCell>{t('common.name')}</TableCell>
+            <TableCell>{t('common.city')}</TableCell>
+            <TableCell>{t('common.stars')}</TableCell>
+            <TableCell>{t('admin.colCoordinates')}</TableCell>
+            <TableCell align="right">{t('admin.colActions')}</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -133,7 +117,7 @@ export const AdminHotelsPage = () => {
               <TableCell align="right">
                 <HotelImageUpload hotelId={hotel.id} />
                 <Button onClick={() => setEditingHotel(hotel)} size="small">
-                  Изменить
+                  {t('common.edit')}
                 </Button>
                 <Button
                   color="error"
@@ -143,7 +127,7 @@ export const AdminHotelsPage = () => {
                   }}
                   size="small"
                 >
-                  Удалить
+                  {t('common.delete')}
                 </Button>
               </TableCell>
             </TableRow>
@@ -152,7 +136,7 @@ export const AdminHotelsPage = () => {
       </Table>
       {!hotelsQuery.isLoading && (hotelsQuery.data?.items.length ?? 0) === 0 ? (
         <Typography color="text.secondary" sx={{ mt: 2 }}>
-          Отели ещё не созданы
+          {t('admin.hotelsEmpty')}
         </Typography>
       ) : null}
     </Box>

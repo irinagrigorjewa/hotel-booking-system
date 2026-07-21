@@ -7,14 +7,14 @@ import {
   TextField,
   Typography,
 } from '@mui/material'
-import { useState } from 'react'
 import { useForm } from 'react-hook-form'
+import { useTranslation } from 'react-i18next'
 import { Link as RouterLink } from 'react-router-dom'
 
 import { useAuth } from '../../context/AuthContext'
+import { useNotify } from '../../context/NotificationContext'
 import { useReviewMutations } from '../../hooks/useReviewMutations'
 import { useReviews } from '../../hooks/useReviews'
-import { getApiErrorMessage } from '../../utils/getApiErrorMessage'
 
 interface HotelReviewsProps {
   hotelId: number
@@ -26,10 +26,11 @@ interface ReviewFormValues {
 }
 
 export const HotelReviews = ({ hotelId }: HotelReviewsProps) => {
+  const { t } = useTranslation()
   const { user } = useAuth()
+  const { notifySuccess, notifyApiError } = useNotify()
   const reviewsQuery = useReviews(hotelId)
   const { createReview, deleteReview } = useReviewMutations(hotelId)
-  const [formError, setFormError] = useState('')
   const {
     register,
     handleSubmit,
@@ -43,47 +44,42 @@ export const HotelReviews = ({ hotelId }: HotelReviewsProps) => {
   const rating = watch('rating')
 
   const submit = async (values: ReviewFormValues): Promise<void> => {
-    setFormError('')
-
     try {
       await createReview.mutateAsync(values)
       reset({ rating: 5, comment: '' })
+      notifySuccess('notifications.reviewCreated')
     } catch (error) {
-      setFormError(getApiErrorMessage(error, 'Не удалось сохранить отзыв'))
+      notifyApiError(error, 'errors.saveReviewFailed')
     }
   }
 
   const remove = async (reviewId: number): Promise<void> => {
-    if (!window.confirm('Удалить отзыв?')) {
+    if (!window.confirm(t('reviews.deleteConfirm'))) {
       return
     }
 
     try {
       await deleteReview.mutateAsync(reviewId)
+      notifySuccess('notifications.reviewDeleted')
     } catch (error) {
-      setFormError(getApiErrorMessage(error, 'Не удалось удалить отзыв'))
+      notifyApiError(error, 'errors.deleteReviewFailed')
     }
   }
 
   return (
     <Box sx={{ mb: 4 }}>
       <Typography component="h2" gutterBottom variant="h5">
-        Отзывы
+        {t('reviews.title')}
       </Typography>
-      {formError ? (
-        <Alert severity="error" sx={{ mb: 2 }}>
-          {formError}
-        </Alert>
-      ) : null}
       {reviewsQuery.isLoading ? (
-        <Typography color="text.secondary">Загрузка отзывов…</Typography>
+        <Typography color="text.secondary">{t('reviews.loading')}</Typography>
       ) : null}
       {reviewsQuery.isError ? (
-        <Alert severity="error">Не удалось загрузить отзывы</Alert>
+        <Alert severity="error">{t('reviews.loadFailed')}</Alert>
       ) : null}
       {reviewsQuery.data?.items.length === 0 ? (
         <Typography color="text.secondary" sx={{ mb: 2 }}>
-          Пока нет отзывов
+          {t('reviews.empty')}
         </Typography>
       ) : null}
       <Stack spacing={2} sx={{ mb: 3 }}>
@@ -102,7 +98,7 @@ export const HotelReviews = ({ hotelId }: HotelReviewsProps) => {
                 size="small"
                 sx={{ mt: 0.5 }}
               >
-                Удалить
+                {t('common.delete')}
               </Button>
             ) : null}
           </Box>
@@ -111,7 +107,7 @@ export const HotelReviews = ({ hotelId }: HotelReviewsProps) => {
       {user ? (
         <Box component="form" noValidate onSubmit={handleSubmit(submit)}>
           <Typography gutterBottom variant="subtitle1">
-            Оставить отзыв
+            {t('reviews.leave')}
           </Typography>
           <Rating
             onChange={(_event, value) => {
@@ -124,13 +120,13 @@ export const HotelReviews = ({ hotelId }: HotelReviewsProps) => {
             error={Boolean(errors.comment)}
             fullWidth
             helperText={errors.comment?.message}
-            label="Комментарий"
+            label={t('reviews.comment')}
             multiline
             minRows={3}
             {...register('comment', {
-              required: 'Напишите комментарий',
-              minLength: { value: 10, message: 'Минимум 10 символов' },
-              maxLength: { value: 2000, message: 'Максимум 2000 символов' },
+              required: t('reviews.commentRequired'),
+              minLength: { value: 10, message: t('reviews.commentMin') },
+              maxLength: { value: 2000, message: t('reviews.commentMax') },
             })}
           />
           <Button
@@ -139,15 +135,15 @@ export const HotelReviews = ({ hotelId }: HotelReviewsProps) => {
             type="submit"
             variant="contained"
           >
-            Отправить
+            {t('common.submit')}
           </Button>
         </Box>
       ) : (
         <Alert severity="info">
           <Button component={RouterLink} size="small" to="/login">
-            Войдите
+            {t('nav.login')}
           </Button>
-          , чтобы оставить отзыв
+          {`, ${t('reviews.loginToReview')}`}
         </Alert>
       )}
     </Box>

@@ -6,6 +6,7 @@ import { I18nextProvider } from 'react-i18next'
 
 import { App } from './App'
 import { AuthProvider } from './context/AuthContext'
+import { NotificationProvider } from './context/NotificationContext'
 import i18n from './i18n'
 import { theme } from './theme/theme'
 
@@ -30,8 +31,10 @@ createRoot(rootElement).render(
       <QueryClientProvider client={queryClient}>
         <ThemeProvider theme={theme}>
           <AuthProvider>
-            <CssBaseline />
-            <App />
+            <NotificationProvider>
+              <CssBaseline />
+              <App />
+            </NotificationProvider>
           </AuthProvider>
         </ThemeProvider>
       </QueryClientProvider>

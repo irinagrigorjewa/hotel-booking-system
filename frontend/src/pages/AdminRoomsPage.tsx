@@ -1,9 +1,6 @@
 import {
-  Alert,
   Box,
   Button,
-  Link,
-  Paper,
   Table,
   TableBody,
   TableCell,
@@ -13,9 +10,12 @@ import {
 } from '@mui/material'
 import { isAxiosError } from 'axios'
 import { useState } from 'react'
-import { Link as RouterLink } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 
 import { RoomForm } from '../components/admin/rooms/RoomForm'
+import { AdminErrorAlert } from '../components/admin/shared/AdminErrorAlert'
+import { AdminFormSection } from '../components/admin/shared/AdminFormSection'
+import { AdminPageHeader } from '../components/admin/shared/AdminPageHeader'
 import { useHotels } from '../hooks/useHotels'
 import { useRoomMutations } from '../hooks/useRoomMutations'
 import { useRoomTypes } from '../hooks/useRoomTypes'
@@ -24,6 +24,7 @@ import type { Room, RoomWritePayload } from '../types/room'
 import { getApiErrorMessage } from '../utils/getApiErrorMessage'
 
 export const AdminRoomsPage = () => {
+  const { t } = useTranslation()
   const hotelsQuery = useHotels({ page: 1, size: 100, sort: 'created_at' })
   const roomTypesQuery = useRoomTypes()
   const roomsQuery = useRooms({ page: 1, size: 100 })
@@ -46,11 +47,11 @@ export const AdminRoomsPage = () => {
       }
     } catch (error) {
       if (isAxiosError(error) && error.response?.status === 409) {
-        setFormError('Номер комнаты уже существует в этом отеле')
+        setFormError(t('admin.roomsDuplicateNumber'))
         return
       }
 
-      setFormError(getApiErrorMessage(error, 'Не удалось сохранить номер'))
+      setFormError(getApiErrorMessage(error, t('admin.roomsSaveFailed'), (key) => t(key)))
     }
   }
 
@@ -63,32 +64,25 @@ export const AdminRoomsPage = () => {
         setEditing(null)
       }
     } catch (error) {
-      setActionError(getApiErrorMessage(error, 'Не удалось удалить номер'))
+      setActionError(
+        getApiErrorMessage(error, t('admin.roomsDeleteFailed'), (key) => t(key)),
+      )
     }
   }
 
   return (
     <Box>
-      <Typography component="h1" gutterBottom variant="h4">
-        Админ: номера
-      </Typography>
-      <Typography sx={{ mb: 2 }}>
-        <Link component={RouterLink} to="/admin/hotels" sx={{ mr: 2 }}>
-          Отели
-        </Link>
-        <Link component={RouterLink} to="/admin/room-types">
-          Типы номеров
-        </Link>
-      </Typography>
-      {actionError ? (
-        <Alert severity="error" sx={{ mb: 2 }}>
-          {actionError}
-        </Alert>
-      ) : null}
-      <Paper sx={{ mb: 3, p: 2 }} variant="outlined">
-        <Typography component="h2" gutterBottom variant="h6">
-          {editing ? 'Редактирование номера' : 'Новый номер'}
-        </Typography>
+      <AdminPageHeader
+        links={[
+          { label: t('admin.nav.hotels'), to: '/admin/hotels' },
+          { label: t('admin.nav.roomTypes'), to: '/admin/room-types' },
+        ]}
+        title={t('admin.roomsTitle')}
+      />
+      {actionError ? <AdminErrorAlert message={actionError} /> : null}
+      <AdminFormSection
+        title={editing ? t('admin.roomsEditTitle') : t('admin.roomsNewTitle')}
+      >
         <RoomForm
           hotels={hotelsQuery.data?.items ?? []}
           initialRoom={editing}
@@ -105,17 +99,17 @@ export const AdminRoomsPage = () => {
           roomTypes={roomTypesQuery.data?.items ?? []}
           submitError={formError}
         />
-      </Paper>
+      </AdminFormSection>
       <Table>
         <TableHead>
           <TableRow>
-            <TableCell>Отель</TableCell>
-            <TableCell>Номер</TableCell>
-            <TableCell>Тип</TableCell>
-            <TableCell>Цена</TableCell>
-            <TableCell>Вместимость</TableCell>
-            <TableCell>Статус</TableCell>
-            <TableCell align="right">Действия</TableCell>
+            <TableCell>{t('nav.adminHotels')}</TableCell>
+            <TableCell>{t('admin.colNumber')}</TableCell>
+            <TableCell>{t('admin.colType')}</TableCell>
+            <TableCell>{t('common.price')}</TableCell>
+            <TableCell>{t('hotels.capacity')}</TableCell>
+            <TableCell>{t('admin.colStatus')}</TableCell>
+            <TableCell align="right">{t('admin.colActions')}</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -129,7 +123,7 @@ export const AdminRoomsPage = () => {
               <TableCell>{room.status}</TableCell>
               <TableCell align="right">
                 <Button onClick={() => setEditing(room)} size="small">
-                  Изменить
+                  {t('common.edit')}
                 </Button>
                 <Button
                   color="error"
@@ -139,7 +133,7 @@ export const AdminRoomsPage = () => {
                   }}
                   size="small"
                 >
-                  Удалить
+                  {t('common.delete')}
                 </Button>
               </TableCell>
             </TableRow>
@@ -148,7 +142,7 @@ export const AdminRoomsPage = () => {
       </Table>
       {!roomsQuery.isLoading && (roomsQuery.data?.items.length ?? 0) === 0 ? (
         <Typography color="text.secondary" sx={{ mt: 2 }}>
-          Номера ещё не созданы
+          {t('admin.roomsEmpty')}
         </Typography>
       ) : null}
     </Box>

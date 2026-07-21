@@ -1,7 +1,10 @@
-import { Alert, Box, Button, MenuItem, TextField } from '@mui/material'
+import { Box, MenuItem, TextField } from '@mui/material'
 import { useEffect } from 'react'
 import { Controller, useForm } from 'react-hook-form'
+import { useTranslation } from 'react-i18next'
 
+import { AdminFormActions } from '../shared/AdminFormActions'
+import { AdminFormError } from '../shared/AdminFormError'
 import type { HotelListItem } from '../../../types/hotel'
 import type { Room, RoomStatus, RoomWritePayload } from '../../../types/room'
 import type { RoomType } from '../../../types/roomType'
@@ -68,6 +71,7 @@ export const RoomForm = ({
   onSubmit,
   onCancel,
 }: RoomFormProps) => {
+  const { t } = useTranslation()
   const {
     control,
     register,
@@ -100,22 +104,21 @@ export const RoomForm = ({
 
   return (
     <Box component="form" noValidate onSubmit={handleSubmit(submit)}>
-      {submitError ? (
-        <Alert severity="error" sx={{ mb: 2 }}>
-          {submitError}
-        </Alert>
-      ) : null}
+      <AdminFormError message={submitError} />
       <Controller
         control={control}
         name="hotel_id"
-        rules={{ required: 'Выберите отель', min: { value: 1, message: 'Выберите отель' } }}
+        rules={{
+          required: t('admin.form.hotelRequired'),
+          min: { value: 1, message: t('admin.form.hotelRequired') },
+        }}
         render={({ field }) => (
           <TextField
             {...field}
             error={Boolean(errors.hotel_id)}
             fullWidth
             helperText={errors.hotel_id?.message}
-            label="Отель"
+            label={t('admin.nav.hotels')}
             margin="normal"
             onChange={(event) => field.onChange(Number(event.target.value))}
             select
@@ -133,8 +136,8 @@ export const RoomForm = ({
         control={control}
         name="room_type_id"
         rules={{
-          required: 'Выберите тип',
-          min: { value: 1, message: 'Выберите тип' },
+          required: t('admin.form.roomTypeRequired'),
+          min: { value: 1, message: t('admin.form.roomTypeRequired') },
         }}
         render={({ field }) => (
           <TextField
@@ -142,7 +145,7 @@ export const RoomForm = ({
             error={Boolean(errors.room_type_id)}
             fullWidth
             helperText={errors.room_type_id?.message}
-            label="Тип номера"
+            label={t('admin.form.roomTypeLabel')}
             margin="normal"
             onChange={(event) => field.onChange(Number(event.target.value))}
             select
@@ -160,39 +163,39 @@ export const RoomForm = ({
         error={Boolean(errors.number)}
         fullWidth
         helperText={errors.number?.message}
-        label="Номер"
+        label={t('admin.colNumber')}
         margin="normal"
-        {...register('number', { required: 'Укажите номер' })}
+        {...register('number', { required: t('admin.form.numberRequired') })}
       />
       <TextField
         error={Boolean(errors.price)}
         fullWidth
         helperText={errors.price?.message}
-        label="Цена"
+        label={t('common.price')}
         margin="normal"
         type="number"
         {...register('price', {
-          required: 'Укажите цену',
+          required: t('admin.form.priceRequired'),
           valueAsNumber: true,
-          min: { value: 0.01, message: 'Цена должна быть больше 0' },
+          min: { value: 0.01, message: t('admin.form.priceMin') },
         })}
       />
       <TextField
         error={Boolean(errors.capacity)}
         fullWidth
         helperText={errors.capacity?.message}
-        label="Вместимость"
+        label={t('hotels.capacity')}
         margin="normal"
         type="number"
         {...register('capacity', {
-          required: 'Укажите вместимость',
+          required: t('admin.form.capacityRequired'),
           valueAsNumber: true,
-          min: { value: 1, message: 'Минимум 1 гость' },
+          min: { value: 1, message: t('admin.form.capacityMin') },
         })}
       />
       <TextField
         fullWidth
-        label="Описание"
+        label={t('common.description')}
         margin="normal"
         multiline
         minRows={2}
@@ -202,22 +205,18 @@ export const RoomForm = ({
         control={control}
         name="status"
         render={({ field }) => (
-          <TextField {...field} fullWidth label="Статус" margin="normal" select>
-            <MenuItem value="AVAILABLE">AVAILABLE</MenuItem>
-            <MenuItem value="MAINTENANCE">MAINTENANCE</MenuItem>
+          <TextField {...field} fullWidth label={t('admin.colStatus')} margin="normal" select>
+            <MenuItem value="AVAILABLE">{t('admin.form.statusAvailable')}</MenuItem>
+            <MenuItem value="MAINTENANCE">{t('admin.form.statusMaintenance')}</MenuItem>
           </TextField>
         )}
       />
-      <Box sx={{ display: 'flex', gap: 1, mt: 2 }}>
-        <Button disabled={isSubmitting} type="submit" variant="contained">
-          {initialRoom ? 'Сохранить' : 'Создать'}
-        </Button>
-        {onCancel ? (
-          <Button disabled={isSubmitting} onClick={onCancel} type="button">
-            Отмена
-          </Button>
-        ) : null}
-      </Box>
+      <AdminFormActions
+        cancelLabel={t('common.cancel')}
+        isSubmitting={isSubmitting}
+        onCancel={onCancel}
+        submitLabel={initialRoom ? t('common.save') : t('common.create')}
+      />
     </Box>
   )
 }

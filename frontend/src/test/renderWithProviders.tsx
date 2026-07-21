@@ -6,6 +6,7 @@ import { I18nextProvider } from 'react-i18next'
 import { MemoryRouter } from 'react-router-dom'
 
 import { AuthProvider } from '../context/AuthContext'
+import { NotificationProvider } from '../context/NotificationContext'
 import i18n from '../i18n'
 import { theme } from '../theme/theme'
 
@@ -34,7 +35,9 @@ export const renderWithProviders = (
       <QueryClientProvider client={queryClient}>
         <ThemeProvider theme={theme}>
           <AuthProvider>
-            <MemoryRouter initialEntries={initialEntries}>{children}</MemoryRouter>
+            <NotificationProvider>
+              <MemoryRouter initialEntries={initialEntries}>{children}</MemoryRouter>
+            </NotificationProvider>
           </AuthProvider>
         </ThemeProvider>
       </QueryClientProvider>

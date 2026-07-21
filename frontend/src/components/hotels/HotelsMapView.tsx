@@ -1,6 +1,7 @@
 import { Box } from '@mui/material'
 import L from 'leaflet'
 import { useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { MapContainer, Marker, Popup, TileLayer, useMap } from 'react-leaflet'
 import { Link as RouterLink } from 'react-router-dom'
 
@@ -44,6 +45,7 @@ export const HotelsMapView = ({
   interactive = true,
   singleCenter,
 }: HotelsMapViewProps) => {
+  const { t } = useTranslation()
   const center: [number, number] =
     singleCenter ??
     (hotels[0]
@@ -73,7 +75,7 @@ export const HotelsMapView = ({
           >
             <Popup>
               <RouterLink to={`/hotels/${hotel.id}`}>{hotel.name}</RouterLink>
-              {hotel.min_price ? <div>от {hotel.min_price} ₽</div> : null}
+              {hotel.min_price ? <div>{t('common.fromPrice', { price: hotel.min_price })}</div> : null}
             </Popup>
           </Marker>
         ))}

@@ -1,9 +1,6 @@
 import {
-  Alert,
   Box,
   Button,
-  Link,
-  Paper,
   Table,
   TableBody,
   TableCell,
@@ -13,15 +10,19 @@ import {
 } from '@mui/material'
 import { isAxiosError } from 'axios'
 import { useState } from 'react'
-import { Link as RouterLink } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 
 import { RoomTypeForm } from '../components/admin/room-types/RoomTypeForm'
+import { AdminErrorAlert } from '../components/admin/shared/AdminErrorAlert'
+import { AdminFormSection } from '../components/admin/shared/AdminFormSection'
+import { AdminPageHeader } from '../components/admin/shared/AdminPageHeader'
 import { useRoomTypeMutations } from '../hooks/useRoomTypeMutations'
 import { useRoomTypes } from '../hooks/useRoomTypes'
 import type { RoomType } from '../types/roomType'
 import { getApiErrorMessage } from '../utils/getApiErrorMessage'
 
 export const AdminRoomTypesPage = () => {
+  const { t } = useTranslation()
   const roomTypesQuery = useRoomTypes()
   const { createRoomType, updateRoomType, deleteRoomType } =
     useRoomTypeMutations()
@@ -46,11 +47,13 @@ export const AdminRoomTypesPage = () => {
       }
     } catch (error) {
       if (isAxiosError(error) && error.response?.status === 409) {
-        setFormError('Тип номера с таким названием уже существует')
+        setFormError(t('admin.roomTypesDuplicateName'))
         return
       }
 
-      setFormError(getApiErrorMessage(error, 'Не удалось сохранить тип номера'))
+      setFormError(
+        getApiErrorMessage(error, t('admin.roomTypesSaveFailed'), (key) => t(key)),
+      )
     }
   }
 
@@ -63,48 +66,31 @@ export const AdminRoomTypesPage = () => {
         setEditing(null)
       }
     } catch (error) {
-      setActionError(getApiErrorMessage(error, 'Не удалось удалить тип номера'))
+      setActionError(
+        getApiErrorMessage(error, t('admin.roomTypesDeleteFailed'), (key) => t(key)),
+      )
     }
   }
 
   return (
     <Box>
-      <Typography component="h1" gutterBottom variant="h4">
-        Админ: типы номеров
-      </Typography>
-      <Typography sx={{ mb: 2 }}>
-        <Link component={RouterLink} to="/admin/hotels">
-          Отели
-        </Link>
-      </Typography>
+      <AdminPageHeader
+        links={[{ label: t('admin.nav.hotels'), to: '/admin/hotels' }]}
+        title={t('admin.roomTypesTitle')}
+      />
       {roomTypesQuery.isError ? (
-        <Alert
-          action={
-            <Button
-              color="inherit"
-              onClick={() => {
-                void roomTypesQuery.refetch()
-              }}
-              size="small"
-            >
-              Повторить
-            </Button>
-          }
-          severity="error"
-          sx={{ mb: 2 }}
-        >
-          Не удалось загрузить типы номеров
-        </Alert>
+        <AdminErrorAlert
+          message={t('admin.roomTypesLoadFailed')}
+          onRetry={() => {
+            void roomTypesQuery.refetch()
+          }}
+          retryLabel={t('common.retry')}
+        />
       ) : null}
-      {actionError ? (
-        <Alert severity="error" sx={{ mb: 2 }}>
-          {actionError}
-        </Alert>
-      ) : null}
-      <Paper sx={{ mb: 3, p: 2 }} variant="outlined">
-        <Typography component="h2" gutterBottom variant="h6">
-          {editing ? 'Редактирование типа' : 'Новый тип номера'}
-        </Typography>
+      {actionError ? <AdminErrorAlert message={actionError} /> : null}
+      <AdminFormSection
+        title={editing ? t('admin.roomTypesEditTitle') : t('admin.roomTypesNewTitle')}
+      >
         <RoomTypeForm
           initialRoomType={editing}
           isSubmitting={isSubmitting}
@@ -119,12 +105,12 @@ export const AdminRoomTypesPage = () => {
           onSubmit={handleSubmit}
           submitError={formError}
         />
-      </Paper>
+      </AdminFormSection>
       <Table>
         <TableHead>
           <TableRow>
-            <TableCell>Название</TableCell>
-            <TableCell align="right">Действия</TableCell>
+            <TableCell>{t('common.name')}</TableCell>
+            <TableCell align="right">{t('admin.colActions')}</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -133,7 +119,7 @@ export const AdminRoomTypesPage = () => {
               <TableCell>{roomType.name}</TableCell>
               <TableCell align="right">
                 <Button onClick={() => setEditing(roomType)} size="small">
-                  Изменить
+                  {t('common.edit')}
                 </Button>
                 <Button
                   color="error"
@@ -143,7 +129,7 @@ export const AdminRoomTypesPage = () => {
                   }}
                   size="small"
                 >
-                  Удалить
+                  {t('common.delete')}
                 </Button>
               </TableCell>
             </TableRow>
@@ -153,7 +139,7 @@ export const AdminRoomTypesPage = () => {
       {!roomTypesQuery.isLoading &&
       (roomTypesQuery.data?.items.length ?? 0) === 0 ? (
         <Typography color="text.secondary" sx={{ mt: 2 }}>
-          Типы номеров ещё не созданы
+          {t('admin.roomTypesEmpty')}
         </Typography>
       ) : null}
     </Box>

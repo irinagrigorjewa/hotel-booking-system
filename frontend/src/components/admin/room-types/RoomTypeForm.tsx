@@ -1,7 +1,10 @@
-import { Alert, Box, Button, TextField } from '@mui/material'
+import { Box, TextField } from '@mui/material'
 import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
+import { useTranslation } from 'react-i18next'
 
+import { AdminFormActions } from '../shared/AdminFormActions'
+import { AdminFormError } from '../shared/AdminFormError'
 import type { RoomType } from '../../../types/roomType'
 
 interface RoomTypeFormValues {
@@ -23,6 +26,7 @@ export const RoomTypeForm = ({
   onSubmit,
   onCancel,
 }: RoomTypeFormProps) => {
+  const { t } = useTranslation()
   const {
     register,
     handleSubmit,
@@ -45,29 +49,21 @@ export const RoomTypeForm = ({
 
   return (
     <Box component="form" noValidate onSubmit={handleSubmit(submit)}>
-      {submitError ? (
-        <Alert severity="error" sx={{ mb: 2 }}>
-          {submitError}
-        </Alert>
-      ) : null}
+      <AdminFormError message={submitError} />
       <TextField
         error={Boolean(errors.name)}
         fullWidth
         helperText={errors.name?.message}
-        label="Название типа"
+        label={t('admin.form.typeName')}
         margin="normal"
-        {...register('name', { required: 'Укажите название' })}
+        {...register('name', { required: t('admin.form.nameRequired') })}
       />
-      <Box sx={{ display: 'flex', gap: 1, mt: 1 }}>
-        <Button disabled={isSubmitting} type="submit" variant="contained">
-          {initialRoomType ? 'Сохранить' : 'Создать'}
-        </Button>
-        {onCancel ? (
-          <Button disabled={isSubmitting} onClick={onCancel} type="button">
-            Отмена
-          </Button>
-        ) : null}
-      </Box>
+      <AdminFormActions
+        cancelLabel={t('common.cancel')}
+        isSubmitting={isSubmitting}
+        onCancel={onCancel}
+        submitLabel={initialRoomType ? t('common.save') : t('common.create')}
+      />
     </Box>
   )
 }
