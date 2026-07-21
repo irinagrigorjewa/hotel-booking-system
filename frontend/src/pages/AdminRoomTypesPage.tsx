@@ -16,19 +16,19 @@ import { RoomTypeForm } from '../components/admin/room-types/RoomTypeForm'
 import { AdminErrorAlert } from '../components/admin/shared/AdminErrorAlert'
 import { AdminFormSection } from '../components/admin/shared/AdminFormSection'
 import { AdminPageHeader } from '../components/admin/shared/AdminPageHeader'
+import { useNotify } from '../context/NotificationContext'
 import { useRoomTypeMutations } from '../hooks/useRoomTypeMutations'
 import { useRoomTypes } from '../hooks/useRoomTypes'
 import type { RoomType } from '../types/roomType'
-import { getApiErrorMessage } from '../utils/getApiErrorMessage'
 
 export const AdminRoomTypesPage = () => {
   const { t } = useTranslation()
+  const { notifySuccess, notifyApiError } = useNotify()
   const roomTypesQuery = useRoomTypes()
   const { createRoomType, updateRoomType, deleteRoomType } =
     useRoomTypeMutations()
   const [editing, setEditing] = useState<RoomType | null>(null)
   const [formError, setFormError] = useState('')
-  const [actionError, setActionError] = useState('')
 
   const isSubmitting = createRoomType.isPending || updateRoomType.isPending
 
@@ -45,30 +45,26 @@ export const AdminRoomTypesPage = () => {
       } else {
         await createRoomType.mutateAsync({ name })
       }
+      notifySuccess('notifications.roomTypeSaved')
     } catch (error) {
       if (isAxiosError(error) && error.response?.status === 409) {
         setFormError(t('admin.roomTypesDuplicateName'))
         return
       }
 
-      setFormError(
-        getApiErrorMessage(error, t('admin.roomTypesSaveFailed'), (key) => t(key)),
-      )
+      notifyApiError(error, 'admin.roomTypesSaveFailed')
     }
   }
 
   const handleDelete = async (roomTypeId: number): Promise<void> => {
-    setActionError('')
-
     try {
       await deleteRoomType.mutateAsync(roomTypeId)
       if (editing?.id === roomTypeId) {
         setEditing(null)
       }
+      notifySuccess('notifications.roomTypeDeleted')
     } catch (error) {
-      setActionError(
-        getApiErrorMessage(error, t('admin.roomTypesDeleteFailed'), (key) => t(key)),
-      )
+      notifyApiError(error, 'admin.roomTypesDeleteFailed')
     }
   }
 
@@ -87,7 +83,6 @@ export const AdminRoomTypesPage = () => {
           retryLabel={t('common.retry')}
         />
       ) : null}
-      {actionError ? <AdminErrorAlert message={actionError} /> : null}
       <AdminFormSection
         title={editing ? t('admin.roomTypesEditTitle') : t('admin.roomTypesNewTitle')}
       >

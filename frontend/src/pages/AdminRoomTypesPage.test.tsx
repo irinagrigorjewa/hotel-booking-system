@@ -21,6 +21,8 @@ describe('AdminRoomTypesPage', () => {
     await waitFor(() => {
       expect(screen.getByLabelText('Название типа')).toHaveValue('')
     })
+
+    expect(await screen.findByRole('alert')).toHaveTextContent('Тип номера сохранён')
   })
 
   it('shows a field error for duplicate room type names', async () => {

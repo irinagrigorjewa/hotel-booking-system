@@ -18,12 +18,13 @@ import { useTranslation } from 'react-i18next'
 import { Link as RouterLink } from 'react-router-dom'
 
 import { reviewsApi } from '../api/reviews'
+import { useNotify } from '../context/NotificationContext'
 import { useHotels } from '../hooks/useHotels'
 import { useReviews } from '../hooks/useReviews'
-import { getApiErrorMessage } from '../utils/getApiErrorMessage'
 
 export const AdminReviewsPage = () => {
   const { t } = useTranslation()
+  const { notifySuccess, notifyApiError } = useNotify()
   const hotelsQuery = useHotels({ page: 1, size: 100, sort: 'created_at' })
   const [hotelId, setHotelId] = useState<number | ''>('')
   const selectedHotelId = typeof hotelId === 'number' ? hotelId : 0
@@ -31,20 +32,18 @@ export const AdminReviewsPage = () => {
     page: 1,
     size: 50,
   })
-  const [actionError, setActionError] = useState('')
 
   const handleDelete = async (reviewId: number): Promise<void> => {
     if (!window.confirm(t('reviews.deleteConfirm'))) {
       return
     }
 
-    setActionError('')
-
     try {
       await reviewsApi.remove(reviewId)
       await reviewsQuery.refetch()
+      notifySuccess('notifications.reviewDeleted')
     } catch (error) {
-      setActionError(getApiErrorMessage(error, t('errors.deleteReviewFailed')))
+      notifyApiError(error, 'errors.deleteReviewFailed')
     }
   }
 
@@ -77,11 +76,6 @@ export const AdminReviewsPage = () => {
           ))}
         </Select>
       </FormControl>
-      {actionError ? (
-        <Alert severity="error" sx={{ mb: 2 }}>
-          {actionError}
-        </Alert>
-      ) : null}
       {typeof hotelId !== 'number' ? (
         <Alert severity="info">{t('admin.selectHotelHint')}</Alert>
       ) : null}

@@ -17,6 +17,7 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link as RouterLink } from 'react-router-dom'
 
+import { useNotify } from '../context/NotificationContext'
 import { useBookingMutations } from '../hooks/useBookingMutations'
 import { useBookings } from '../hooks/useBookings'
 import type { BookingStatus } from '../types/booking'
@@ -24,12 +25,12 @@ import {
   ALLOWED_STATUS_TRANSITIONS,
   statusSelectOptions,
 } from '../utils/bookingStatusTransitions'
-import { getApiErrorMessage } from '../utils/getApiErrorMessage'
 
 const STATUSES: BookingStatus[] = ['PENDING', 'CONFIRMED', 'CANCELLED', 'COMPLETED']
 
 export const AdminBookingsPage = () => {
   const { t } = useTranslation()
+  const { notifySuccess, notifyApiError } = useNotify()
   const [statusFilter, setStatusFilter] = useState<BookingStatus | ''>('')
   const bookingsQuery = useBookings({
     page: 1,
@@ -37,18 +38,16 @@ export const AdminBookingsPage = () => {
     ...(statusFilter ? { status: statusFilter } : {}),
   })
   const { updateBookingStatus } = useBookingMutations()
-  const [actionError, setActionError] = useState('')
 
   const handleStatusChange = async (
     bookingId: number,
     status: BookingStatus,
   ): Promise<void> => {
-    setActionError('')
-
     try {
       await updateBookingStatus.mutateAsync({ bookingId, status })
+      notifySuccess('notifications.bookingStatusUpdated')
     } catch (error) {
-      setActionError(getApiErrorMessage(error, t('errors.updateBookingFailed')))
+      notifyApiError(error, 'errors.updateBookingFailed')
     }
   }
 
@@ -83,11 +82,6 @@ export const AdminBookingsPage = () => {
       {bookingsQuery.isError ? (
         <Alert severity="error" sx={{ mb: 2 }}>
           {t('bookings.loadFailed')}
-        </Alert>
-      ) : null}
-      {actionError ? (
-        <Alert severity="error" sx={{ mb: 2 }}>
-          {actionError}
         </Alert>
       ) : null}
       <Table size="small">
