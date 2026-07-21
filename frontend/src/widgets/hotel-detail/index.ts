@@ -1,0 +1,5 @@
+export { HotelDetailGallery } from './HotelDetailGallery'
+export { HotelDetailHeader } from './HotelDetailHeader'
+export { HotelDetailQueryState } from './HotelDetailQueryState'
+export { HotelDetailReviews } from './HotelDetailReviews'
+export { HotelDetailRooms } from './HotelDetailRooms'
