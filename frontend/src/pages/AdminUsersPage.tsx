@@ -1,5 +1,4 @@
 import {
-  Alert,
   Box,
   Button,
   FormControl,
@@ -13,12 +12,12 @@ import {
   TableHead,
   TableRow,
   TextField,
-  Typography,
 } from '@mui/material'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Link as RouterLink } from 'react-router-dom'
 
+import { AdminErrorAlert } from '../components/admin/shared/AdminErrorAlert'
+import { AdminPageHeader } from '../components/admin/shared/AdminPageHeader'
 import { useAuth } from '../context/AuthContext'
 import { useNotify } from '../context/NotificationContext'
 import { useUserMutations, useUsers } from '../hooks/useUsers'
@@ -44,14 +43,10 @@ export const AdminUsersPage = () => {
 
   return (
     <Box>
-      <Typography component="h1" gutterBottom variant="h4">
-        {t('admin.usersTitle')}
-      </Typography>
-      <Typography sx={{ mb: 2 }}>
-        <Button component={RouterLink} to="/admin">
-          {t('admin.back')}
-        </Button>
-      </Typography>
+      <AdminPageHeader
+        links={[{ label: t('admin.back'), to: '/admin' }]}
+        title={t('admin.usersTitle')}
+      />
       <Stack direction="row" spacing={1} sx={{ mb: 2 }}>
         <TextField
           label={t('common.search')}
@@ -71,9 +66,13 @@ export const AdminUsersPage = () => {
         </Button>
       </Stack>
       {usersQuery.isError ? (
-        <Alert severity="error" sx={{ mb: 2 }}>
-          {t('admin.usersLoadFailed')}
-        </Alert>
+        <AdminErrorAlert
+          message={t('admin.usersLoadFailed')}
+          onRetry={() => {
+            void usersQuery.refetch()
+          }}
+          retryLabel={t('common.retry')}
+        />
       ) : null}
       <Table size="small">
         <TableHead>

@@ -11,13 +11,13 @@ import {
   TableCell,
   TableHead,
   TableRow,
-  Typography,
 } from '@mui/material'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Link as RouterLink } from 'react-router-dom'
 
 import { reviewsApi } from '../api/reviews'
+import { AdminErrorAlert } from '../components/admin/shared/AdminErrorAlert'
+import { AdminPageHeader } from '../components/admin/shared/AdminPageHeader'
 import { useNotify } from '../context/NotificationContext'
 import { useHotels } from '../hooks/useHotels'
 import { useReviews } from '../hooks/useReviews'
@@ -49,14 +49,10 @@ export const AdminReviewsPage = () => {
 
   return (
     <Box>
-      <Typography component="h1" gutterBottom variant="h4">
-        {t('admin.reviewsTitle')}
-      </Typography>
-      <Typography sx={{ mb: 2 }}>
-        <Button component={RouterLink} to="/admin">
-          {t('admin.back')}
-        </Button>
-      </Typography>
+      <AdminPageHeader
+        links={[{ label: t('admin.back'), to: '/admin' }]}
+        title={t('admin.reviewsTitle')}
+      />
       <FormControl size="small" sx={{ mb: 2, minWidth: 260 }}>
         <InputLabel id="admin-review-hotel">{t('bookings.colHotel')}</InputLabel>
         <Select
@@ -80,7 +76,13 @@ export const AdminReviewsPage = () => {
         <Alert severity="info">{t('admin.selectHotelHint')}</Alert>
       ) : null}
       {typeof hotelId === 'number' && reviewsQuery.isError ? (
-        <Alert severity="error">{t('reviews.loadFailed')}</Alert>
+        <AdminErrorAlert
+          message={t('reviews.loadFailed')}
+          onRetry={() => {
+            void reviewsQuery.refetch()
+          }}
+          retryLabel={t('common.retry')}
+        />
       ) : null}
       {typeof hotelId === 'number' ? (
         <Table size="small">
