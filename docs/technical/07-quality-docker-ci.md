@@ -286,7 +286,7 @@ pytest --cov=app --cov-report=term-missing --cov-fail-under=80
 |--------|---------------|-------------|------------|
 | `db` | `postgres:16-alpine` (или 15+) | `5432` (опц. только internal) | PostgreSQL |
 | `backend` | `backend/Dockerfile` | `${BACKEND_PORT:-8000}` | FastAPI, Alembic migrate on start, `/media` |
-| `frontend` | `frontend/Dockerfile` | `${FRONTEND_PORT:-5173}` или `80` | SPA; API через backend URL |
+| `frontend` | `frontend/Dockerfile` | `${FRONTEND_PORT:-5173}` или `80` | SPA (nginx); same-origin `/api/` и `/media/` → `backend:8000` |
 
 Зависимости:
 
@@ -403,7 +403,7 @@ services:
     build:
       context: ./frontend
       args:
-        VITE_API_BASE_URL: http://localhost:${BACKEND_PORT:-8000}/api/v1
+        VITE_API_BASE_URL: /api/v1
     ports:
       - "${FRONTEND_PORT:-5173}:80"
     depends_on:
@@ -446,9 +446,10 @@ docker compose up --build
 | Практика | Деталь |
 |----------|--------|
 | Stage `build` | `npm ci` / `pnpm i --frozen-lockfile` → `npm run build` |
-| Build args | `VITE_API_BASE_URL` на этапе сборки |
+| Build args | `VITE_API_BASE_URL` на этапе сборки (Compose/CI: `/api/v1` — relative, same-origin) |
 | Stage `runtime` | `nginx:alpine` + `dist/` в `/usr/share/nginx/html` |
 | SPA routing | `try_files $uri /index.html` |
+| nginx proxy | `location /api/` и `location /media/` → `http://backend:8000` (`frontend/nginx.conf`) |
 | Кэш зависимостей | Копировать lockfile + package.json до исходников |
 | Не включать | Dev-сервер Vite в production-образе |
 
