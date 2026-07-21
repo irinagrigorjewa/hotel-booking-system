@@ -75,7 +75,7 @@ export const AdminBookingsPage = () => {
           <MenuItem value="">{t('common.all')}</MenuItem>
           {STATUSES.map((status) => (
             <MenuItem key={status} value={status}>
-              {status}
+              {t(`enums.booking.${status}`)}
             </MenuItem>
           ))}
         </Select>
@@ -128,7 +128,7 @@ export const AdminBookingsPage = () => {
                   >
                     {statusSelectOptions(booking.status).map((status) => (
                       <MenuItem key={status} value={status}>
-                        {status}
+                        {t(`enums.booking.${status}`)}
                       </MenuItem>
                     ))}
                   </Select>

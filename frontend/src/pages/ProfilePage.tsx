@@ -131,7 +131,7 @@ export const ProfilePage = () => {
           <TextField
             InputProps={{ readOnly: true }}
             label={t('profile.role')}
-            value={user?.role ?? ''}
+            value={user?.role ? t(`enums.role.${user.role}`) : ''}
           />
           <Button
             disabled={patchMe.isPending || name.trim().length === 0}
@@ -178,7 +178,7 @@ export const ProfilePage = () => {
                   })}
                 </TableCell>
                 <TableCell>{booking.total_price} ₽</TableCell>
-                <TableCell>{booking.status}</TableCell>
+                <TableCell>{t(`enums.booking.${booking.status}`)}</TableCell>
                 <TableCell align="right">
                   {canCancel(booking.status) ? (
                     <Button

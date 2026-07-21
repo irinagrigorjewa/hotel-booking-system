@@ -120,7 +120,7 @@ export const AdminRoomsPage = () => {
               <TableCell>{room.room_type.name}</TableCell>
               <TableCell>{room.price}</TableCell>
               <TableCell>{room.capacity}</TableCell>
-              <TableCell>{room.status}</TableCell>
+              <TableCell>{t(`enums.room.${room.status}`)}</TableCell>
               <TableCell align="right">
                 <Button onClick={() => setEditing(room)} size="small">
                   {t('common.edit')}

@@ -108,8 +108,8 @@ export const AdminUsersPage = () => {
                     }}
                     value={user.role}
                   >
-                    <MenuItem value="CLIENT">CLIENT</MenuItem>
-                    <MenuItem value="ADMIN">ADMIN</MenuItem>
+                    <MenuItem value="CLIENT">{t('enums.role.CLIENT')}</MenuItem>
+                    <MenuItem value="ADMIN">{t('enums.role.ADMIN')}</MenuItem>
                   </Select>
                 </FormControl>
               </TableCell>

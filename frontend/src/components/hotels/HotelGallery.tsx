@@ -1,4 +1,5 @@
 import { Box } from '@mui/material'
+import { useTranslation } from 'react-i18next'
 
 import type { HotelImage } from '../../types/hotel'
 import { mediaUrl } from '../../utils/mediaUrl'
@@ -9,13 +10,15 @@ interface HotelGalleryProps {
 }
 
 export const HotelGallery = ({ images, hotelName }: HotelGalleryProps) => {
+  const { t } = useTranslation()
+
   if (images.length === 0) {
     return null
   }
 
   return (
     <Box
-      aria-label="Галерея отеля"
+      aria-label={t('hotels.gallery.ariaLabel')}
       sx={{
         display: 'grid',
         gap: 1,
@@ -32,7 +35,10 @@ export const HotelGallery = ({ images, hotelName }: HotelGalleryProps) => {
 
         return (
           <Box
-            alt={`${hotelName} фото ${image.sort_order}`}
+            alt={t('hotels.gallery.photoAlt', {
+              hotelName,
+              order: image.sort_order,
+            })}
             component="img"
             key={image.id}
             src={src}
