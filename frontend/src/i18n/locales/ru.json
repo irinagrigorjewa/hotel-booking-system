@@ -152,7 +152,37 @@
     "passwordsMismatch": "Пароли должны совпадать",
     "providerRequired": "useAuth должен использоваться внутри AuthProvider"
   },
+  "rooms": {
+    "filters": {
+      "capacity": "Вместимость",
+      "priceFrom": "Цена от",
+      "priceTo": "Цена до",
+      "checkIn": "Заезд",
+      "checkOut": "Выезд",
+      "apply": "Применить"
+    }
+  },
+  "enums": {
+    "booking": {
+      "PENDING": "Ожидает",
+      "CONFIRMED": "Подтверждено",
+      "CANCELLED": "Отменено",
+      "COMPLETED": "Завершено"
+    },
+    "role": {
+      "CLIENT": "Клиент",
+      "ADMIN": "Админ"
+    },
+    "room": {
+      "AVAILABLE": "Доступен",
+      "MAINTENANCE": "На обслуживании"
+    }
+  },
   "hotels": {
+    "gallery": {
+      "ariaLabel": "Галерея отеля",
+      "photoAlt": "{{hotelName}} фото {{order}}"
+    },
     "homeTagline": "Найдите отель для следующей поездки.",
     "popular": "Популярные отели",
     "allHotels": "Все отели",

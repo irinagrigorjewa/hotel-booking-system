@@ -152,7 +152,37 @@
     "passwordsMismatch": "Passwords must match",
     "providerRequired": "useAuth must be used within an AuthProvider"
   },
+  "rooms": {
+    "filters": {
+      "capacity": "Capacity",
+      "priceFrom": "Price from",
+      "priceTo": "Price to",
+      "checkIn": "Check-in",
+      "checkOut": "Check-out",
+      "apply": "Apply"
+    }
+  },
+  "enums": {
+    "booking": {
+      "PENDING": "Pending",
+      "CONFIRMED": "Confirmed",
+      "CANCELLED": "Cancelled",
+      "COMPLETED": "Completed"
+    },
+    "role": {
+      "CLIENT": "Client",
+      "ADMIN": "Admin"
+    },
+    "room": {
+      "AVAILABLE": "Available",
+      "MAINTENANCE": "Under maintenance"
+    }
+  },
   "hotels": {
+    "gallery": {
+      "ariaLabel": "Hotel gallery",
+      "photoAlt": "{{hotelName}} photo {{order}}"
+    },
     "homeTagline": "Find a hotel for your next trip.",
     "popular": "Popular hotels",
     "allHotels": "All hotels",

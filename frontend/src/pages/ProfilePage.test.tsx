@@ -49,7 +49,7 @@ describe('ProfilePage', () => {
     })
 
     expect(await screen.findByText('Grand Hotel')).toBeInTheDocument()
-    expect(screen.getByText('CONFIRMED')).toBeInTheDocument()
+    expect(screen.getByText('Подтверждено')).toBeInTheDocument()
 
     fireEvent.click(screen.getByRole('button', { name: 'Отменить' }))
 
