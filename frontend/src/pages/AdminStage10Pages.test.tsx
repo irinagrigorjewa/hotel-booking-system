@@ -1,7 +1,7 @@
 import { fireEvent, screen, waitFor } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
 
-import { bookingsApi } from '../api/bookings'
+import * as updateBookingStatusRequest from '@entities/booking/api/requests/updateBookingStatus'
 import { usersApi } from '../api/users'
 import type { User } from '../types/auth'
 import { renderWithProviders } from '@shared/test/renderWithProviders'
@@ -105,7 +105,7 @@ describe('AdminBookingsPage', () => {
   })
 
   it('updates booking status and shows success notification', async () => {
-    const updateSpy = vi.spyOn(bookingsApi, 'updateStatus')
+    const updateSpy = vi.spyOn(updateBookingStatusRequest, 'updateBookingStatus')
 
     renderWithProviders(<AdminBookingsPage />, {
       initialEntries: ['/admin/bookings'],

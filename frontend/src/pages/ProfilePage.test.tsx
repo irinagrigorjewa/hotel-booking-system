@@ -1,7 +1,7 @@
 import { fireEvent, screen, waitFor } from '@testing-library/react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { bookingsApi } from '../api/bookings'
+import * as cancelBookingRequest from '@entities/booking/api/requests/cancelBooking'
 import { usersApi } from '../api/users'
 import type { User } from '../types/auth'
 import { renderWithProviders } from '@shared/test/renderWithProviders'
@@ -43,7 +43,7 @@ describe('ProfilePage', () => {
   })
 
   it('lists bookings and cancels a confirmed one', async () => {
-    const cancelSpy = vi.spyOn(bookingsApi, 'cancel')
+    const cancelSpy = vi.spyOn(cancelBookingRequest, 'cancelBooking')
 
     renderWithProviders(<ProfilePage />, {
       initialEntries: ['/profile?tab=bookings'],
