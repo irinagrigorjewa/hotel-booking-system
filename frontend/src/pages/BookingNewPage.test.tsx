@@ -1,7 +1,7 @@
 import { fireEvent, screen, waitFor } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
 
-import { bookingsApi } from '../api/bookings'
+import * as createBookingRequest from '@entities/booking/api/requests/createBooking'
 import { bookingHandlers, server } from '@shared/test/server'
 import { renderWithProviders } from '@shared/test/renderWithProviders'
 import { utcTodayIso } from '@shared/lib/bookingDates'
@@ -16,7 +16,7 @@ const addDays = (isoDate: string, days: number): string => {
 
 describe('BookingNewPage', () => {
   it('shows nights and total preview, then creates a booking', async () => {
-    const createSpy = vi.spyOn(bookingsApi, 'create')
+    const createSpy = vi.spyOn(createBookingRequest, 'createBooking')
     const today = utcTodayIso()
     const checkIn = addDays(today, 10)
     const checkOut = addDays(today, 15)
