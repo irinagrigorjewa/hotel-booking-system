@@ -1,14 +1,11 @@
-import { useQuery } from '@tanstack/react-query'
+export { useReviews } from '@entities/review/api/queries/useReviews'
+export { reviewKeys } from '@entities/review/api/keys'
 
-import { reviewsApi } from '../api/reviews'
-import type { ReviewListParams } from '../types/review'
+import { reviewKeys } from '@entities/review/api/keys'
+import type { ReviewListParams } from '@entities/review/model/types'
 
-export const reviewsQueryKey = (hotelId: number, params: ReviewListParams = {}) =>
-  ['reviews', hotelId, params] as const
-
-export const useReviews = (hotelId: number, params: ReviewListParams = {}) =>
-  useQuery({
-    queryKey: reviewsQueryKey(hotelId, params),
-    queryFn: () => reviewsApi.list(hotelId, params),
-    enabled: Number.isInteger(hotelId) && hotelId > 0,
-  })
+/** @deprecated Prefer `reviewKeys.list` */
+export const reviewsQueryKey = (
+  hotelId: number,
+  params: ReviewListParams = {},
+) => reviewKeys.list(hotelId, params)

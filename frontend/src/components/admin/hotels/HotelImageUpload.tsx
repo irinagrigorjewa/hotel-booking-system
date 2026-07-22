@@ -1,12 +1,10 @@
 import { Box, Button, Typography } from '@mui/material'
-import { useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { type ChangeEvent, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { useNotify } from '@app/providers/NotificationProvider'
-import { hotelKeys } from '@entities/hotel/api/keys'
-
-import { imagesApi } from '../../../api/images'
+import { uploadHotelImageMutationOptions } from '@entities/image/api/mutations/uploadHotelImageMutationOptions'
 
 interface HotelImageUploadProps {
   hotelId: number
@@ -16,6 +14,7 @@ export const HotelImageUpload = ({ hotelId }: HotelImageUploadProps) => {
   const { t } = useTranslation()
   const { notifySuccess, notifyApiError } = useNotify()
   const queryClient = useQueryClient()
+  const uploadMutation = useMutation(uploadHotelImageMutationOptions(queryClient))
   const [uploading, setUploading] = useState(false)
 
   const onFileChange = async (
@@ -31,11 +30,7 @@ export const HotelImageUpload = ({ hotelId }: HotelImageUploadProps) => {
     setUploading(true)
 
     try {
-      await imagesApi.uploadHotelImage(hotelId, file)
-      await queryClient.invalidateQueries({ queryKey: hotelKeys.all })
-      await queryClient.invalidateQueries({
-        queryKey: hotelKeys.detail(hotelId),
-      })
+      await uploadMutation.mutateAsync({ hotelId, file })
       notifySuccess('notifications.imageUploaded')
     } catch (uploadError) {
       notifyApiError(uploadError, 'errors.uploadImageFailed')

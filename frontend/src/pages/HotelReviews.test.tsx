@@ -1,8 +1,8 @@
 import { fireEvent, screen, waitFor } from '@testing-library/react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { reviewsApi } from '../api/reviews'
-import type { User } from '../types/auth'
+import * as createReviewRequest from '@entities/review/api/requests/createReview'
+import type { User } from '@entities/user/model/types'
 import { renderWithProviders } from '@shared/test/renderWithProviders'
 import { HotelReviews } from '../components/hotels/HotelReviews'
 
@@ -48,7 +48,7 @@ describe('HotelReviews', () => {
   })
 
   it('lists reviews and creates a new one', async () => {
-    const createSpy = vi.spyOn(reviewsApi, 'create')
+    const createSpy = vi.spyOn(createReviewRequest, 'createReview')
 
     renderWithProviders(<HotelReviews hotelId={1} />)
 

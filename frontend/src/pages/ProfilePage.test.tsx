@@ -2,8 +2,8 @@ import { fireEvent, screen, waitFor } from '@testing-library/react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import * as cancelBookingRequest from '@entities/booking/api/requests/cancelBooking'
-import { usersApi } from '../api/users'
-import type { User } from '../types/auth'
+import * as patchMeRequest from '@entities/user/api/requests/patchMe'
+import type { User } from '@entities/user/model/types'
 import { renderWithProviders } from '@shared/test/renderWithProviders'
 import { ProfilePage } from './ProfilePage'
 
@@ -62,7 +62,7 @@ describe('ProfilePage', () => {
   })
 
   it('saves profile and shows success notification', async () => {
-    const patchSpy = vi.spyOn(usersApi, 'patchMe')
+    const patchSpy = vi.spyOn(patchMeRequest, 'patchMe')
 
     renderWithProviders(<ProfilePage />, {
       initialEntries: ['/profile?tab=account'],

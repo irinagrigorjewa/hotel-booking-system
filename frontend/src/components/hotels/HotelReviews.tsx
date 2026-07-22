@@ -13,8 +13,8 @@ import { Link as RouterLink } from 'react-router-dom'
 
 import { useAuth } from '../../context/AuthContext'
 import { useNotify } from '@app/providers/NotificationProvider'
-import { useReviewMutations } from '../../hooks/useReviewMutations'
-import { useReviews } from '../../hooks/useReviews'
+import { useReviewMutations } from '@entities/review/api/mutations/useReviewMutations'
+import { useReviews } from '@entities/review/api/queries/useReviews'
 
 interface HotelReviewsProps {
   hotelId: number

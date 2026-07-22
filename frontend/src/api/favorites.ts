@@ -1,28 +1,12 @@
-import { apiClient } from '@shared/api/client'
-import type { HotelPage } from '@entities/hotel/model/types'
+import { addFavorite } from '@entities/favorite/api/requests/addFavorite'
+import { listFavorites } from '@entities/favorite/api/requests/listFavorites'
+import { removeFavorite } from '@entities/favorite/api/requests/removeFavorite'
 
-export interface FavoriteCreated {
-  hotel_id: number
-  user_id: number
-  created_at: string
-}
-
+/** @deprecated Prefer `@entities/favorite/api/requests/*` */
 export const favoritesApi = {
-  list: async (page = 1, size = 20): Promise<HotelPage> => {
-    const { data } = await apiClient.get<HotelPage>('/favorites', {
-      params: { page, size },
-    })
-
-    return data
-  },
-
-  add: async (hotelId: number): Promise<FavoriteCreated> => {
-    const { data } = await apiClient.post<FavoriteCreated>(`/favorites/${hotelId}`)
-
-    return data
-  },
-
-  remove: async (hotelId: number): Promise<void> => {
-    await apiClient.delete(`/favorites/${hotelId}`)
-  },
+  list: listFavorites,
+  add: addFavorite,
+  remove: removeFavorite,
 }
+
+export type { FavoriteCreated } from '@entities/favorite/model/types'

@@ -1,8 +1,8 @@
 import { fireEvent, screen, waitFor } from '@testing-library/react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { favoritesApi } from '../../api/favorites'
-import type { User } from '../../types/auth'
+import * as addFavoriteRequest from '@entities/favorite/api/requests/addFavorite'
+import type { User } from '@entities/user/model/types'
 import { renderWithProviders } from '@shared/test/renderWithProviders'
 import { FavoriteButton } from './FavoriteButton'
 
@@ -49,7 +49,7 @@ describe('FavoriteButton', () => {
   })
 
   it('shows success notification when adding a favorite', async () => {
-    const addSpy = vi.spyOn(favoritesApi, 'add')
+    const addSpy = vi.spyOn(addFavoriteRequest, 'addFavorite')
 
     renderWithProviders(<FavoriteButton hotelId={1} isFavorite={false} />)
 
@@ -63,7 +63,9 @@ describe('FavoriteButton', () => {
   })
 
   it('shows error notification when toggle fails', async () => {
-    vi.spyOn(favoritesApi, 'add').mockRejectedValueOnce({ response: { data: {} } })
+    vi.spyOn(addFavoriteRequest, 'addFavorite').mockRejectedValueOnce({
+      response: { data: {} },
+    })
 
     renderWithProviders(<FavoriteButton hotelId={1} isFavorite={false} />)
 

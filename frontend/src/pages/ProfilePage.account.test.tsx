@@ -1,8 +1,8 @@
 import { fireEvent, screen, waitFor } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
 
-import { usersApi } from '../api/users'
-import type { User } from '../types/auth'
+import * as patchMeRequest from '@entities/user/api/requests/patchMe'
+import type { User } from '@entities/user/model/types'
 import { renderWithProviders } from '@shared/test/renderWithProviders'
 import { ProfilePage } from './ProfilePage'
 
@@ -39,7 +39,7 @@ vi.mock('../context/AuthContext', async (importOriginal) => {
 
 describe('ProfilePage account', () => {
   it('saves name and phone via PATCH /users/me', async () => {
-    const patchSpy = vi.spyOn(usersApi, 'patchMe')
+    const patchSpy = vi.spyOn(patchMeRequest, 'patchMe')
 
     renderWithProviders(<ProfilePage />, {
       initialEntries: ['/profile?tab=account'],

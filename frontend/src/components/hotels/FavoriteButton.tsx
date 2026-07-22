@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom'
 
 import { useAuth } from '../../context/AuthContext'
 import { useNotify } from '@app/providers/NotificationProvider'
-import { useFavoriteMutations } from '../../hooks/useFavoriteMutations'
+import { useFavoriteMutations } from '@entities/favorite/api/mutations/useFavoriteMutations'
 
 interface FavoriteButtonProps {
   hotelId: number
