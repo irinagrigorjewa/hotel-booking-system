@@ -1,16 +1,19 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 
+import { hotelKeys } from '@entities/hotel/api/keys'
+
 import { reviewsApi } from '../api/reviews'
 import type { ReviewWritePayload } from '../types/review'
-import { hotelQueryKey } from './useHotel'
 
 export const useReviewMutations = (hotelId: number) => {
   const queryClient = useQueryClient()
 
   const invalidate = async (): Promise<void> => {
     await queryClient.invalidateQueries({ queryKey: ['reviews', hotelId] })
-    await queryClient.invalidateQueries({ queryKey: hotelQueryKey(hotelId) })
-    await queryClient.invalidateQueries({ queryKey: ['hotels'] })
+    await queryClient.invalidateQueries({
+      queryKey: hotelKeys.detail(hotelId),
+    })
+    await queryClient.invalidateQueries({ queryKey: hotelKeys.all })
   }
 
   const createReview = useMutation({

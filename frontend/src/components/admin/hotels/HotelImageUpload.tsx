@@ -3,8 +3,10 @@ import { useQueryClient } from '@tanstack/react-query'
 import { type ChangeEvent, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import { imagesApi } from '../../../api/images'
 import { useNotify } from '@app/providers/NotificationProvider'
+import { hotelKeys } from '@entities/hotel/api/keys'
+
+import { imagesApi } from '../../../api/images'
 
 interface HotelImageUploadProps {
   hotelId: number
@@ -30,8 +32,10 @@ export const HotelImageUpload = ({ hotelId }: HotelImageUploadProps) => {
 
     try {
       await imagesApi.uploadHotelImage(hotelId, file)
-      await queryClient.invalidateQueries({ queryKey: ['hotels'] })
-      await queryClient.invalidateQueries({ queryKey: ['hotel', hotelId] })
+      await queryClient.invalidateQueries({ queryKey: hotelKeys.all })
+      await queryClient.invalidateQueries({
+        queryKey: hotelKeys.detail(hotelId),
+      })
       notifySuccess('notifications.imageUploaded')
     } catch (uploadError) {
       notifyApiError(uploadError, 'errors.uploadImageFailed')

@@ -1,12 +1,7 @@
-import { useQuery } from '@tanstack/react-query'
+export { useHotel } from '@entities/hotel/api/queries/useHotel'
+export { hotelKeys } from '@entities/hotel/api/keys'
 
-import { hotelsApi } from '../api/hotels'
+import { hotelKeys } from '@entities/hotel/api/keys'
 
-export const hotelQueryKey = (hotelId: number) => ['hotel', hotelId] as const
-
-export const useHotel = (hotelId: number) =>
-  useQuery({
-    queryKey: hotelQueryKey(hotelId),
-    queryFn: () => hotelsApi.getById(hotelId),
-    enabled: Number.isInteger(hotelId) && hotelId > 0,
-  })
+/** @deprecated Prefer `hotelKeys.detail` */
+export const hotelQueryKey = (hotelId: number) => hotelKeys.detail(hotelId)

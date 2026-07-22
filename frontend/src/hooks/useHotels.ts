@@ -1,13 +1,8 @@
-import { useQuery } from '@tanstack/react-query'
+export { useHotels } from '@entities/hotel/api/queries/useHotels'
+export { hotelKeys } from '@entities/hotel/api/keys'
 
-import { hotelsApi } from '../api/hotels'
-import type { HotelListParams } from '../types/hotel'
+import { hotelKeys } from '@entities/hotel/api/keys'
+import type { HotelListParams } from '@entities/hotel/model/types'
 
-export const hotelsQueryKey = (params: HotelListParams) =>
-  ['hotels', params] as const
-
-export const useHotels = (params: HotelListParams) =>
-  useQuery({
-    queryKey: hotelsQueryKey(params),
-    queryFn: () => hotelsApi.list(params),
-  })
+/** @deprecated Prefer `hotelKeys.list` */
+export const hotelsQueryKey = (params: HotelListParams) => hotelKeys.list(params)

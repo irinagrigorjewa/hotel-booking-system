@@ -10,9 +10,10 @@ import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useSearchParams } from 'react-router-dom'
 
-import { HotelsMapView } from '../components/hotels/HotelsMapView'
+import { useHotelsMap } from '@entities/hotel/api/queries/useHotelsMap'
 import { useDebouncedValue } from '@shared/lib/useDebouncedValue'
-import { useHotelsMap } from '../hooks/useHotelsMap'
+
+import { HotelsMapView } from '../components/hotels/HotelsMapView'
 
 export const HotelsMapPage = () => {
   const { t } = useTranslation()

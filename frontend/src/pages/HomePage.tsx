@@ -3,9 +3,10 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link as RouterLink, useNavigate } from 'react-router-dom'
 
-import { HotelCatalogState } from '../components/hotels/HotelCatalogState'
+import { useHotels } from '@entities/hotel/api/queries/useHotels'
 import { useDebouncedValue } from '@shared/lib/useDebouncedValue'
-import { useHotels } from '../hooks/useHotels'
+
+import { HotelCatalogState } from '../components/hotels/HotelCatalogState'
 
 export const HomePage = () => {
   const { t } = useTranslation()

@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from 'react'
 import { useSearchParams } from 'react-router-dom'
 
-import type { HotelListParams, HotelSort } from '../types/hotel'
+import type { HotelListParams, HotelSort } from '@entities/hotel/model/types'
 
 const SORT_VALUES: HotelSort[] = ['created_at', 'stars', 'avg_rating']
 

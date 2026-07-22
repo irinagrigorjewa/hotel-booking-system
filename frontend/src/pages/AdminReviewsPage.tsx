@@ -15,11 +15,12 @@ import {
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
+import { useNotify } from '@app/providers/NotificationProvider'
+import { useHotels } from '@entities/hotel/api/queries/useHotels'
+
 import { reviewsApi } from '../api/reviews'
 import { AdminErrorAlert } from '../components/admin/shared/AdminErrorAlert'
 import { AdminPageHeader } from '../components/admin/shared/AdminPageHeader'
-import { useNotify } from '@app/providers/NotificationProvider'
-import { useHotels } from '../hooks/useHotels'
 import { useReviews } from '../hooks/useReviews'
 
 export const AdminReviewsPage = () => {

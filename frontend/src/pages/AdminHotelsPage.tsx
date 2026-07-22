@@ -11,15 +11,19 @@ import {
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
+import { useNotify } from '@app/providers/NotificationProvider'
+import { useHotelMutations } from '@entities/hotel/api/mutations/useHotelMutations'
+import { useHotels } from '@entities/hotel/api/queries/useHotels'
+import type {
+  HotelListItem,
+  HotelWritePayload,
+} from '@entities/hotel/model/types'
+
 import { HotelForm } from '../components/admin/hotels/HotelForm'
 import { HotelImageUpload } from '../components/admin/hotels/HotelImageUpload'
 import { AdminErrorAlert } from '../components/admin/shared/AdminErrorAlert'
 import { AdminFormSection } from '../components/admin/shared/AdminFormSection'
 import { AdminPageHeader } from '../components/admin/shared/AdminPageHeader'
-import { useNotify } from '@app/providers/NotificationProvider'
-import { useHotelMutations } from '../hooks/useHotelMutations'
-import { useHotels } from '../hooks/useHotels'
-import type { HotelListItem, HotelWritePayload } from '../types/hotel'
 
 export const AdminHotelsPage = () => {
   const { t } = useTranslation()

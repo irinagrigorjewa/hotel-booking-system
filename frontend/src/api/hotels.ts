@@ -1,86 +1,16 @@
-import { apiClient } from '@shared/api/client'
-import type {
-  HotelDetail,
-  HotelListParams,
-  HotelPage,
-  HotelWritePayload,
-} from '../types/hotel'
-import type { HotelMapResponse } from '../types/hotelMap'
+import { createHotel } from '@entities/hotel/api/requests/createHotel'
+import { deleteHotel } from '@entities/hotel/api/requests/deleteHotel'
+import { getHotel } from '@entities/hotel/api/requests/getHotel'
+import { getHotelsMap } from '@entities/hotel/api/requests/getHotelsMap'
+import { listHotels } from '@entities/hotel/api/requests/listHotels'
+import { updateHotel } from '@entities/hotel/api/requests/updateHotel'
 
-const buildListParams = (
-  params: HotelListParams,
-): Record<string, string | number> => {
-  const query: Record<string, string | number> = {}
-
-  if (params.city?.trim()) {
-    query.city = params.city.trim()
-  }
-
-  if (params.stars !== undefined) {
-    query.stars = params.stars
-  }
-
-  if (params.sort) {
-    query.sort = params.sort
-  }
-
-  if (params.order) {
-    query.order = params.order
-  }
-
-  if (params.page !== undefined) {
-    query.page = params.page
-  }
-
-  if (params.size !== undefined) {
-    query.size = params.size
-  }
-
-  return query
-}
-
+/** @deprecated Prefer `@entities/hotel/api/requests/*` */
 export const hotelsApi = {
-  list: async (params: HotelListParams = {}): Promise<HotelPage> => {
-    const { data } = await apiClient.get<HotelPage>('/hotels', {
-      params: buildListParams(params),
-    })
-
-    return data
-  },
-
-  getById: async (hotelId: number): Promise<HotelDetail> => {
-    const { data } = await apiClient.get<HotelDetail>(`/hotels/${hotelId}`)
-
-    return data
-  },
-
-  getMap: async (city?: string): Promise<HotelMapResponse> => {
-    const { data } = await apiClient.get<HotelMapResponse>('/hotels/map', {
-      params: city?.trim() ? { city: city.trim() } : undefined,
-    })
-
-    return data
-  },
-
-  create: async (payload: HotelWritePayload): Promise<HotelDetail> => {
-    const { data } = await apiClient.post<HotelDetail>('/hotels', payload)
-
-    return data
-  },
-
-  update: async (
-    hotelId: number,
-    payload: HotelWritePayload,
-  ): Promise<HotelDetail> => {
-    const { data } = await apiClient.put<HotelDetail>(
-      `/hotels/${hotelId}`,
-      payload,
-    )
-
-    return data
-  },
-
-  remove: async (hotelId: number): Promise<void> => {
-    await apiClient.delete(`/hotels/${hotelId}`)
-  },
+  list: listHotels,
+  getById: getHotel,
+  getMap: getHotelsMap,
+  create: createHotel,
+  update: updateHotel,
+  remove: deleteHotel,
 }
