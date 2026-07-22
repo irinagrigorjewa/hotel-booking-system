@@ -1,8 +1,8 @@
 import { fireEvent, screen, waitFor } from '@testing-library/react'
 import { describe, expect, it } from 'vitest'
 
-import { roomTypeHandlers, server } from '../test/server'
-import { renderWithProviders } from '../test/renderWithProviders'
+import { roomTypeHandlers, server } from '@shared/test/server'
+import { renderWithProviders } from '@shared/test/renderWithProviders'
 import { AdminRoomTypesPage } from './AdminRoomTypesPage'
 
 describe('AdminRoomTypesPage', () => {

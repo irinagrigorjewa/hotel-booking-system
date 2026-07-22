@@ -3,7 +3,7 @@ import { describe, expect, it, vi } from 'vitest'
 
 import type { User } from '../../types/auth'
 import type { Room } from '../../types/room'
-import { renderWithProviders } from '../../test/renderWithProviders'
+import { renderWithProviders } from '@shared/test/renderWithProviders'
 import { RoomList } from './RoomList'
 
 const auth = vi.hoisted(() => ({

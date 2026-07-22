@@ -1,4 +1,4 @@
-import { apiClient } from './client'
+import { apiClient } from '@shared/api/client'
 import type { RoomType, RoomTypePage, RoomTypeWritePayload } from '../types/roomType'
 
 export const roomTypesApi = {

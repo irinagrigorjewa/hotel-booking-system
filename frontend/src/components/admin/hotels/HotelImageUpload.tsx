@@ -4,7 +4,7 @@ import { type ChangeEvent, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { imagesApi } from '../../../api/images'
-import { useNotify } from '../../../context/NotificationContext'
+import { useNotify } from '@app/providers/NotificationProvider'
 
 interface HotelImageUploadProps {
   hotelId: number

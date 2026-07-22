@@ -1,4 +1,4 @@
-import { apiClient } from './client'
+import { apiClient } from '@shared/api/client'
 import type { Room, RoomListParams, RoomPage, RoomWritePayload } from '../types/room'
 
 const buildListParams = (

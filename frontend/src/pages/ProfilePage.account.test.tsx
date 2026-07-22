@@ -3,7 +3,7 @@ import { describe, expect, it, vi } from 'vitest'
 
 import { usersApi } from '../api/users'
 import type { User } from '../types/auth'
-import { renderWithProviders } from '../test/renderWithProviders'
+import { renderWithProviders } from '@shared/test/renderWithProviders'
 import { ProfilePage } from './ProfilePage'
 
 const auth = vi.hoisted(() => ({

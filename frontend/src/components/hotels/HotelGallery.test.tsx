@@ -1,8 +1,8 @@
 import { screen, waitFor } from '@testing-library/react'
 import { beforeEach, describe, expect, it } from 'vitest'
 
-import { setAppLanguage } from '../../i18n'
-import { renderWithProviders } from '../../test/renderWithProviders'
+import { setAppLanguage } from '@shared/i18n'
+import { renderWithProviders } from '@shared/test/renderWithProviders'
 import type { HotelImage } from '../../types/hotel'
 import { HotelGallery } from './HotelGallery'
 

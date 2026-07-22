@@ -2,9 +2,9 @@ import { fireEvent, screen, waitFor } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
 
 import { bookingsApi } from '../api/bookings'
-import { bookingHandlers, server } from '../test/server'
-import { renderWithProviders } from '../test/renderWithProviders'
-import { utcTodayIso } from '../utils/bookingDates'
+import { bookingHandlers, server } from '@shared/test/server'
+import { renderWithProviders } from '@shared/test/renderWithProviders'
+import { utcTodayIso } from '@shared/lib/bookingDates'
 import { BookingNewPage } from './BookingNewPage'
 
 const addDays = (isoDate: string, days: number): string => {

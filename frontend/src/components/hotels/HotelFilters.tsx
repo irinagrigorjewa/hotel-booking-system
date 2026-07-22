@@ -9,7 +9,7 @@ import {
 } from '@mui/material'
 import { useTranslation } from 'react-i18next'
 
-import { STAR_OPTIONS } from '../../constants/domainOptions'
+import { STAR_OPTIONS } from '@shared/config/domainOptions'
 import type { HotelSort } from '../../types/hotel'
 
 export interface HotelFiltersValue {

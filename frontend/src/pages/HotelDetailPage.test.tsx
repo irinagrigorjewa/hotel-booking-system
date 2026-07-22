@@ -2,8 +2,8 @@ import { screen } from '@testing-library/react'
 import { Route, Routes } from 'react-router-dom'
 import { describe, expect, it } from 'vitest'
 
-import { hotelHandlers, roomHandlers, server } from '../test/server'
-import { renderWithProviders } from '../test/renderWithProviders'
+import { hotelHandlers, roomHandlers, server } from '@shared/test/server'
+import { renderWithProviders } from '@shared/test/renderWithProviders'
 import { HotelDetailPage } from './HotelDetailPage'
 
 const renderDetail = (path: string) =>

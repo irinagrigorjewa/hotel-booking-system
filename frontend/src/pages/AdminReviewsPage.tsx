@@ -18,7 +18,7 @@ import { useTranslation } from 'react-i18next'
 import { reviewsApi } from '../api/reviews'
 import { AdminErrorAlert } from '../components/admin/shared/AdminErrorAlert'
 import { AdminPageHeader } from '../components/admin/shared/AdminPageHeader'
-import { useNotify } from '../context/NotificationContext'
+import { useNotify } from '@app/providers/NotificationProvider'
 import { useHotels } from '../hooks/useHotels'
 import { useReviews } from '../hooks/useReviews'
 

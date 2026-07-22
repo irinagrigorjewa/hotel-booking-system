@@ -19,7 +19,7 @@ import { useTranslation } from 'react-i18next'
 import { AdminErrorAlert } from '../components/admin/shared/AdminErrorAlert'
 import { AdminPageHeader } from '../components/admin/shared/AdminPageHeader'
 import { useAuth } from '../context/AuthContext'
-import { useNotify } from '../context/NotificationContext'
+import { useNotify } from '@app/providers/NotificationProvider'
 import { useUserMutations, useUsers } from '../hooks/useUsers'
 import type { UserRole } from '../types/auth'
 

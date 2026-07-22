@@ -3,7 +3,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { favoritesApi } from '../../api/favorites'
 import type { User } from '../../types/auth'
-import { renderWithProviders } from '../../test/renderWithProviders'
+import { renderWithProviders } from '@shared/test/renderWithProviders'
 import { FavoriteButton } from './FavoriteButton'
 
 const auth = vi.hoisted(() => ({

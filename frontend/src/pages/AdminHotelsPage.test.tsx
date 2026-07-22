@@ -1,7 +1,7 @@
 import { fireEvent, screen, waitFor } from '@testing-library/react'
 import { describe, expect, it } from 'vitest'
 
-import { renderWithProviders } from '../test/renderWithProviders'
+import { renderWithProviders } from '@shared/test/renderWithProviders'
 import { AdminHotelsPage } from './AdminHotelsPage'
 
 describe('AdminHotelsPage', () => {

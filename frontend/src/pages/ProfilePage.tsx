@@ -17,7 +17,7 @@ import { useTranslation } from 'react-i18next'
 import { Link as RouterLink, useSearchParams } from 'react-router-dom'
 
 import { useAuth } from '../context/AuthContext'
-import { useNotify } from '../context/NotificationContext'
+import { useNotify } from '@app/providers/NotificationProvider'
 import { useBookingMutations } from '../hooks/useBookingMutations'
 import { useBookings } from '../hooks/useBookings'
 import { useUserMutations } from '../hooks/useUsers'

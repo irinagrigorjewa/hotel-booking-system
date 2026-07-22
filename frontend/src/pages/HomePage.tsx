@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next'
 import { Link as RouterLink, useNavigate } from 'react-router-dom'
 
 import { HotelCatalogState } from '../components/hotels/HotelCatalogState'
-import { useDebouncedValue } from '../hooks/useDebouncedValue'
+import { useDebouncedValue } from '@shared/lib/useDebouncedValue'
 import { useHotels } from '../hooks/useHotels'
 
 export const HomePage = () => {
