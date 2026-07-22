@@ -1,12 +1,8 @@
-import { useQuery } from '@tanstack/react-query'
+export { useFavorites } from '@entities/favorite/api/queries/useFavorites'
+export { favoriteKeys } from '@entities/favorite/api/keys'
 
-import { favoritesApi } from '../api/favorites'
+import { favoriteKeys } from '@entities/favorite/api/keys'
 
+/** @deprecated Prefer `favoriteKeys.list` */
 export const favoritesQueryKey = (page = 1, size = 20) =>
-  ['favorites', { page, size }] as const
-
-export const useFavorites = (page = 1, size = 20) =>
-  useQuery({
-    queryKey: favoritesQueryKey(page, size),
-    queryFn: () => favoritesApi.list(page, size),
-  })
+  favoriteKeys.list({ page, size })

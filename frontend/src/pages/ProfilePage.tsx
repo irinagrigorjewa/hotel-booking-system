@@ -20,7 +20,7 @@ import { useAuth } from '../context/AuthContext'
 import { useNotify } from '@app/providers/NotificationProvider'
 import { useBookingMutations } from '../hooks/useBookingMutations'
 import { useBookings } from '../hooks/useBookings'
-import { useUserMutations } from '../hooks/useUsers'
+import { useUserMutations } from '@entities/user/api/mutations/useUserMutations'
 import type { Booking } from '../types/booking'
 
 const canCancel = (status: Booking['status']): boolean =>

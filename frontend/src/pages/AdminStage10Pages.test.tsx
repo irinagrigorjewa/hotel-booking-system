@@ -2,8 +2,8 @@ import { fireEvent, screen, waitFor } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
 
 import * as updateBookingStatusRequest from '@entities/booking/api/requests/updateBookingStatus'
-import { usersApi } from '../api/users'
-import type { User } from '../types/auth'
+import * as patchUserRequest from '@entities/user/api/requests/patchUser'
+import type { User } from '@entities/user/model/types'
 import { renderWithProviders } from '@shared/test/renderWithProviders'
 import { AdminBookingsPage } from './AdminBookingsPage'
 import { AdminHomePage } from './AdminHomePage'
@@ -57,7 +57,7 @@ describe('AdminHomePage', () => {
 
 describe('AdminUsersPage', () => {
   it('lists users and changes a client role', async () => {
-    const patchSpy = vi.spyOn(usersApi, 'patchUser')
+    const patchSpy = vi.spyOn(patchUserRequest, 'patchUser')
 
     renderWithProviders(<AdminUsersPage />, { initialEntries: ['/admin/users'] })
 

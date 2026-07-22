@@ -20,8 +20,9 @@ import { AdminErrorAlert } from '../components/admin/shared/AdminErrorAlert'
 import { AdminPageHeader } from '../components/admin/shared/AdminPageHeader'
 import { useAuth } from '../context/AuthContext'
 import { useNotify } from '@app/providers/NotificationProvider'
-import { useUserMutations, useUsers } from '../hooks/useUsers'
-import type { UserRole } from '../types/auth'
+import { useUserMutations } from '@entities/user/api/mutations/useUserMutations'
+import { useUsers } from '@entities/user/api/queries/useUsers'
+import type { UserRole } from '@entities/user/model/types'
 
 export const AdminUsersPage = () => {
   const { t } = useTranslation()

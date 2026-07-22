@@ -17,11 +17,11 @@ import { useTranslation } from 'react-i18next'
 
 import { useNotify } from '@app/providers/NotificationProvider'
 import { useHotels } from '@entities/hotel/api/queries/useHotels'
+import { useReviewMutations } from '@entities/review/api/mutations/useReviewMutations'
+import { useReviews } from '@entities/review/api/queries/useReviews'
 
-import { reviewsApi } from '../api/reviews'
 import { AdminErrorAlert } from '../components/admin/shared/AdminErrorAlert'
 import { AdminPageHeader } from '../components/admin/shared/AdminPageHeader'
-import { useReviews } from '../hooks/useReviews'
 
 export const AdminReviewsPage = () => {
   const { t } = useTranslation()
@@ -33,6 +33,7 @@ export const AdminReviewsPage = () => {
     page: 1,
     size: 50,
   })
+  const { deleteReview } = useReviewMutations(selectedHotelId)
 
   const handleDelete = async (reviewId: number): Promise<void> => {
     if (!window.confirm(t('reviews.deleteConfirm'))) {
@@ -40,8 +41,7 @@ export const AdminReviewsPage = () => {
     }
 
     try {
-      await reviewsApi.remove(reviewId)
-      await reviewsQuery.refetch()
+      await deleteReview.mutateAsync(reviewId)
       notifySuccess('notifications.reviewDeleted')
     } catch (error) {
       notifyApiError(error, 'errors.deleteReviewFailed')
