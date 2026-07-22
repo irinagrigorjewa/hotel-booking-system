@@ -1,0 +1,178 @@
+import { Box, MenuItem, TextField } from '@mui/material'
+import { useEffect } from 'react'
+import { Controller, useForm } from 'react-hook-form'
+import { useTranslation } from 'react-i18next'
+
+import type { HotelListItem } from '@entities/hotel/model/types'
+import type { Room, RoomWritePayload } from '@entities/room/model/types'
+import type { RoomType } from '@entities/room-type/model/types'
+import { AdminFormActions } from '@shared/ui/AdminFormActions'
+import { AdminFormError } from '@shared/ui/AdminFormError'
+
+import {
+  emptyRoomFormValues,
+  roomFormValuesToPayload,
+  toRoomFormValues,
+  type RoomFormValues,
+} from '../model/mapRoomForm'
+
+interface RoomFormProps {
+  hotels: HotelListItem[]
+  roomTypes: RoomType[]
+  initialRoom?: Room | null
+  isSubmitting: boolean
+  submitError?: string
+  onSubmit: (values: RoomWritePayload) => Promise<void>
+  onCancel?: () => void
+}
+
+export const RoomForm = ({
+  hotels,
+  roomTypes,
+  initialRoom,
+  isSubmitting,
+  submitError,
+  onSubmit,
+  onCancel,
+}: RoomFormProps) => {
+  const { t } = useTranslation()
+  const {
+    control,
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<RoomFormValues>({
+    defaultValues: toRoomFormValues(initialRoom, hotels, roomTypes),
+  })
+
+  useEffect(() => {
+    reset(toRoomFormValues(initialRoom, hotels, roomTypes))
+  }, [hotels, initialRoom, reset, roomTypes])
+
+  const submit = async (values: RoomFormValues): Promise<void> => {
+    await onSubmit(roomFormValuesToPayload(values))
+
+    if (!initialRoom) {
+      reset(emptyRoomFormValues(hotels, roomTypes))
+    }
+  }
+
+  return (
+    <Box component="form" noValidate onSubmit={handleSubmit(submit)}>
+      <AdminFormError message={submitError} />
+      <Controller
+        control={control}
+        name="hotel_id"
+        rules={{
+          required: t('admin.form.hotelRequired'),
+          min: { value: 1, message: t('admin.form.hotelRequired') },
+        }}
+        render={({ field }) => (
+          <TextField
+            {...field}
+            error={Boolean(errors.hotel_id)}
+            fullWidth
+            helperText={errors.hotel_id?.message}
+            label={t('admin.nav.hotels')}
+            margin="normal"
+            onChange={(event) => field.onChange(Number(event.target.value))}
+            select
+            value={field.value || ''}
+          >
+            {hotels.map((hotel) => (
+              <MenuItem key={hotel.id} value={hotel.id}>
+                {hotel.name}
+              </MenuItem>
+            ))}
+          </TextField>
+        )}
+      />
+      <Controller
+        control={control}
+        name="room_type_id"
+        rules={{
+          required: t('admin.form.roomTypeRequired'),
+          min: { value: 1, message: t('admin.form.roomTypeRequired') },
+        }}
+        render={({ field }) => (
+          <TextField
+            {...field}
+            error={Boolean(errors.room_type_id)}
+            fullWidth
+            helperText={errors.room_type_id?.message}
+            label={t('admin.form.roomTypeLabel')}
+            margin="normal"
+            onChange={(event) => field.onChange(Number(event.target.value))}
+            select
+            value={field.value || ''}
+          >
+            {roomTypes.map((roomType) => (
+              <MenuItem key={roomType.id} value={roomType.id}>
+                {roomType.name}
+              </MenuItem>
+            ))}
+          </TextField>
+        )}
+      />
+      <TextField
+        error={Boolean(errors.number)}
+        fullWidth
+        helperText={errors.number?.message}
+        label={t('admin.colNumber')}
+        margin="normal"
+        {...register('number', { required: t('admin.form.numberRequired') })}
+      />
+      <TextField
+        error={Boolean(errors.price)}
+        fullWidth
+        helperText={errors.price?.message}
+        label={t('common.price')}
+        margin="normal"
+        type="number"
+        {...register('price', {
+          required: t('admin.form.priceRequired'),
+          valueAsNumber: true,
+          min: { value: 0.01, message: t('admin.form.priceMin') },
+        })}
+      />
+      <TextField
+        error={Boolean(errors.capacity)}
+        fullWidth
+        helperText={errors.capacity?.message}
+        label={t('hotels.capacity')}
+        margin="normal"
+        type="number"
+        {...register('capacity', {
+          required: t('admin.form.capacityRequired'),
+          valueAsNumber: true,
+          min: { value: 1, message: t('admin.form.capacityMin') },
+        })}
+      />
+      <TextField
+        fullWidth
+        label={t('common.description')}
+        margin="normal"
+        multiline
+        minRows={2}
+        {...register('description')}
+      />
+      <Controller
+        control={control}
+        name="status"
+        render={({ field }) => (
+          <TextField {...field} fullWidth label={t('admin.colStatus')} margin="normal" select>
+            <MenuItem value="AVAILABLE">{t('enums.room.AVAILABLE')}</MenuItem>
+            <MenuItem value="MAINTENANCE">{t('enums.room.MAINTENANCE')}</MenuItem>
+          </TextField>
+        )}
+      />
+      <AdminFormActions
+        cancelLabel={t('common.cancel')}
+        isSubmitting={isSubmitting}
+        onCancel={onCancel}
+        submitLabel={initialRoom ? t('common.save') : t('common.create')}
+      />
+    </Box>
+  )
+}

@@ -3,10 +3,10 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { render, screen, waitFor } from '@testing-library/react'
 import { afterEach, describe, expect, it } from 'vitest'
 
-import { App } from './App'
-import { AuthProvider } from './context/AuthContext'
-import { NotificationProvider } from './context/NotificationContext'
-import { theme } from './theme/theme'
+import { App } from '@app/App'
+import { AuthProvider } from '@features/auth/ui/AuthContext'
+import { NotificationProvider } from '@app/providers/NotificationProvider'
+import { theme } from '@shared/theme/theme'
 
 const renderAtPath = (path: string) => {
   window.history.pushState({}, '', path)

@@ -1,0 +1,72 @@
+---
+description: Архитектура Hotel Booking — слои FE/BE, каталоги, media, инварианты зависимостей
+alwaysApply: true
+---
+
+# Архитектура
+
+Полное описание: [docs/technical/05-architecture-stack.md](../../docs/technical/05-architecture-stack.md).
+
+## Стек
+
+- **Frontend:** React 19, TypeScript, Vite, React Router, Axios, MUI, RHF, TanStack Query, i18next, react-leaflet
+- **Backend:** FastAPI, SQLAlchemy 2, Alembic, Pydantic v2, PostgreSQL
+- **Infra:** Docker Compose (`frontend`, `backend`, PostgreSQL, volume `uploads`); CI — GitHub Actions
+
+## Корень репозитория
+
+```
+frontend/          # SPA (Vite)
+backend/           # FastAPI + alembic + tests
+uploads/           # gitignore; volume фото
+docker-compose.yml
+.env.example
+.github/workflows/ci.yml
+docs/              # спецификация по разделам
+DESC.md            # исходная спека (приоритет при расхождении)
+```
+
+## Backend layers
+
+| Слой            | Можно                                  | Нельзя                                                 |
+| --------------- | -------------------------------------- | ------------------------------------------------------ |
+| `routers/`      | schemas, services, deps                | SQLAlchemy queries, бизнес-правила                     |
+| `schemas/`      | Pydantic, enums                        | ORM models, repositories                               |
+| `services/`     | repositories, schemas, core, FS upload | сырой SQL как правило; HTTP как единственная валидация |
+| `repositories/` | models, session                        | FastAPI, orchestration бизнес-правил                   |
+| `models/`       | SQLAlchemy                             | FastAPI, services                                      |
+
+Frontend **никогда** не ходит в PostgreSQL и не пишет в `uploads/`.
+
+## Frontend layers (FSD)
+
+```
+app → pages → widgets → features → entities → shared → /api/v1
+```
+
+| Слой | Путь | Роль |
+| --- | --- | --- |
+| `app` | `frontend/src/app/` | bootstrap, layouts, router, providers |
+| `pages` | `frontend/src/pages/<route>/ui/` | тонкие экраны маршрутов |
+| `widgets` | `frontend/src/widgets/` | составные UI-блоки |
+| `features` | `frontend/src/features/` | пользовательские сценарии (auth, filters, admin-*) |
+| `entities` | `frontend/src/entities/*/api/` | доменные HTTP requests + TanStack Query |
+| `shared` | `frontend/src/shared/` | `api/client`, lib, ui, i18n, theme, auth |
+
+Импорты **только вниз** по слоям. Не писать новый код в legacy `src/api/` / `src/hooks/` / `src/components/`.
+
+- Auth: `features/auth/ui/AuthContext` + Axios interceptor refresh в `shared/api/client` (один retry, mutex на параллельные 401)
+- Guards: `app/router` (`RequireAuth`, `RequireAdmin`); session для auth-маршрутов; `role === ADMIN` для `/admin/*`
+- Карта: данные с `GET /hotels/map`; тайлы OSM на клиенте без API-ключа
+- Media URL: `shared/lib/mediaUrl`
+
+## Media
+
+- Файлы на диске `UPLOAD_DIR` (`uploads/hotels`, `uploads/rooms`)
+- Static mount `/media` в `main.py`
+- URL фото в JSON указывают на backend `/media/...`
+
+## Конфиг
+
+- Settings через `core/config` (env); роутеры не парсят `os.environ` напрямую
+- Секреты только в `.env` (не в git); контракт — `.env.example`

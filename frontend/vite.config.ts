@@ -1,8 +1,23 @@
-import { defineConfig } from 'vite'
+import path from 'node:path'
+import { fileURLToPath } from 'node:url'
+
 import react from '@vitejs/plugin-react'
+import { defineConfig } from 'vite'
+
+const rootDir = path.dirname(fileURLToPath(import.meta.url))
 
 export default defineConfig({
   plugins: [react()],
+  resolve: {
+    alias: {
+      '@shared': path.resolve(rootDir, 'src/shared'),
+      '@entities': path.resolve(rootDir, 'src/entities'),
+      '@features': path.resolve(rootDir, 'src/features'),
+      '@widgets': path.resolve(rootDir, 'src/widgets'),
+      '@pages': path.resolve(rootDir, 'src/pages'),
+      '@app': path.resolve(rootDir, 'src/app'),
+    },
+  },
   server: {
     proxy: {
       '/api': {
@@ -17,7 +32,7 @@ export default defineConfig({
   },
   test: {
     environment: 'jsdom',
-    setupFiles: './src/test/setup.ts',
+    setupFiles: './src/shared/test/setup.ts',
     globals: true,
   },
 })

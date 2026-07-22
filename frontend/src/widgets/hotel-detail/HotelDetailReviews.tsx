@@ -1,4 +1,4 @@
-import { HotelReviews } from '../../components/hotels/HotelReviews'
+import { HotelReviews } from '@features/review-create/ui/HotelReviews'
 
 interface HotelDetailReviewsProps {
   hotelId: number

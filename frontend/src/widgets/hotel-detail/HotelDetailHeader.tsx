@@ -1,8 +1,8 @@
 import { Box, Rating, Typography } from '@mui/material'
 import { useTranslation } from 'react-i18next'
 
-import { FavoriteButton } from '../../components/hotels/FavoriteButton'
-import type { HotelDetail } from '../../types/hotel'
+import { FavoriteButton } from '@features/favorite-toggle/ui/FavoriteButton'
+import type { HotelDetail } from '@entities/hotel/model/types'
 
 interface HotelDetailHeaderProps {
   hotel: HotelDetail
