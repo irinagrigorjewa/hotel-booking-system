@@ -1,8 +1,8 @@
 import { Typography } from '@mui/material'
 import { useTranslation } from 'react-i18next'
 
-import { HotelGallery } from '../../components/hotels/HotelGallery'
-import { HotelMiniMap } from '../../components/hotels/HotelMiniMap'
+import { HotelGallery } from '@entities/hotel/ui/HotelGallery'
+import { HotelMiniMap } from '@entities/hotel/ui/HotelMiniMap'
 import type { HotelImage } from '../../types/hotel'
 
 interface HotelDetailGalleryProps {

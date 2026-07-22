@@ -4,7 +4,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import * as createReviewRequest from '@entities/review/api/requests/createReview'
 import type { User } from '@entities/user/model/types'
 import { renderWithProviders } from '@shared/test/renderWithProviders'
-import { HotelReviews } from '../components/hotels/HotelReviews'
+import { HotelReviews } from '@features/review-create/ui/HotelReviews'
 
 const auth = vi.hoisted(() => ({
   user: {
@@ -17,8 +17,8 @@ const auth = vi.hoisted(() => ({
   } as User | null,
 }))
 
-vi.mock('../context/AuthContext', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('../context/AuthContext')>()
+vi.mock('@features/auth/ui/AuthContext', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@features/auth/ui/AuthContext')>()
 
   return {
     ...actual,

@@ -15,12 +15,12 @@ import { useTranslation } from 'react-i18next'
 import { useNotify } from '@app/providers/NotificationProvider'
 import { useHotels } from '@entities/hotel/api/queries/useHotels'
 
-import { RoomForm } from '../components/admin/rooms/RoomForm'
-import { AdminFormSection } from '../components/admin/shared/AdminFormSection'
-import { AdminPageHeader } from '../components/admin/shared/AdminPageHeader'
-import { useRoomMutations } from '../hooks/useRoomMutations'
-import { useRoomTypes } from '../hooks/useRoomTypes'
-import { useRooms } from '../hooks/useRooms'
+import { RoomForm } from '@features/admin-room/ui/RoomForm'
+import { AdminFormSection } from '@shared/ui/AdminFormSection'
+import { AdminPageHeader } from '@shared/ui/AdminPageHeader'
+import { useRoomMutations } from '@entities/room/api/mutations/useRoomMutations'
+import { useRoomTypes } from '@entities/room-type/api/queries/useRoomTypes'
+import { useRooms } from '@entities/room/api/queries/useRooms'
 import type { Room, RoomWritePayload } from '../types/room'
 
 export const AdminRoomsPage = () => {

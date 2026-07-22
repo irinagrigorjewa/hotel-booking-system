@@ -2,8 +2,8 @@ import { AppBar, Box, Button, Container, Toolbar, Typography } from '@mui/materi
 import { useTranslation } from 'react-i18next'
 import { Link as RouterLink, Outlet } from 'react-router-dom'
 
-import { LanguageSwitcher } from '../../components/LanguageSwitcher'
-import { useAuth } from '../../context/AuthContext'
+import { LanguageSwitcher } from '@features/language-switch/ui/LanguageSwitcher'
+import { useAuth } from '@features/auth/ui/AuthContext'
 
 export const PublicLayout = () => {
   const { user, logout } = useAuth()

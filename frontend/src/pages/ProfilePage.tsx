@@ -16,15 +16,12 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link as RouterLink, useSearchParams } from 'react-router-dom'
 
-import { useAuth } from '../context/AuthContext'
 import { useNotify } from '@app/providers/NotificationProvider'
-import { useBookingMutations } from '../hooks/useBookingMutations'
-import { useBookings } from '../hooks/useBookings'
+import { useBookingMutations } from '@entities/booking/api/mutations/useBookingMutations'
+import { canCancelBooking } from '@entities/booking/model/rules'
+import { useBookings } from '@entities/booking/api/queries/useBookings'
 import { useUserMutations } from '@entities/user/api/mutations/useUserMutations'
-import type { Booking } from '../types/booking'
-
-const canCancel = (status: Booking['status']): boolean =>
-  status === 'PENDING' || status === 'CONFIRMED'
+import { useAuth } from '@features/auth/ui/AuthContext'
 
 export const ProfilePage = () => {
   const { t } = useTranslation()
@@ -166,7 +163,7 @@ export const ProfilePage = () => {
                 <TableCell>{booking.total_price} ₽</TableCell>
                 <TableCell>{t(`enums.booking.${booking.status}`)}</TableCell>
                 <TableCell align="right">
-                  {canCancel(booking.status) ? (
+                  {canCancelBooking(booking.status) ? (
                     <Button
                       disabled={cancellingId === booking.id}
                       onClick={() => void handleCancel(booking.id)}

@@ -20,8 +20,8 @@ import { useHotels } from '@entities/hotel/api/queries/useHotels'
 import { useReviewMutations } from '@entities/review/api/mutations/useReviewMutations'
 import { useReviews } from '@entities/review/api/queries/useReviews'
 
-import { AdminErrorAlert } from '../components/admin/shared/AdminErrorAlert'
-import { AdminPageHeader } from '../components/admin/shared/AdminPageHeader'
+import { AdminErrorAlert } from '@shared/ui/AdminErrorAlert'
+import { AdminPageHeader } from '@shared/ui/AdminPageHeader'
 
 export const AdminReviewsPage = () => {
   const { t } = useTranslation()

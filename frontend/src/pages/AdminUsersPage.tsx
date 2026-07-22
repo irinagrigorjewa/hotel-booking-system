@@ -16,9 +16,9 @@ import {
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import { AdminErrorAlert } from '../components/admin/shared/AdminErrorAlert'
-import { AdminPageHeader } from '../components/admin/shared/AdminPageHeader'
-import { useAuth } from '../context/AuthContext'
+import { AdminErrorAlert } from '@shared/ui/AdminErrorAlert'
+import { AdminPageHeader } from '@shared/ui/AdminPageHeader'
+import { useAuth } from '@features/auth/ui/AuthContext'
 import { useNotify } from '@app/providers/NotificationProvider'
 import { useUserMutations } from '@entities/user/api/mutations/useUserMutations'
 import { useUsers } from '@entities/user/api/queries/useUsers'

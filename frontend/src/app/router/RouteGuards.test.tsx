@@ -13,7 +13,7 @@ const auth = vi.hoisted(() => ({
   user: null as User | null,
 }))
 
-vi.mock('../../context/AuthContext', () => ({
+vi.mock('@features/auth/ui/AuthContext', () => ({
   useAuth: () => auth,
 }))
 

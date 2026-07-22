@@ -7,56 +7,30 @@ import {
   TextField,
   Typography,
 } from '@mui/material'
-import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import { useNavigate, useSearchParams } from 'react-router-dom'
 
-import { useNotify } from '@app/providers/NotificationProvider'
-import { useBookingMutations } from '../hooks/useBookingMutations'
-import { useRoom } from '../hooks/useRoom'
-import { formatMoney, nightsBetween, utcTodayIso } from '@shared/lib/bookingDates'
-
-interface BookingFormValues {
-  check_in: string
-  check_out: string
-}
-
-const parseRoomId = (value: string | null): number => {
-  if (!value) {
-    return 0
-  }
-
-  const parsed = Number(value)
-
-  return Number.isInteger(parsed) && parsed > 0 ? parsed : 0
-}
+import { useBookingForm } from '@features/booking-create/model/useBookingForm'
 
 export const BookingNewPage = () => {
   const { t } = useTranslation()
-  const navigate = useNavigate()
-  const { notifySuccess, notifyApiError } = useNotify()
-  const [searchParams] = useSearchParams()
-  const roomId = parseRoomId(searchParams.get('room_id'))
-  const { data: room, isLoading, isError } = useRoom(roomId)
-  const { createBooking } = useBookingMutations()
-  const today = utcTodayIso()
+  const {
+    roomId,
+    room,
+    isLoading,
+    isError,
+    form,
+    nights,
+    totalPreview,
+    checkInRules,
+    checkOutRules,
+    submit,
+    isPending,
+  } = useBookingForm()
   const {
     register,
     handleSubmit,
-    watch,
     formState: { errors, isSubmitting },
-  } = useForm<BookingFormValues>({
-    defaultValues: {
-      check_in: searchParams.get('date_from') ?? '',
-      check_out: searchParams.get('date_to') ?? '',
-    },
-  })
-
-  const checkIn = watch('check_in')
-  const checkOut = watch('check_out')
-  const nights = nightsBetween(checkIn, checkOut)
-  const totalPreview =
-    room && nights >= 1 ? formatMoney(nights * Number(room.price)) : null
+  } = form
 
   if (!roomId) {
     return <Alert severity="warning">{t('bookings.selectRoom')}</Alert>
@@ -72,20 +46,6 @@ export const BookingNewPage = () => {
 
   if (isError || !room) {
     return <Alert severity="error">{t('bookings.roomLoadFailed')}</Alert>
-  }
-
-  const submit = async (values: BookingFormValues): Promise<void> => {
-    try {
-      await createBooking.mutateAsync({
-        room_id: roomId,
-        check_in: values.check_in,
-        check_out: values.check_out,
-      })
-      notifySuccess('notifications.bookingCreated')
-      navigate('/profile?tab=bookings', { replace: true })
-    } catch (error) {
-      notifyApiError(error, 'errors.createBookingFailed')
-    }
   }
 
   return (
@@ -108,10 +68,7 @@ export const BookingNewPage = () => {
           helperText={errors.check_in?.message}
           label={t('hotels.checkIn')}
           type="date"
-          {...register('check_in', {
-            required: t('bookings.checkInRequired'),
-            validate: (value) => value >= today || t('bookings.checkInPast'),
-          })}
+          {...register('check_in', checkInRules)}
         />
         <TextField
           InputLabelProps={{ shrink: true }}
@@ -120,21 +77,7 @@ export const BookingNewPage = () => {
           helperText={errors.check_out?.message}
           label={t('hotels.checkOut')}
           type="date"
-          {...register('check_out', {
-            required: t('bookings.checkOutRequired'),
-            validate: (value, formValues) => {
-              const count = nightsBetween(formValues.check_in, value)
-
-              if (count < 1) {
-                return t('bookings.checkOutAfter')
-              }
-              if (count > 30) {
-                return t('bookings.maxNights')
-              }
-
-              return true
-            },
-          })}
+          {...register('check_out', checkOutRules)}
         />
         <Typography>
           {nights > 0 && totalPreview
@@ -142,7 +85,7 @@ export const BookingNewPage = () => {
             : t('bookings.nightsPlaceholder')}
         </Typography>
         <Button
-          disabled={isSubmitting || createBooking.isPending}
+          disabled={isSubmitting || isPending}
           type="submit"
           variant="contained"
         >

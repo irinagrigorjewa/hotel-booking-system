@@ -1,18 +1,15 @@
 import { Box, Button, Link, Paper, TextField, Typography } from '@mui/material'
-import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link as RouterLink, useNavigate } from 'react-router-dom'
 
 import { useHotels } from '@entities/hotel/api/queries/useHotels'
-import { useDebouncedValue } from '@shared/lib/useDebouncedValue'
-
-import { HotelCatalogState } from '../components/hotels/HotelCatalogState'
+import { useDebouncedCityFilter } from '@features/hotel-search/model/useDebouncedCityFilter'
+import { HotelCatalogState } from '@shared/ui/HotelCatalogState'
 
 export const HomePage = () => {
   const { t } = useTranslation()
   const navigate = useNavigate()
-  const [cityDraft, setCityDraft] = useState('')
-  const debouncedCity = useDebouncedValue(cityDraft, 350)
+  const { cityDraft, setCityDraft, debouncedCity } = useDebouncedCityFilter('')
   const hotelsQuery = useHotels({
     city: debouncedCity.trim() || undefined,
     page: 1,

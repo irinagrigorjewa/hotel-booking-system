@@ -1,7 +1,7 @@
 import { Box, Typography } from '@mui/material'
 import { useTranslation } from 'react-i18next'
 
-import { HotelCatalogState } from '../components/hotels/HotelCatalogState'
+import { HotelCatalogState } from '@shared/ui/HotelCatalogState'
 import { useFavorites } from '@entities/favorite/api/queries/useFavorites'
 
 export const FavoritesPage = () => {

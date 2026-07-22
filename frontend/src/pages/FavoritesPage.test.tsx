@@ -6,8 +6,8 @@ import { favoriteHandlers, server } from '@shared/test/server'
 import { renderWithProviders } from '@shared/test/renderWithProviders'
 import { FavoritesPage } from './FavoritesPage'
 
-vi.mock('../context/AuthContext', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('../context/AuthContext')>()
+vi.mock('@features/auth/ui/AuthContext', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@features/auth/ui/AuthContext')>()
   const user: User = {
     id: 2,
     name: 'Client User',

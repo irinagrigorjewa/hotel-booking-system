@@ -1,14 +1,13 @@
 import { Box, Button, Link, Pagination, Typography } from '@mui/material'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link as RouterLink } from 'react-router-dom'
 
 import { useHotels } from '@entities/hotel/api/queries/useHotels'
-import { useDebouncedValue } from '@shared/lib/useDebouncedValue'
-
-import { HotelCatalogState } from '../components/hotels/HotelCatalogState'
-import { HotelFilters } from '../components/hotels/HotelFilters'
-import { useHotelListSearchParams } from '../hooks/useHotelListSearchParams'
+import { HotelFilters } from '@features/hotel-filters/ui/HotelFilters'
+import { useHotelListSearchParams } from '@features/hotel-filters/model/useHotelListSearchParams'
+import { useDebouncedCityFilter } from '@features/hotel-search/model/useDebouncedCityFilter'
+import { HotelCatalogState } from '@shared/ui/HotelCatalogState'
 
 export const HotelsPage = () => {
   const { t } = useTranslation()
@@ -17,17 +16,14 @@ export const HotelsPage = () => {
     size: 20,
     sort: 'created_at',
   })
-  const [cityDraft, setCityDraft] = useState(params.city ?? '')
-  const debouncedCity = useDebouncedValue(cityDraft, 350)
+  const { cityDraft, setCityDraft, debouncedCity } = useDebouncedCityFilter(
+    params.city ?? '',
+  )
   const hotelsQuery = useHotels(params)
   const totalPages = Math.max(
     1,
     Math.ceil((hotelsQuery.data?.total ?? 0) / (params.size ?? 20)),
   )
-
-  useEffect(() => {
-    setCityDraft(params.city ?? '')
-  }, [params.city])
 
   useEffect(() => {
     const next = debouncedCity.trim()
