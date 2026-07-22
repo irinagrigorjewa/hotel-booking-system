@@ -1,12 +1,8 @@
-import { useQuery } from '@tanstack/react-query'
+export { useRoomTypes } from '@entities/room-type/api/queries/useRoomTypes'
+export { roomTypeKeys } from '@entities/room-type/api/keys'
 
-import { roomTypesApi } from '../api/roomTypes'
+import { roomTypeKeys } from '@entities/room-type/api/keys'
 
+/** @deprecated Prefer `roomTypeKeys.list` */
 export const roomTypesQueryKey = (page = 1, size = 100) =>
-  ['room-types', { page, size }] as const
-
-export const useRoomTypes = (page = 1, size = 100) =>
-  useQuery({
-    queryKey: roomTypesQueryKey(page, size),
-    queryFn: () => roomTypesApi.list(page, size),
-  })
+  roomTypeKeys.list(page, size)
