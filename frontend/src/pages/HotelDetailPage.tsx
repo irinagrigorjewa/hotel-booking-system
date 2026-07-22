@@ -3,7 +3,8 @@ import { isAxiosError } from 'axios'
 import { useTranslation } from 'react-i18next'
 import { Link as RouterLink, useParams } from 'react-router-dom'
 
-import { useHotel } from '../hooks/useHotel'
+import { useHotel } from '@entities/hotel/api/queries/useHotel'
+
 import {
   HotelDetailGallery,
   HotelDetailHeader,

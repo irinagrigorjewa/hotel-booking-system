@@ -1,16 +1,19 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 
+import { hotelKeys } from '@entities/hotel/api/keys'
+
 import { favoritesApi } from '../api/favorites'
-import { hotelQueryKey } from './useHotel'
 
 export const useFavoriteMutations = () => {
   const queryClient = useQueryClient()
 
   const invalidate = async (hotelId?: number): Promise<void> => {
     await queryClient.invalidateQueries({ queryKey: ['favorites'] })
-    await queryClient.invalidateQueries({ queryKey: ['hotels'] })
+    await queryClient.invalidateQueries({ queryKey: hotelKeys.all })
     if (hotelId !== undefined) {
-      await queryClient.invalidateQueries({ queryKey: hotelQueryKey(hotelId) })
+      await queryClient.invalidateQueries({
+        queryKey: hotelKeys.detail(hotelId),
+      })
     }
   }
 

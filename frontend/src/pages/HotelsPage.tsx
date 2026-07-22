@@ -3,11 +3,12 @@ import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link as RouterLink } from 'react-router-dom'
 
+import { useHotels } from '@entities/hotel/api/queries/useHotels'
+import { useDebouncedValue } from '@shared/lib/useDebouncedValue'
+
 import { HotelCatalogState } from '../components/hotels/HotelCatalogState'
 import { HotelFilters } from '../components/hotels/HotelFilters'
-import { useDebouncedValue } from '@shared/lib/useDebouncedValue'
 import { useHotelListSearchParams } from '../hooks/useHotelListSearchParams'
-import { useHotels } from '../hooks/useHotels'
 
 export const HotelsPage = () => {
   const { t } = useTranslation()

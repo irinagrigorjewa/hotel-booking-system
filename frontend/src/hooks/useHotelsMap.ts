@@ -1,12 +1,7 @@
-import { useQuery } from '@tanstack/react-query'
+export { useHotelsMap } from '@entities/hotel/api/queries/useHotelsMap'
+export { hotelKeys } from '@entities/hotel/api/keys'
 
-import { hotelsApi } from '../api/hotels'
+import { hotelKeys } from '@entities/hotel/api/keys'
 
-export const hotelsMapQueryKey = (city?: string) =>
-  ['hotels-map', city ?? ''] as const
-
-export const useHotelsMap = (city?: string) =>
-  useQuery({
-    queryKey: hotelsMapQueryKey(city),
-    queryFn: () => hotelsApi.getMap(city),
-  })
+/** @deprecated Prefer `hotelKeys.map` */
+export const hotelsMapQueryKey = (city?: string) => hotelKeys.map(city)

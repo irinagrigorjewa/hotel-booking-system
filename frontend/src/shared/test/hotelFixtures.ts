@@ -1,4 +1,8 @@
-import type { HotelDetail, HotelListItem, HotelPage } from '../../types/hotel'
+import type {
+  HotelDetail,
+  HotelListItem,
+  HotelPage,
+} from '@entities/hotel/model/types'
 
 export const createHotelListItem = (
   overrides: Partial<HotelListItem> = {},

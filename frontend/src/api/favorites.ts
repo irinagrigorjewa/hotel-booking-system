@@ -1,5 +1,5 @@
 import { apiClient } from '@shared/api/client'
-import type { HotelPage } from '../types/hotel'
+import type { HotelPage } from '@entities/hotel/model/types'
 
 export interface FavoriteCreated {
   hotel_id: number
