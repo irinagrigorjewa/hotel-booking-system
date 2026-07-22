@@ -13,12 +13,12 @@ import {
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import { AdminErrorAlert } from '../components/admin/shared/AdminErrorAlert'
-import { AdminPageHeader } from '../components/admin/shared/AdminPageHeader'
+import { AdminErrorAlert } from '@shared/ui/AdminErrorAlert'
+import { AdminPageHeader } from '@shared/ui/AdminPageHeader'
 import { BOOKING_STATUS_OPTIONS } from '@shared/config/domainOptions'
 import { useNotify } from '@app/providers/NotificationProvider'
-import { useBookingMutations } from '../hooks/useBookingMutations'
-import { useBookings } from '../hooks/useBookings'
+import { useBookingMutations } from '@entities/booking/api/mutations/useBookingMutations'
+import { useBookings } from '@entities/booking/api/queries/useBookings'
 import type { BookingStatus } from '../types/booking'
 import {
   ALLOWED_STATUS_TRANSITIONS,

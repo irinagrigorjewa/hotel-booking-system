@@ -6,7 +6,7 @@ import { I18nextProvider } from 'react-i18next'
 import { App } from '@app/App'
 import { NotificationProvider } from '@app/providers/NotificationProvider'
 import { QueryProvider } from '@app/providers/QueryProvider'
-import { AuthProvider } from '../context/AuthContext'
+import { AuthProvider } from '@features/auth/ui/AuthContext'
 import i18n from '@shared/i18n'
 import { theme } from '@shared/theme/theme'
 

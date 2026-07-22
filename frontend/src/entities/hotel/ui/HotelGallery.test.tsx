@@ -3,7 +3,7 @@ import { beforeEach, describe, expect, it } from 'vitest'
 
 import { setAppLanguage } from '@shared/i18n'
 import { renderWithProviders } from '@shared/test/renderWithProviders'
-import type { HotelImage } from '../../types/hotel'
+import type { HotelImage } from '@entities/hotel/model/types'
 import { HotelGallery } from './HotelGallery'
 
 const images: HotelImage[] = [

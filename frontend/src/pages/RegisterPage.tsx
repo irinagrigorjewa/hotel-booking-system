@@ -4,7 +4,7 @@ import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { Link as RouterLink, useNavigate } from 'react-router-dom'
 
-import { useAuth } from '../context/AuthContext'
+import { useAuth } from '@features/auth/ui/AuthContext'
 import { getApiErrorMessage } from '@shared/lib/getApiErrorMessage'
 
 interface RegisterFormValues {

@@ -1,8 +1,9 @@
 import { render, screen, waitFor } from '@testing-library/react'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
+import type { TokenPair } from '@entities/user/model/auth-types'
+import type { User } from '@entities/user/model/types'
 import { tokenStorage } from '@shared/auth/tokenStorage'
-import type { TokenPair, User } from '../types/auth'
 import { AuthProvider, useAuth } from './AuthContext'
 
 const user: User = {
@@ -21,13 +22,19 @@ const tokens: TokenPair = {
 }
 
 const authApi = vi.hoisted(() => ({
-  getCurrentUser: vi.fn<() => Promise<User>>(),
+  getMe: vi.fn<() => Promise<User>>(),
 }))
 
-vi.mock('../api/auth', () => ({
-  getCurrentUser: authApi.getCurrentUser,
+vi.mock('@entities/user/api/requests/getMe', () => ({
+  getMe: authApi.getMe,
+}))
+vi.mock('@entities/user/api/requests/login', () => ({
   login: vi.fn(),
+}))
+vi.mock('@entities/user/api/requests/logout', () => ({
   logout: vi.fn(),
+}))
+vi.mock('@entities/user/api/requests/register', () => ({
   register: vi.fn(),
 }))
 
@@ -42,14 +49,14 @@ const AuthState = () => {
 }
 
 afterEach(() => {
-  authApi.getCurrentUser.mockReset()
+  authApi.getMe.mockReset()
   window.localStorage.clear()
 })
 
 describe('AuthContext', () => {
   it('restores the user from saved tokens', async () => {
     tokenStorage.save(tokens)
-    authApi.getCurrentUser.mockResolvedValue(user)
+    authApi.getMe.mockResolvedValue(user)
 
     render(
       <AuthProvider>

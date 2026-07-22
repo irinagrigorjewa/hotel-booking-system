@@ -11,7 +11,7 @@ const auth = vi.hoisted(() => ({
 }))
 const navigate = vi.hoisted(() => vi.fn())
 
-vi.mock('../context/AuthContext', () => ({
+vi.mock('@features/auth/ui/AuthContext', () => ({
   useAuth: () => auth,
 }))
 

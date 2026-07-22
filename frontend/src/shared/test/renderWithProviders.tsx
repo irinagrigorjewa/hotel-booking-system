@@ -6,7 +6,7 @@ import { I18nextProvider } from 'react-i18next'
 import { MemoryRouter } from 'react-router-dom'
 
 import { NotificationProvider } from '@app/providers/NotificationProvider'
-import { AuthProvider } from '../../context/AuthContext'
+import { AuthProvider } from '@features/auth/ui/AuthContext'
 import i18n from '@shared/i18n'
 import { theme } from '@shared/theme/theme'
 

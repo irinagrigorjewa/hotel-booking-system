@@ -1,8 +1,8 @@
 import { screen } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
 
-import type { User } from '../../types/auth'
-import type { Room } from '../../types/room'
+import type { Room } from '@entities/room/model/types'
+import type { User } from '@entities/user/model/types'
 import { renderWithProviders } from '@shared/test/renderWithProviders'
 import { RoomList } from './RoomList'
 
@@ -10,8 +10,8 @@ const auth = vi.hoisted(() => ({
   user: null as User | null,
 }))
 
-vi.mock('../../context/AuthContext', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('../../context/AuthContext')>()
+vi.mock('@features/auth/ui/AuthContext', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@features/auth/ui/AuthContext')>()
 
   return {
     ...actual,

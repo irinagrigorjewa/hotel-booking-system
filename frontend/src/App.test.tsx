@@ -4,7 +4,7 @@ import { render, screen, waitFor } from '@testing-library/react'
 import { afterEach, describe, expect, it } from 'vitest'
 
 import { App } from '@app/App'
-import { AuthProvider } from './context/AuthContext'
+import { AuthProvider } from '@features/auth/ui/AuthContext'
 import { NotificationProvider } from '@app/providers/NotificationProvider'
 import { theme } from '@shared/theme/theme'
 

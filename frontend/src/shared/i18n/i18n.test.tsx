@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event'
 import { Route, Routes } from 'react-router-dom'
 import { beforeEach, describe, expect, it } from 'vitest'
 
-import { LanguageSwitcher } from '../../components/LanguageSwitcher'
+import { LanguageSwitcher } from '@features/language-switch/ui/LanguageSwitcher'
 import { I18N_STORAGE_KEY, setAppLanguage } from '@shared/i18n'
 import { PublicLayout } from '@app/layouts/PublicLayout'
 import { renderWithProviders } from '@shared/test/renderWithProviders'

@@ -2,7 +2,7 @@ import { AppBar, Box, Container, Paper, Toolbar, Typography } from '@mui/materia
 import { useTranslation } from 'react-i18next'
 import { Link as RouterLink, Outlet } from 'react-router-dom'
 
-import { LanguageSwitcher } from '../../components/LanguageSwitcher'
+import { LanguageSwitcher } from '@features/language-switch/ui/LanguageSwitcher'
 
 export const AuthLayout = () => {
   const { t } = useTranslation()

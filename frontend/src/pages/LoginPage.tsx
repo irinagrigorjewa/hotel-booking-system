@@ -4,20 +4,13 @@ import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { Link as RouterLink, useLocation, useNavigate } from 'react-router-dom'
 
-import { useAuth } from '../context/AuthContext'
+import { getReturnUrl } from '@features/auth/model/getReturnUrl'
+import { useAuth } from '@features/auth/ui/AuthContext'
 import { getApiErrorMessage } from '@shared/lib/getApiErrorMessage'
 
 interface LoginFormValues {
   email: string
   password: string
-}
-
-const getReturnUrl = (search: string): string => {
-  const returnUrl = new URLSearchParams(search).get('returnUrl')
-
-  return returnUrl?.startsWith('/') && !returnUrl.startsWith('//')
-    ? returnUrl
-    : '/'
 }
 
 export const LoginPage = () => {

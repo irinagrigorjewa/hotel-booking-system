@@ -19,11 +19,11 @@ import type {
   HotelWritePayload,
 } from '@entities/hotel/model/types'
 
-import { HotelForm } from '../components/admin/hotels/HotelForm'
-import { HotelImageUpload } from '../components/admin/hotels/HotelImageUpload'
-import { AdminErrorAlert } from '../components/admin/shared/AdminErrorAlert'
-import { AdminFormSection } from '../components/admin/shared/AdminFormSection'
-import { AdminPageHeader } from '../components/admin/shared/AdminPageHeader'
+import { HotelForm } from '@features/admin-hotel/ui/HotelForm'
+import { HotelImageUpload } from '@features/admin-hotel/ui/HotelImageUpload'
+import { AdminErrorAlert } from '@shared/ui/AdminErrorAlert'
+import { AdminFormSection } from '@shared/ui/AdminFormSection'
+import { AdminPageHeader } from '@shared/ui/AdminPageHeader'
 
 export const AdminHotelsPage = () => {
   const { t } = useTranslation()
