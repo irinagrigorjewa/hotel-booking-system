@@ -193,13 +193,14 @@ flowchart TB
 
 ### 5.3.1. Routing
 
-- Маршруты объявляются в `src/routes/` и подключаются в `App.tsx`.
-- Layouts: публичный (Navbar + i18n switch), auth-required, admin-only.
+- Маршруты объявляются в `app/router/AppRoutes.tsx` (guards рядом: `RequireAuth`, `RequireAdmin`, `GuestOnly`).
+- Layouts: `app/layouts` — публичный (`PublicLayout` + header widget / i18n switch), auth-required, admin-only.
 - Guards: проверка наличия сессии и `role === ADMIN` для `/admin/*`.
 - Публичные: `/`, `/hotels`, `/hotels/map`, `/hotels/:id`, `/login`, `/register`.
 - Auth: `/bookings/new`, `/favorites`, `/profile`.
 - Admin: `/admin`, `/admin/users|hotels|room-types|rooms|bookings|reviews`.
 - Fallback `*` → 404.
+- Экраны: `pages/<route>/ui/*Page.tsx` (напр. `pages/hotel-detail/ui/HotelDetailPage.tsx`).
 
 ```mermaid
 flowchart LR
@@ -215,35 +216,40 @@ flowchart LR
 
 ### 5.3.2. State management
 
-| Состояние    | Где хранится                                                       | Назначение                                        |
-| ------------ | ------------------------------------------------------------------ | ------------------------------------------------- |
-| Auth session | `context/AuthContext` (+ tokens в `localStorage` по умолчанию MVP) | user, login/logout, hydrate on boot               |
-| Server cache | TanStack Query                                                     | списки отелей, детали, брони, отзывы, избранное   |
-| Form state   | React Hook Form                                                    | login/register, booking dates, admin CRUD, review |
-| UI ephemeral | локальный state компонента                                         | модалки, выбранный маркер, toasts                 |
-| Language     | i18next + `localStorage` key `i18n_lang`                           | ru/en                                             |
+| Состояние    | Где хранится                                                                 | Назначение                                        |
+| ------------ | ---------------------------------------------------------------------------- | ------------------------------------------------- |
+| Auth session | `features/auth/ui/AuthContext` (+ tokens в `shared/auth/tokenStorage`)       | user, login/logout, hydrate on boot               |
+| Server cache | TanStack Query (`entities/*/api/queries|mutations`)                          | списки отелей, детали, брони, отзывы, избранное   |
+| Form state   | React Hook Form (часто в `features/*/ui` или page)                           | login/register, booking dates, admin CRUD, review |
+| UI ephemeral | локальный state компонента                                                   | модалки, выбранный маркер, toasts                 |
+| Language     | `shared/i18n` + `localStorage` key `i18n_lang`                               | ru/en                                             |
 
 **Правило:** серверные данные не дублировать в Context «на всякий случай»; Context — для auth и кросс-дерева UI-сессии.
 
 ### 5.3.3. Data fetching
 
 ```
-pages / components
+pages / widgets / features
         │
         ▼
-   hooks/ (useHotels, useBooking, …)  — TanStack Query
+   entities/*/api/queries|mutations  — TanStack Query
         │
         ▼
-   api/ (Axios clients: auth, hotels, rooms, …)
+   entities/*/api/requests  — доменные HTTP-вызовы
+        │
+        ▼
+   shared/api/client (Axios + interceptors)
         │
         ▼
    Backend /api/v1
 ```
 
-- Все HTTP-вызовы — только из `src/api/` (компоненты **не** импортируют axios напрямую).
-- Хуки оборачивают query/mutation keys, инвалидацию кэша после create/update/delete.
+**Импорты только вниз:** `app` → `pages` → `widgets` → `features` → `entities` → `shared`.
+
+- HTTP-транспорт — `shared/api/client`; доменные вызовы — `entities/*/api/requests` (компоненты **не** импортируют axios напрямую).
+- Query/mutation keys, инвалидация кэша — рядом с entity API (`entities/*/api/keys.ts`, `queries/`, `mutations/`).
 - Пагинация: `page`, `size` из query-параметров API.
-- Ошибки: разбор `detail` (строка или validation array) → toast + i18n mapping.
+- Ошибки: разбор `detail` (строка или validation array) → toast + i18n mapping (`shared/lib/getApiErrorMessage`).
 
 ### 5.3.4. Auth flow
 
@@ -288,11 +294,11 @@ sequenceDiagram
 
 ### 5.3.5. i18n
 
-- Инициализация: `src/i18n/index.ts`.
-- Словари: `src/i18n/locales/ru.json`, `en.json`.
+- Инициализация: `shared/i18n/index.ts`.
+- Словари: `shared/i18n/locales/ru.json`, `en.json`.
 - Все пользовательские строки UI — ключи словарей (Navbar, формы, ошибки валидации RHF, empty states, admin).
 - Язык по умолчанию: `ru`; иначе значение из `localStorage` (`i18n_lang`).
-- Переключатель **RU | EN** в Navbar на всех layout-экранах.
+- Переключатель **RU | EN** (`features/language-switch`) в header на всех layout-экранах.
 - Сообщения API: известные `detail` → ключи i18n; неизвестные — показывать `detail` как есть.
 
 ### 5.3.6. Map (react-leaflet)
@@ -331,38 +337,48 @@ hotel-booking-system/
 | `README.md`                | Онбординг: Compose, seed, как заливать фото                                                |
 | `.github/workflows/ci.yml` | Quality gates на push/PR в main                                                            |
 
-### 5.4.2. Frontend `frontend/src/`
+### 5.4.2. Frontend `frontend/src/` (FSD)
+
+Импорты **только вниз:** `app` → `pages` → `widgets` → `features` → `entities` → `shared`.
 
 ```
 src/
-  api/           # HTTP-клиенты по доменам
-  components/    # Переиспользуемые UI-компоненты
-  pages/         # Страницы маршрутов
-  layouts/       # Оболочки (public / auth / admin)
-  context/       # AuthContext
-  hooks/         # TanStack Query и UI-хуки
-  routes/        # Определение маршрутов и guards
-  i18n/          # i18next + locales/ru.json, en.json
-  utils/         # Чистые хелперы (даты, деньги, error map)
-  assets/        # Статика фронта (иконки, placeholder)
-  App.tsx
-  main.tsx
+  app/              # bootstrap: main, App, providers, layouts, router
+    layouts/        # PublicLayout, AuthLayout
+    providers/      # QueryProvider, NotificationProvider
+    router/         # AppRoutes, RequireAuth, RequireAdmin, GuestOnly
+  pages/            # экраны маршрутов: <route>/ui/*Page.tsx
+    home|hotels|hotels-map|hotel-detail|booking-new|favorites|…
+    login|register|profile|not-found|admin/{home,users,hotels,…}
+  widgets/          # составные блоки: header, hotel-catalog, hotel-detail, hotels-map, profile
+  features/         # сценарии: auth, favorite-toggle, hotel-filters, booking-create, admin-*, …
+  entities/         # домены: hotel, room, room-type, booking, review, favorite, user, image
+    <entity>/
+      api/          # keys, requests/, queries/, mutations/
+      model/        # типы, правила
+      ui/           # презентация сущности (опционально)
+      lib/          # чистые хелперы сущности (опционально)
+  shared/           # api/client, lib, ui, i18n, theme, auth, config, test
+  App.test.tsx
+  vite-env.d.ts
 ```
 
-| Каталог / файл | Назначение                                                                                                            |
-| -------------- | --------------------------------------------------------------------------------------------------------------------- |
-| `api/`         | `auth`, `hotels`, `rooms`, `bookings`, `users`, `reviews`, `favorites`, `images`; общий Axios instance + interceptors |
-| `components/`  | Navbar, HotelCard, ReviewList, ImageGallery, MapView, формы-виджеты без прямого axios                                 |
-| `pages/`       | Экраны из раздела UI-маршрутов                                                                                        |
-| `layouts/`     | Общий chrome: header, outlet, i18n switch                                                                             |
-| `context/`     | Сессия пользователя, методы login/logout/refresh coordination                                                         |
-| `hooks/`       | `useAuth`, `useHotelsQuery`, `useCreateBooking`, …                                                                    |
-| `routes/`      | Route objects, `ProtectedRoute`, `AdminRoute`                                                                         |
-| `i18n/`        | Конфиг и словари                                                                                                      |
-| `utils/`       | Форматирование nights/total, парсинг API errors                                                                       |
-| `assets/`      | Локальные изображения/стили, не путать с backend `/media`                                                             |
-| `App.tsx`      | Провайдеры (QueryClient, Theme, Auth, i18n) + router                                                                  |
-| `main.tsx`     | Точка входа Vite                                                                                                      |
+Aliases (tsconfig): `@app/*`, `@pages/*`, `@widgets/*`, `@features/*`, `@entities/*`, `@shared/*`.
+
+| Каталог / файл | Назначение |
+| -------------- | ---------- |
+| `app/` | Точка входа, провайдеры, layouts, маршрутная таблица и guards |
+| `pages/<route>/ui/` | Тонкие экраны: композиция widgets/features без axios |
+| `widgets/` | Крупные UI-блоки экрана (каталог, деталь отеля, карта, профиль, header) |
+| `features/` | Пользовательские сценарии (auth session, фильтры, toggle избранного, admin-формы) |
+| `entities/*/api/` | HTTP requests + TanStack Query/Mutation по домену |
+| `shared/api/client` | Единый Axios instance + refresh interceptors |
+| `shared/lib` | Чистые хелперы (`mediaUrl`, booking dates, API error message, …) |
+| `shared/i18n` | i18next + словари ru/en |
+| `shared/auth` | `tokenStorage` |
+| `shared/ui` | Переиспользуемые примитивы UI без доменной логики |
+
+Плоских каталогов `src/api/`, `src/hooks/`, `src/components/`, `src/context/` как primary layout **нет** — новый код класть в слои FSD выше.
 
 ### 5.4.3. Backend `backend/app/`
 
@@ -483,16 +499,17 @@ flowchart LR
 
 ### 5.7.2. Frontend
 
-| Модуль                | Отвечает за                      | Не отвечает за                                           |
-| --------------------- | -------------------------------- | -------------------------------------------------------- |
-| `api/`                | Транспорт и DTO вызовов          | JSX, бизнес-дублирование правил сервера                  |
-| `hooks/`              | Кэш Query, инвалидация           | Прямой DOM / axios instance setup (кроме тонкой обёртки) |
-| `context/AuthContext` | Сессия                           | Списки отелей                                            |
-| `pages/`              | Сборка экрана                    | Сырой SQL / секреты                                      |
-| `components/`         | Презентация и локальный UI-state | Политики ролей сервера (только отображение/disable)      |
-| `routes/`             | URL ↔ page + guards              | Fetch данных                                             |
-| `i18n/`               | Локализация UI                   | Контент описаний отелей в БД                             |
-| Map components        | Маркеры, навигация на деталь     | Геокодинг адресов                                        |
+| Модуль | Отвечает за | Не отвечает за |
+| ------ | ----------- | -------------- |
+| `shared/api/client` | Axios instance, interceptors | JSX, доменные URL по сущностям |
+| `entities/*/api` | Requests + Query/Mutation keys/инвалидация | Сборка экрана, axios setup |
+| `features/auth` | Сессия (`AuthContext`) | Списки отелей |
+| `features/*` | Пользовательские сценарии (фильтры, toggle, admin-формы) | Сырой SQL / секреты |
+| `pages/` | Сборка экрана маршрута | Прямой axios / секреты |
+| `widgets/` | Составной UI блока экрана | Политики ролей сервера (только отображение/disable) |
+| `app/router` | URL ↔ page + guards | Fetch данных |
+| `shared/i18n` | Локализация UI | Контент описаний отелей в БД |
+| Map UI (`entities/hotel`, `widgets/hotels-map`) | Маркеры, навигация на деталь | Геокодинг адресов |
 
 ### 5.7.3. Сквозные границы
 
@@ -523,7 +540,7 @@ flowchart LR
    Проверка в `core.deps` + service; не размазывать `if role` по repositories.
 
 7. **Усложнение фронта**  
-   Новые серверные фичи — новый модуль в `api/` + hook; общий Axios/auth не копировать. Глобальный store (Redux и т.п.) не вводить, пока не исчерпан Context + Query.
+   Новые серверные фичи — `entities/<domain>/api` (requests + query/mutation) и при необходимости `features/<scenario>`; общий Axios/`shared/api/client` не копировать. Глобальный store (Redux и т.п.) не вводить, пока не исчерпан AuthContext + Query. Импорты только вниз по FSD.
 
 8. **BFF / агрегирующие эндпоинты**  
    Допустимы как methods в service, собирающие несколько repository-вызовов; не переносить join-логику на фронт несколькими обязательными водопадными запросами без необходимости.
@@ -534,7 +551,8 @@ flowchart LR
 10. **Запрещённые shortcut’ы**
     - `from app.models import …` внутри router для update полей
     - `session.execute` в service
-    - axios в `pages/` / `components/`
+    - axios в `pages/` / `widgets/` / `features/*/ui` (только через `entities` / `shared/api`)
+    - импорт «вверх» по FSD (`entities` → `features`, `shared` → `entities`, …)
     - чтение `SECRET_KEY` / `DATABASE_URL` на фронте
 
 ---

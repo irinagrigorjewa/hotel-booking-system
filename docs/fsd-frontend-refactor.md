@@ -1,6 +1,9 @@
 # План FSD-архитектуры — Hotel Booking Frontend
 
-**Текущее состояние (на диске):** только legacy-раскладка — `api/`, `hooks/`, `components/`, `context/`, плоские `pages/`, частичный `widgets/hotel-detail/`. Каталогов `app/`, `entities/`, `features/`, `shared/` ещё нет. `main.tsx` по-прежнему подключает `context/`, `i18n/`, `theme/` по старым путям.
+> **Status (2026-07):** миграция **реализована** на ветке `batch/fsd-architecture` (Phases **0–4**). Фактическое дерево: `app/`, `pages/<route>/ui/`, `widgets/`, `features/`, `entities/`, `shared/` — см. `ls frontend/src`. Документ ниже — исторический план миграции; для актуальной раскладки ориентироваться на `docs/technical/05-architecture-stack.md` и README.
+>
+> **Residual debt:** отдельные `entities/*/ui` всё ещё импортируют `features` (нарушение FSD «только вниз»):  
+> `RoomList` → `booking-navigate`, `HotelCard` → `favorite-toggle`, `HotelReviewList` → `auth`. Исправить инверсией зависимостей (props/slots или поднятие композиции в widget/feature).
 
 ---
 

@@ -1,0 +1,86 @@
+---
+description: TypeScript/React и Python/FastAPI conventions для Hotel Booking
+alwaysApply: true
+---
+
+# Правила кода
+
+## TypeScript (frontend)
+
+- Не использовать `any`, `var`
+- `const` по умолчанию; `let` только при реальном переназначении
+- `strict: true` — типизировать явно
+
+## React
+
+- Только функциональные компоненты и хуки
+- Именованные экспорты, PascalCase: `export const HotelCard = () => { ... }`
+- Бизнес-логику выносить в хуки и stores/context, не в JSX
+- `useMemo` / `useCallback` — только при реальной необходимости
+- Компоненты небольшие и сфокусированные; один компонент — один файл
+- Не class components; не создавать компонент внутри компонента
+- Ранний return; деструктурировать props
+- Не использовать `React.FC` без необходимости
+
+## Frontend architecture (FSD)
+
+Слои и импорты только вниз: `app` → `pages` → `widgets` → `features` → `entities` → `shared`.
+
+- HTTP: Axios instance — `shared/api/client`; доменные `requests` / Query+Mutation — `entities/*/api/` (сценарии — `features/*/model`). Страницы и UI **не** импортируют axios
+- Серверные данные — TanStack Query в `entities/*/api/queries|mutations` (и feature-hooks при необходимости)
+- Auth session — `features/auth/ui/AuthContext`; токены — `shared/auth/tokenStorage`
+- Экраны — `pages/<route>/ui/`; составные блоки — `widgets/`; сценарии — `features/`
+- Формы — React Hook Form; UI — MUI; карта — react-leaflet
+- Пользовательские строки UI — ключи i18n (`shared/i18n`, `ru` / `en`), не хардкод
+- Стек и каталоги: [docs/technical/05-architecture-stack.md](../../docs/technical/05-architecture-stack.md)
+
+Не класть новый код в плоские `src/api/`, `src/hooks/`, `src/components/` — этих каталогов как primary layout больше нет.
+
+## Backend (Python / FastAPI)
+
+Слои (зависимости только вниз):
+
+```
+routers → services → repositories → models
+schemas (Pydantic v2) — DTO для HTTP
+core / database — config, JWT, session
+```
+
+- Бизнес-логика **только** в `services` (overlap, total_price, refresh rotation, лимиты фото, 409 на delete)
+- SQL / SQLAlchemy queries **только** в `repositories`
+- Routers тонкие: parse → service → HTTP status; без сырого SQL
+- Schemas не импортируют ORM models
+- Типизировать явно; не использовать `Any` там, где есть Pydantic schema
+- Миграции схемы — Alembic, не ad-hoc SQL из приложения
+
+## Доменные инварианты (чеклист)
+
+Детали: [docs/technical/03-domain-model.md](../../docs/technical/03-domain-model.md), API — [04-api-contract.md](../../docs/technical/04-api-contract.md).
+
+- Booking: overlap с PENDING/CONFIRMED → 409; check_out exclusive; nights 1–30
+- Auth: refresh hash в БД; rotation; logout revoke
+- Review: один отзыв на пару (user, hotel)
+- Images: MIME JPEG/PNG/WebP, размер ≤ MAX, ≤ 10 на сущность; URL `/media/...`
+- Delete hotel/room с активными бронями → 409
+
+## Components
+
+- Один компонент — одна задача; UI без бизнес-логики
+- Минимальные props; не передавать лишнее
+
+## Ошибки
+
+- Не игнорировать ошибки; понятные сообщения; не подавлять исключения
+
+## Комментарии
+
+- Не комментировать очевидное; комментарий только для неочевидной причины решения
+
+## Чего не делать
+
+- Не вызывать axios / fetch из компонентов
+- Не добавлять зависимости без необходимости
+- Не коммитить `.env`, ключи, credentials, бинарники `uploads/`
+- Не оставлять `console.log` (только `console.warn` / `console.error`)
+- Не создавать markdown-файлы без запроса
+- Не выходить за MVP scope (email, платежи, S3/CDN, геокодинг) — см. `05-docs-source.mdc`
