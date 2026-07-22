@@ -1,5 +1,0 @@
-export { login } from '@entities/user/api/requests/login'
-export { logout } from '@entities/user/api/requests/logout'
-export { refresh } from '@entities/user/api/requests/refresh'
-export { register } from '@entities/user/api/requests/register'
-export { getMe as getCurrentUser } from '@entities/user/api/requests/getMe'

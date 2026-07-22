@@ -2,7 +2,7 @@ import { render, screen } from '@testing-library/react'
 import { MemoryRouter, Route, Routes, useLocation } from 'react-router-dom'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
-import type { User } from '../../types/auth'
+import type { User } from '@entities/user/model/types'
 import { AppRoutes } from './AppRoutes'
 import { GuestOnly } from './GuestOnly'
 import { RequireAdmin } from './RequireAdmin'

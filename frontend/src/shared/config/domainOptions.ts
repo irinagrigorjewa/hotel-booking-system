@@ -1,4 +1,4 @@
-import type { BookingStatus } from '../../types/booking'
+import type { BookingStatus } from '@entities/booking/model/types'
 
 export const STAR_OPTIONS = [1, 2, 3, 4, 5] as const
 

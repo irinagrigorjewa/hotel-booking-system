@@ -1,4 +1,4 @@
-import type { BookingStatus } from '../../types/booking'
+import type { BookingStatus } from '@entities/booking/model/types'
 
 /** Mirrors backend `_ALLOWED_TRANSITIONS` in services/bookings.py */
 export const ALLOWED_STATUS_TRANSITIONS: Record<

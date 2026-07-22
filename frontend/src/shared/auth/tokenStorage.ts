@@ -1,4 +1,4 @@
-import type { TokenPair } from '../../types/auth'
+import type { TokenPair } from '@entities/user/model/auth-types'
 
 const storageKey = 'auth_tokens'
 

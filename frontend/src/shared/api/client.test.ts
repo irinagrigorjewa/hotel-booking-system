@@ -3,7 +3,7 @@ import { http, HttpResponse } from 'msw'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { tokenStorage } from '@shared/auth/tokenStorage'
-import type { TokenPair } from '../../types/auth'
+import type { TokenPair } from '@entities/user/model/auth-types'
 import { server } from '@shared/test/server'
 import { createApiClient } from '@shared/api/client'
 
