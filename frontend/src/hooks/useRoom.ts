@@ -1,12 +1,7 @@
-import { useQuery } from '@tanstack/react-query'
+export { useRoom } from '@entities/room/api/queries/useRoom'
+export { roomKeys } from '@entities/room/api/keys'
 
-import { roomsApi } from '../api/rooms'
+import { roomKeys } from '@entities/room/api/keys'
 
-export const roomQueryKey = (roomId: number) => ['room', roomId] as const
-
-export const useRoom = (roomId: number) =>
-  useQuery({
-    queryKey: roomQueryKey(roomId),
-    queryFn: () => roomsApi.getById(roomId),
-    enabled: Number.isInteger(roomId) && roomId > 0,
-  })
+/** @deprecated Prefer `roomKeys.detail` */
+export const roomQueryKey = (roomId: number) => roomKeys.detail(roomId)

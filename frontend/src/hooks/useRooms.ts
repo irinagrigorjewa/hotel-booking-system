@@ -1,13 +1,8 @@
-import { useQuery } from '@tanstack/react-query'
+export { useRooms } from '@entities/room/api/queries/useRooms'
+export { roomKeys } from '@entities/room/api/keys'
 
-import { roomsApi } from '../api/rooms'
-import type { RoomListParams } from '../types/room'
+import { roomKeys } from '@entities/room/api/keys'
+import type { RoomListParams } from '@entities/room/model/types'
 
-export const roomsQueryKey = (params: RoomListParams) =>
-  ['rooms', params] as const
-
-export const useRooms = (params: RoomListParams) =>
-  useQuery({
-    queryKey: roomsQueryKey(params),
-    queryFn: () => roomsApi.list(params),
-  })
+/** @deprecated Prefer `roomKeys.list` */
+export const roomsQueryKey = (params: RoomListParams) => roomKeys.list(params)
