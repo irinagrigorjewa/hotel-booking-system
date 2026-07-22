@@ -6,7 +6,7 @@ import {
   useState,
   type PropsWithChildren,
 } from 'react'
-import i18n from '../i18n'
+import i18n from '@shared/i18n'
 
 import {
   getCurrentUser,
@@ -14,7 +14,7 @@ import {
   logout as logoutRequest,
   register as registerRequest,
 } from '../api/auth'
-import { tokenStorage } from '../auth/tokenStorage'
+import { tokenStorage } from '@shared/auth/tokenStorage'
 import type { LoginRequest, RegisterRequest, TokenPair, User } from '../types/auth'
 
 interface AuthContextValue {

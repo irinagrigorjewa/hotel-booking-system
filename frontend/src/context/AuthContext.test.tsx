@@ -1,7 +1,7 @@
 import { render, screen, waitFor } from '@testing-library/react'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
-import { tokenStorage } from '../auth/tokenStorage'
+import { tokenStorage } from '@shared/auth/tokenStorage'
 import type { TokenPair, User } from '../types/auth'
 import { AuthProvider, useAuth } from './AuthContext'
 

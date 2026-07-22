@@ -11,7 +11,7 @@ import { useTranslation } from 'react-i18next'
 import { Link as RouterLink } from 'react-router-dom'
 
 import type { HotelListItem } from '../../types/hotel'
-import { mediaUrl } from '../../utils/mediaUrl'
+import { mediaUrl } from '@shared/lib/mediaUrl'
 import { FavoriteButton } from './FavoriteButton'
 
 interface HotelCardProps {

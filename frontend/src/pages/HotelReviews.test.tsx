@@ -3,7 +3,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { reviewsApi } from '../api/reviews'
 import type { User } from '../types/auth'
-import { renderWithProviders } from '../test/renderWithProviders'
+import { renderWithProviders } from '@shared/test/renderWithProviders'
 import { HotelReviews } from '../components/hotels/HotelReviews'
 
 const auth = vi.hoisted(() => ({

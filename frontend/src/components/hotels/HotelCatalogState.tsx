@@ -1,7 +1,7 @@
 import { Alert, Box, Button, Grid, Skeleton, Typography } from '@mui/material'
 import { useTranslation } from 'react-i18next'
 
-import { SKELETON_CARD_KEYS } from '../../constants/domainOptions'
+import { SKELETON_CARD_KEYS } from '@shared/config/domainOptions'
 import type { HotelListItem } from '../../types/hotel'
 import { HotelCard } from './HotelCard'
 

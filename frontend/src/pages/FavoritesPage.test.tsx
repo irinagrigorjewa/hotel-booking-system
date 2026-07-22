@@ -2,8 +2,8 @@ import { screen } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
 
 import type { User } from '../types/auth'
-import { favoriteHandlers, server } from '../test/server'
-import { renderWithProviders } from '../test/renderWithProviders'
+import { favoriteHandlers, server } from '@shared/test/server'
+import { renderWithProviders } from '@shared/test/renderWithProviders'
 import { FavoritesPage } from './FavoritesPage'
 
 vi.mock('../context/AuthContext', async (importOriginal) => {

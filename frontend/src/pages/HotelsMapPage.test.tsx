@@ -1,8 +1,8 @@
 import { screen } from '@testing-library/react'
 import { describe, expect, it } from 'vitest'
 
-import { hotelHandlers, server } from '../test/server'
-import { renderWithProviders } from '../test/renderWithProviders'
+import { hotelHandlers, server } from '@shared/test/server'
+import { renderWithProviders } from '@shared/test/renderWithProviders'
 import { HotelsMapPage } from './HotelsMapPage'
 
 describe('HotelsMapPage', () => {

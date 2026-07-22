@@ -4,7 +4,7 @@ import type {
   TokenPair,
   User,
 } from '../types/auth'
-import { apiClient } from './client'
+import { apiClient } from '@shared/api/client'
 
 const withAuthorization = (accessToken: string) => ({
   headers: {

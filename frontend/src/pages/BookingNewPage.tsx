@@ -11,10 +11,10 @@ import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 
-import { useNotify } from '../context/NotificationContext'
+import { useNotify } from '@app/providers/NotificationProvider'
 import { useBookingMutations } from '../hooks/useBookingMutations'
 import { useRoom } from '../hooks/useRoom'
-import { formatMoney, nightsBetween, utcTodayIso } from '../utils/bookingDates'
+import { formatMoney, nightsBetween, utcTodayIso } from '@shared/lib/bookingDates'
 
 interface BookingFormValues {
   check_in: string

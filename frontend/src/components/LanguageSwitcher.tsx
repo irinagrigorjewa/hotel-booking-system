@@ -1,7 +1,7 @@
 import { Button, ButtonGroup } from '@mui/material'
 import { useTranslation } from 'react-i18next'
 
-import { setAppLanguage } from '../i18n'
+import { setAppLanguage } from '@shared/i18n'
 
 export const LanguageSwitcher = () => {
   const { i18n, t } = useTranslation()

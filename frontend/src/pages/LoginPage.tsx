@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next'
 import { Link as RouterLink, useLocation, useNavigate } from 'react-router-dom'
 
 import { useAuth } from '../context/AuthContext'
-import { getApiErrorMessage } from '../utils/getApiErrorMessage'
+import { getApiErrorMessage } from '@shared/lib/getApiErrorMessage'
 
 interface LoginFormValues {
   email: string

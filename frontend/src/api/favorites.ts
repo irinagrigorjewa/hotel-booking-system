@@ -1,4 +1,4 @@
-import { apiClient } from './client'
+import { apiClient } from '@shared/api/client'
 import type { HotelPage } from '../types/hotel'
 
 export interface FavoriteCreated {

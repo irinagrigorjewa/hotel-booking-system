@@ -2,7 +2,7 @@ import { Box } from '@mui/material'
 import { useTranslation } from 'react-i18next'
 
 import type { HotelImage } from '../../types/hotel'
-import { mediaUrl } from '../../utils/mediaUrl'
+import { mediaUrl } from '@shared/lib/mediaUrl'
 
 interface HotelGalleryProps {
   images: HotelImage[]

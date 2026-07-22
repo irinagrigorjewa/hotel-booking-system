@@ -5,7 +5,7 @@ import { Link as RouterLink } from 'react-router-dom'
 
 import { HotelCatalogState } from '../components/hotels/HotelCatalogState'
 import { HotelFilters } from '../components/hotels/HotelFilters'
-import { useDebouncedValue } from '../hooks/useDebouncedValue'
+import { useDebouncedValue } from '@shared/lib/useDebouncedValue'
 import { useHotelListSearchParams } from '../hooks/useHotelListSearchParams'
 import { useHotels } from '../hooks/useHotels'
 

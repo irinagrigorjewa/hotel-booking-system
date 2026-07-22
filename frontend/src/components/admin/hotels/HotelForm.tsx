@@ -3,7 +3,7 @@ import { useEffect } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 
-import { STAR_OPTIONS } from '../../../constants/domainOptions'
+import { STAR_OPTIONS } from '@shared/config/domainOptions'
 import type { HotelListItem, HotelWritePayload } from '../../../types/hotel'
 import { AdminFormActions } from '../shared/AdminFormActions'
 import { AdminFormError } from '../shared/AdminFormError'
