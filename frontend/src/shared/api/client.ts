@@ -5,7 +5,7 @@ import axios, {
 } from 'axios'
 
 import { tokenStorage } from '@shared/auth/tokenStorage'
-import type { TokenPair } from '../../types/auth'
+import type { TokenPair } from '@entities/user/model/auth-types'
 
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL ?? '/api/v1'
 const refreshRequestKey = 'refresh'

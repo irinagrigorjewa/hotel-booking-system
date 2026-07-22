@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next'
 
 import { HotelGallery } from '@entities/hotel/ui/HotelGallery'
 import { HotelMiniMap } from '@entities/hotel/ui/HotelMiniMap'
-import type { HotelImage } from '../../types/hotel'
+import type { HotelImage } from '@entities/hotel/model/types'
 
 interface HotelDetailGalleryProps {
   hotelId: number
