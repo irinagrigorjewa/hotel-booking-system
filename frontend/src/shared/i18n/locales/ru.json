@@ -68,6 +68,9 @@
     "roomTypesDeleteFailed": "Не удалось удалить тип номера",
     "roomTypesDuplicateName": "Тип номера с таким названием уже существует",
     "hotelPhotos": "Фото отеля",
+    "hotelPhotosEmpty": "Фотографии ещё не загружены",
+    "confirmDeletePhotoTitle": "Удалить фото?",
+    "confirmDeletePhoto": "Фото будет удалено без возможности восстановления.",
     "uploadPhoto": "Загрузить фото",
     "uploadPhotoFailed": "Не удалось загрузить фото",
     "form": {
@@ -279,6 +282,7 @@
     "favoriteAdded": "Добавлено в избранное",
     "favoriteRemoved": "Удалено из избранного",
     "imageUploaded": "Фото загружено",
+    "imageDeleted": "Фото удалено",
     "hotelSaved": "Отель сохранён",
     "hotelDeleted": "Отель удалён",
     "roomSaved": "Номер сохранён",
@@ -300,6 +304,7 @@
     "updateRoleFailed": "Не удалось изменить роль",
     "updateBookingFailed": "Не удалось изменить статус бронирования",
     "uploadImageFailed": "Не удалось загрузить фото",
+    "deleteImageFailed": "Не удалось удалить фото",
     "authRequestFailed": "Не удалось выполнить запрос авторизации",
     "generic": "Произошла ошибка"
   },
@@ -308,6 +313,7 @@
     "Invalid token": "Недействительный токен",
     "Forbidden": "Доступ запрещён",
     "Hotel not found": "Отель не найден",
+    "Image not found": "Фото не найдено",
     "Room not found": "Номер не найден",
     "Booking not found": "Бронирование не найдено",
     "Review not found": "Отзыв не найден",

@@ -1,4 +1,4 @@
-import { Box, Button, Typography } from '@mui/material'
+import { Box, Button } from '@mui/material'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { type ChangeEvent, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -41,8 +41,7 @@ export const HotelImageUpload = ({ hotelId }: HotelImageUploadProps) => {
 
   return (
     <Box sx={{ mt: 1 }}>
-      <Typography variant="body2">{t('admin.hotelPhotos')}</Typography>
-      <Button component="label" disabled={uploading} size="small" sx={{ mt: 1 }}>
+      <Button component="label" disabled={uploading} size="small">
         {uploading ? t('common.loading') : t('admin.uploadPhoto')}
         <input
           accept="image/jpeg,image/png,image/webp"
