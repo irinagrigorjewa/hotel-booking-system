@@ -13,6 +13,7 @@ import { useTranslation } from 'react-i18next'
 
 import { useNotify } from '@app/providers/NotificationProvider'
 import { useHotelMutations } from '@entities/hotel/api/mutations/useHotelMutations'
+import { useHotel } from '@entities/hotel/api/queries/useHotel'
 import { useHotels } from '@entities/hotel/api/queries/useHotels'
 import type {
   HotelListItem,
@@ -35,6 +36,7 @@ export const AdminHotelsPage = () => {
   const [editingHotel, setEditingHotel] = useState<HotelListItem | null>(null)
   const [formError, setFormError] = useState('')
   const [pendingDeleteId, setPendingDeleteId] = useState<number | null>(null)
+  const editingHotelDetail = useHotel(editingHotel?.id ?? 0)
 
   const isSubmitting = createHotel.isPending || updateHotel.isPending
 
@@ -106,7 +108,10 @@ export const AdminHotelsPage = () => {
               {t('admin.hotelPhotos')}
             </Typography>
             <AdminHotelImageGallery hotelId={editingHotel.id} />
-            <HotelImageUpload hotelId={editingHotel.id} />
+            <HotelImageUpload
+              hotelId={editingHotel.id}
+              imagesCount={editingHotelDetail.data?.images.length ?? 0}
+            />
           </Box>
         ) : null}
       </AdminFormSection>
