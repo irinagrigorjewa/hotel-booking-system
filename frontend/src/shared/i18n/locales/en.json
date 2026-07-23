@@ -68,6 +68,9 @@
     "roomTypesDeleteFailed": "Failed to delete room type",
     "roomTypesDuplicateName": "A room type with this name already exists",
     "hotelPhotos": "Hotel photos",
+    "hotelPhotosEmpty": "No photos uploaded yet",
+    "confirmDeletePhotoTitle": "Delete photo?",
+    "confirmDeletePhoto": "The photo will be permanently deleted.",
     "uploadPhoto": "Upload photo",
     "uploadPhotoFailed": "Failed to upload photo",
     "form": {
@@ -279,6 +282,7 @@
     "favoriteAdded": "Added to favorites",
     "favoriteRemoved": "Removed from favorites",
     "imageUploaded": "Photo uploaded",
+    "imageDeleted": "Photo deleted",
     "hotelSaved": "Hotel saved",
     "hotelDeleted": "Hotel deleted",
     "roomSaved": "Room saved",
@@ -300,6 +304,7 @@
     "updateRoleFailed": "Failed to update role",
     "updateBookingFailed": "Failed to update booking status",
     "uploadImageFailed": "Failed to upload photo",
+    "deleteImageFailed": "Failed to delete photo",
     "authRequestFailed": "Unable to complete authentication request",
     "generic": "Something went wrong"
   },
@@ -308,6 +313,7 @@
     "Invalid token": "Invalid token",
     "Forbidden": "Forbidden",
     "Hotel not found": "Hotel not found",
+    "Image not found": "Image not found",
     "Room not found": "Room not found",
     "Booking not found": "Booking not found",
     "Review not found": "Review not found",

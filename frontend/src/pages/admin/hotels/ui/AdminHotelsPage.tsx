@@ -19,6 +19,7 @@ import type {
   HotelWritePayload,
 } from '@entities/hotel/model/types'
 
+import { AdminHotelImageGallery } from '@features/admin-hotel/ui/AdminHotelImageGallery'
 import { HotelForm } from '@features/admin-hotel/ui/HotelForm'
 import { HotelImageUpload } from '@features/admin-hotel/ui/HotelImageUpload'
 import { AdminErrorAlert } from '@shared/ui/AdminErrorAlert'
@@ -99,6 +100,15 @@ export const AdminHotelsPage = () => {
           onSubmit={handleSubmit}
           submitError={formError}
         />
+        {editingHotel ? (
+          <Box sx={{ mt: 2 }}>
+            <Typography sx={{ mb: 1 }} variant="subtitle2">
+              {t('admin.hotelPhotos')}
+            </Typography>
+            <AdminHotelImageGallery hotelId={editingHotel.id} />
+            <HotelImageUpload hotelId={editingHotel.id} />
+          </Box>
+        ) : null}
       </AdminFormSection>
       <Table>
         <TableHead>
@@ -120,7 +130,6 @@ export const AdminHotelsPage = () => {
                 {hotel.latitude}, {hotel.longitude}
               </TableCell>
               <TableCell align="right">
-                <HotelImageUpload hotelId={hotel.id} />
                 <Button onClick={() => setEditingHotel(hotel)} size="small">
                   {t('common.edit')}
                 </Button>

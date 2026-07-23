@@ -2,6 +2,7 @@ import { fireEvent, screen, waitFor, within } from '@testing-library/react'
 import { http, HttpResponse } from 'msw'
 import { describe, expect, it } from 'vitest'
 
+import { createHotelDetail } from '@shared/test/hotelFixtures'
 import { renderWithProviders } from '@shared/test/renderWithProviders'
 import { server } from '@shared/test/server'
 import { AdminHotelsPage } from './AdminHotelsPage'
@@ -100,5 +101,35 @@ describe('AdminHotelsPage', () => {
     fireEvent.click(within(dialog).getByRole('button', { name: 'Подтвердить' }))
 
     expect(await screen.findByRole('alert')).toHaveTextContent('Отель удалён')
+  })
+
+  it('shows gallery and upload in edit section, not in table row', async () => {
+    server.use(
+      http.get('*/api/v1/hotels/:hotelId', () =>
+        HttpResponse.json(
+          createHotelDetail({
+            id: 1,
+            name: 'Grand Hotel',
+            images: [
+              { id: 10, url: '/media/hotels/1/a.jpg', sort_order: 0 },
+            ],
+          }),
+        ),
+      ),
+    )
+
+    renderWithProviders(<AdminHotelsPage />, {
+      initialEntries: ['/admin/hotels'],
+    })
+
+    await screen.findByText('Grand Hotel')
+
+    expect(screen.queryByAltText('Grand Hotel фото 0')).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Загрузить фото' })).not.toBeInTheDocument()
+
+    fireEvent.click(screen.getByRole('button', { name: 'Изменить' }))
+
+    expect(await screen.findByAltText('Grand Hotel фото 0')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Загрузить фото' })).toBeInTheDocument()
   })
 })
