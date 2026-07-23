@@ -104,6 +104,7 @@
     "retry": "Retry",
     "submit": "Submit",
     "delete": "Delete",
+    "confirmDelete": "Confirm",
     "cancel": "Cancel",
     "save": "Save",
     "create": "Create",

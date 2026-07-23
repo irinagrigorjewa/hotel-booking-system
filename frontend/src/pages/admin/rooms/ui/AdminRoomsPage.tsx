@@ -18,6 +18,7 @@ import { useHotels } from '@entities/hotel/api/queries/useHotels'
 import { RoomForm } from '@features/admin-room/ui/RoomForm'
 import { AdminFormSection } from '@shared/ui/AdminFormSection'
 import { AdminPageHeader } from '@shared/ui/AdminPageHeader'
+import { ConfirmDialog } from '@shared/ui/ConfirmDialog'
 import { useRoomMutations } from '@entities/room/api/mutations/useRoomMutations'
 import { useRoomTypes } from '@entities/room-type/api/queries/useRoomTypes'
 import { useRooms } from '@entities/room/api/queries/useRooms'
@@ -32,6 +33,7 @@ export const AdminRoomsPage = () => {
   const { createRoom, updateRoom, deleteRoom } = useRoomMutations()
   const [editing, setEditing] = useState<Room | null>(null)
   const [formError, setFormError] = useState('')
+  const [pendingDeleteId, setPendingDeleteId] = useState<number | null>(null)
 
   const isSubmitting = createRoom.isPending || updateRoom.isPending
 
@@ -65,6 +67,8 @@ export const AdminRoomsPage = () => {
       notifySuccess('notifications.roomDeleted')
     } catch (error) {
       notifyApiError(error, 'admin.roomsDeleteFailed')
+    } finally {
+      setPendingDeleteId(null)
     }
   }
 
@@ -125,9 +129,7 @@ export const AdminRoomsPage = () => {
                 <Button
                   color="error"
                   disabled={deleteRoom.isPending}
-                  onClick={() => {
-                    void handleDelete(room.id)
-                  }}
+                  onClick={() => setPendingDeleteId(room.id)}
                   size="small"
                 >
                   {t('common.delete')}
@@ -142,6 +144,17 @@ export const AdminRoomsPage = () => {
           {t('admin.roomsEmpty')}
         </Typography>
       ) : null}
+      <ConfirmDialog
+        isConfirming={deleteRoom.isPending}
+        onCancel={() => setPendingDeleteId(null)}
+        onConfirm={() => {
+          if (pendingDeleteId !== null) {
+            void handleDelete(pendingDeleteId)
+          }
+        }}
+        open={pendingDeleteId !== null}
+        title={t('common.confirmDelete')}
+      />
     </Box>
   )
 }
