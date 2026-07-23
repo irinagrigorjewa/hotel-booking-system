@@ -50,10 +50,7 @@ export const AdminBookingsPage = () => {
 
   return (
     <Box>
-      <AdminPageHeader
-        links={[{ label: t('admin.back'), to: '/admin' }]}
-        title={t('admin.bookingsTitle')}
-      />
+      <AdminPageHeader title={t('admin.bookingsTitle')} />
       <FormControl size="small" sx={{ mb: 2, minWidth: 180 }}>
         <InputLabel id="booking-status-filter">{t('bookings.colStatus')}</InputLabel>
         <Select

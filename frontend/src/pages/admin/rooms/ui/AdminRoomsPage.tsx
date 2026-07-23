@@ -78,13 +78,7 @@ export const AdminRoomsPage = () => {
 
   return (
     <Box>
-      <AdminPageHeader
-        links={[
-          { label: t('admin.nav.hotels'), to: '/admin/hotels' },
-          { label: t('admin.nav.roomTypes'), to: '/admin/room-types' },
-        ]}
-        title={t('admin.roomsTitle')}
-      />
+      <AdminPageHeader title={t('admin.roomsTitle')} />
       <AdminFormSection
         title={editing ? t('admin.roomsEditTitle') : t('admin.roomsNewTitle')}
       >
@@ -104,19 +98,16 @@ export const AdminRoomsPage = () => {
           roomTypes={roomTypesQuery.data?.items ?? []}
           submitError={formError}
         />
-        {editing ? (
-          <Box sx={{ mt: 2 }}>
-            <Typography sx={{ mb: 1 }} variant="subtitle2">
-              {t('admin.roomPhotos')}
-            </Typography>
-            <AdminRoomImageGallery roomId={editing.id} />
-            <RoomImageUpload
-              imagesCount={editingRoomDetail.data?.images.length ?? 0}
-              roomId={editing.id}
-            />
-          </Box>
-        ) : null}
       </AdminFormSection>
+      {editing ? (
+        <AdminFormSection title={t('admin.roomPhotos')}>
+          <AdminRoomImageGallery roomId={editing.id} />
+          <RoomImageUpload
+            imagesCount={editingRoomDetail.data?.images.length ?? 0}
+            roomId={editing.id}
+          />
+        </AdminFormSection>
+      ) : null}
       <Table>
         <TableHead>
           <TableRow>

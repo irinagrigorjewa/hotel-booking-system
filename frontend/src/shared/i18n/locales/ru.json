@@ -33,6 +33,7 @@
     "selectHotel": "Выберите отель",
     "selectHotelHint": "Выберите отель, чтобы увидеть отзывы.",
     "nav": {
+      "home": "Обзор",
       "users": "Пользователи",
       "hotels": "Отели",
       "roomTypes": "Типы номеров",
@@ -40,6 +41,8 @@
       "bookings": "Бронирования",
       "reviews": "Отзывы"
     },
+    "navLabel": "Админ-навигация",
+    "openNav": "Меню",
     "colCoordinates": "Координаты",
     "colNumber": "Номер",
     "colType": "Тип",

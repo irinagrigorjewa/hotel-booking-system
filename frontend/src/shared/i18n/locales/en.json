@@ -33,6 +33,7 @@
     "selectHotel": "Select a hotel",
     "selectHotelHint": "Select a hotel to see its reviews.",
     "nav": {
+      "home": "Overview",
       "users": "Users",
       "hotels": "Hotels",
       "roomTypes": "Room types",
@@ -40,6 +41,8 @@
       "bookings": "Bookings",
       "reviews": "Reviews"
     },
+    "navLabel": "Admin navigation",
+    "openNav": "Menu",
     "colCoordinates": "Coordinates",
     "colNumber": "Room",
     "colType": "Type",

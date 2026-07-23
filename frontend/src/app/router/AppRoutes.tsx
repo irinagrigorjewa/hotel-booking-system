@@ -1,5 +1,6 @@
 import { Route, Routes } from 'react-router-dom'
 
+import { AdminLayout } from '@app/layouts/AdminLayout'
 import { AuthLayout } from '@app/layouts/AuthLayout'
 import { PublicLayout } from '@app/layouts/PublicLayout'
 import { GuestOnly } from '@app/router/GuestOnly'
@@ -35,7 +36,16 @@ export const AppRoutes = () => (
         <Route path="favorites" element={<FavoritesPage />} />
         <Route path="profile" element={<ProfilePage />} />
       </Route>
-      <Route element={<RequireAdmin />}>
+      <Route path="*" element={<NotFoundPage />} />
+    </Route>
+    <Route element={<GuestOnly />}>
+      <Route element={<AuthLayout />}>
+        <Route path="login" element={<LoginPage />} />
+        <Route path="register" element={<RegisterPage />} />
+      </Route>
+    </Route>
+    <Route element={<RequireAdmin />}>
+      <Route element={<AdminLayout />}>
         <Route path="admin" element={<AdminHomePage />} />
         <Route path="admin/users" element={<AdminUsersPage />} />
         <Route path="admin/hotels" element={<AdminHotelsPage />} />
@@ -43,13 +53,6 @@ export const AppRoutes = () => (
         <Route path="admin/rooms" element={<AdminRoomsPage />} />
         <Route path="admin/bookings" element={<AdminBookingsPage />} />
         <Route path="admin/reviews" element={<AdminReviewsPage />} />
-      </Route>
-      <Route path="*" element={<NotFoundPage />} />
-    </Route>
-    <Route element={<GuestOnly />}>
-      <Route element={<AuthLayout />}>
-        <Route path="login" element={<LoginPage />} />
-        <Route path="register" element={<RegisterPage />} />
       </Route>
     </Route>
   </Routes>

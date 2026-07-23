@@ -50,10 +50,7 @@ export const AdminReviewsPage = () => {
 
   return (
     <Box>
-      <AdminPageHeader
-        links={[{ label: t('admin.back'), to: '/admin' }]}
-        title={t('admin.reviewsTitle')}
-      />
+      <AdminPageHeader title={t('admin.reviewsTitle')} />
       <FormControl size="small" sx={{ mb: 2, minWidth: 260 }}>
         <InputLabel id="admin-review-hotel">{t('bookings.colHotel')}</InputLabel>
         <Select
