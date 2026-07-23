@@ -15,6 +15,7 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { NavLink, Outlet } from 'react-router-dom'
 
+import { fonts } from '@shared/theme/tokens'
 import { AppHeader } from '@widgets/header/ui/AppHeader'
 
 const DRAWER_WIDTH = 240
@@ -43,15 +44,27 @@ export const AdminLayout = () => {
     <Box
       aria-label={t('admin.navLabel')}
       component="nav"
-      sx={{ display: 'flex', flexDirection: 'column', height: '100%', width: DRAWER_WIDTH }}
+      sx={{
+        bgcolor: 'background.paper',
+        borderRight: '1px solid',
+        borderColor: 'divider',
+        display: 'flex',
+        flexDirection: 'column',
+        height: '100%',
+        width: DRAWER_WIDTH,
+      }}
     >
-      <Toolbar sx={{ px: 2 }}>
-        <Typography component="p" sx={{ fontWeight: 700 }} variant="subtitle1">
+      <Toolbar sx={{ px: 2.5 }}>
+        <Typography
+          component="p"
+          sx={{ fontFamily: fonts.display, fontWeight: 700, letterSpacing: '-0.02em' }}
+          variant="subtitle1"
+        >
           {t('admin.homeTitle')}
         </Typography>
       </Toolbar>
       <Divider />
-      <List sx={{ flexGrow: 1, py: 1 }}>
+      <List sx={{ flexGrow: 1, py: 1.5, px: 1 }}>
         {NAV_ITEMS.map((item) => (
           <ListItemButton
             component={NavLink}
@@ -59,10 +72,14 @@ export const AdminLayout = () => {
             key={item.to}
             onClick={closeMobileNav}
             sx={{
+              borderRadius: 1,
+              mb: 0.5,
               '&.active': {
-                bgcolor: 'action.selected',
-                borderRight: 3,
-                borderColor: 'primary.main',
+                bgcolor: 'primary.light',
+                color: 'primary.dark',
+                '& .MuiListItemText-primary': {
+                  fontWeight: 600,
+                },
               },
             }}
             to={item.to}
@@ -88,6 +105,9 @@ export const AdminLayout = () => {
               ? {
                   width: DRAWER_WIDTH,
                   '& .MuiDrawer-paper': {
+                    bgcolor: 'background.paper',
+                    borderRight: '1px solid',
+                    borderColor: 'divider',
                     boxSizing: 'border-box',
                     position: 'relative',
                     width: DRAWER_WIDTH,
@@ -112,7 +132,7 @@ export const AdminLayout = () => {
             minWidth: 0,
             overflowX: 'hidden',
             px: { xs: 2, sm: 3 },
-            py: 3,
+            py: { xs: 2.5, md: 3.5 },
             width: isDesktop ? `calc(100% - ${DRAWER_WIDTH}px)` : '100%',
           }}
         >
