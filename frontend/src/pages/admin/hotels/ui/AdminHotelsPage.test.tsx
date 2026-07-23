@@ -1,7 +1,9 @@
-import { fireEvent, screen, waitFor } from '@testing-library/react'
+import { fireEvent, screen, waitFor, within } from '@testing-library/react'
+import { http, HttpResponse } from 'msw'
 import { describe, expect, it } from 'vitest'
 
 import { renderWithProviders } from '@shared/test/renderWithProviders'
+import { server } from '@shared/test/server'
 import { AdminHotelsPage } from './AdminHotelsPage'
 
 describe('AdminHotelsPage', () => {
@@ -58,5 +60,45 @@ describe('AdminHotelsPage', () => {
     })
 
     expect(await screen.findByRole('alert')).toHaveTextContent('Отель сохранён')
+  })
+
+  it('opens confirm dialog on delete and does not delete on cancel', async () => {
+    let deleteCalls = 0
+    server.use(
+      http.delete('*/api/v1/hotels/:hotelId', () => {
+        deleteCalls += 1
+        return new HttpResponse(null, { status: 204 })
+      }),
+    )
+
+    renderWithProviders(<AdminHotelsPage />, {
+      initialEntries: ['/admin/hotels'],
+    })
+
+    await screen.findByText('Grand Hotel')
+    fireEvent.click(screen.getByRole('button', { name: 'Удалить' }))
+
+    expect(await screen.findByRole('dialog')).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: 'Отменить' }))
+
+    await waitFor(() => {
+      expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+    })
+    expect(deleteCalls).toBe(0)
+    expect(screen.getByText('Grand Hotel')).toBeInTheDocument()
+  })
+
+  it('deletes hotel after confirm in dialog', async () => {
+    renderWithProviders(<AdminHotelsPage />, {
+      initialEntries: ['/admin/hotels'],
+    })
+
+    await screen.findByText('Grand Hotel')
+    fireEvent.click(screen.getByRole('button', { name: 'Удалить' }))
+
+    const dialog = await screen.findByRole('dialog')
+    fireEvent.click(within(dialog).getByRole('button', { name: 'Подтвердить' }))
+
+    expect(await screen.findByRole('alert')).toHaveTextContent('Отель удалён')
   })
 })

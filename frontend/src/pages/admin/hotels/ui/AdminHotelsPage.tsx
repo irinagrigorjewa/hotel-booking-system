@@ -24,6 +24,7 @@ import { HotelImageUpload } from '@features/admin-hotel/ui/HotelImageUpload'
 import { AdminErrorAlert } from '@shared/ui/AdminErrorAlert'
 import { AdminFormSection } from '@shared/ui/AdminFormSection'
 import { AdminPageHeader } from '@shared/ui/AdminPageHeader'
+import { ConfirmDialog } from '@shared/ui/ConfirmDialog'
 
 export const AdminHotelsPage = () => {
   const { t } = useTranslation()
@@ -32,6 +33,7 @@ export const AdminHotelsPage = () => {
   const { createHotel, updateHotel, deleteHotel } = useHotelMutations()
   const [editingHotel, setEditingHotel] = useState<HotelListItem | null>(null)
   const [formError, setFormError] = useState('')
+  const [pendingDeleteId, setPendingDeleteId] = useState<number | null>(null)
 
   const isSubmitting = createHotel.isPending || updateHotel.isPending
 
@@ -60,6 +62,8 @@ export const AdminHotelsPage = () => {
       notifySuccess('notifications.hotelDeleted')
     } catch (error) {
       notifyApiError(error, 'admin.hotelsDeleteFailed')
+    } finally {
+      setPendingDeleteId(null)
     }
   }
 
@@ -123,9 +127,7 @@ export const AdminHotelsPage = () => {
                 <Button
                   color="error"
                   disabled={deleteHotel.isPending}
-                  onClick={() => {
-                    void handleDelete(hotel.id)
-                  }}
+                  onClick={() => setPendingDeleteId(hotel.id)}
                   size="small"
                 >
                   {t('common.delete')}
@@ -140,6 +142,17 @@ export const AdminHotelsPage = () => {
           {t('admin.hotelsEmpty')}
         </Typography>
       ) : null}
+      <ConfirmDialog
+        isConfirming={deleteHotel.isPending}
+        onCancel={() => setPendingDeleteId(null)}
+        onConfirm={() => {
+          if (pendingDeleteId !== null) {
+            void handleDelete(pendingDeleteId)
+          }
+        }}
+        open={pendingDeleteId !== null}
+        title={t('common.confirmDelete')}
+      />
     </Box>
   )
 }
