@@ -38,8 +38,9 @@ describe('App', () => {
     renderAtPath('/')
 
     expect(
-      screen.getByRole('heading', { name: 'Hotel Booking System' }),
+      screen.getByRole('region', { name: 'Поиск на главной' }),
     ).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Подберите проживание' })).toBeInTheDocument()
 
     await waitFor(() => {
       expect(screen.getByRole('heading', { name: 'Grand Hotel' })).toBeInTheDocument()
