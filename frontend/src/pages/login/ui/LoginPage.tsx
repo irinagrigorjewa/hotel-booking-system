@@ -7,6 +7,7 @@ import { Link as RouterLink, useLocation, useNavigate } from 'react-router-dom'
 import { getReturnUrl } from '@features/auth/model/getReturnUrl'
 import { useAuth } from '@features/auth/ui/AuthContext'
 import { getApiErrorMessage } from '@shared/lib/getApiErrorMessage'
+import { fonts } from '@shared/theme/tokens'
 
 interface LoginFormValues {
   email: string
@@ -40,10 +41,14 @@ export const LoginPage = () => {
 
   return (
     <Box component="form" noValidate onSubmit={handleSubmit(submit)}>
-      <Typography component="h1" variant="h4">
+      <Typography
+        component="h1"
+        sx={{ fontFamily: fonts.display, fontWeight: 700, letterSpacing: '-0.02em' }}
+        variant="h4"
+      >
         {t('auth.loginTitle')}
       </Typography>
-      <Typography sx={{ mb: 3 }} color="text.secondary">
+      <Typography sx={{ mb: 3, mt: 1 }} color="text.secondary">
         {t('auth.loginSubtitle')}
       </Typography>
       {submitError ? (
@@ -81,21 +86,22 @@ export const LoginPage = () => {
         })}
       />
       <Button
+        color="cta"
         disabled={isSubmitting}
         fullWidth
-        sx={{ mt: 2 }}
+        sx={{ mt: 2.5 }}
         type="submit"
         variant="contained"
       >
         {isSubmitting ? t('auth.loginSubmitting') : t('auth.loginSubmit')}
       </Button>
-      <Typography sx={{ mt: 2 }}>
+      <Typography sx={{ mt: 2.5 }} variant="body2">
         {t('auth.noAccount')}{' '}
         <Link component={RouterLink} to="/register">
           {t('nav.register')}
         </Link>
       </Typography>
-      <Typography sx={{ mt: 1.5 }}>
+      <Typography sx={{ mt: 1.5 }} variant="body2">
         <Link component={RouterLink} to="/">
           {t('auth.toHome')}
         </Link>

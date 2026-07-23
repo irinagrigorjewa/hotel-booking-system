@@ -21,14 +21,18 @@ export const AdminPageHeader = ({
     <>
       <Typography
         component="h1"
-        gutterBottom
-        sx={{ fontFamily: fonts.display, fontWeight: 700, letterSpacing: '-0.02em' }}
+        sx={{
+          fontFamily: fonts.display,
+          fontWeight: 700,
+          letterSpacing: '-0.02em',
+          mb: links.length > 0 ? 1 : 3,
+        }}
         variant="h4"
       >
         {title}
       </Typography>
       {links.length > 0 ? (
-        <Typography sx={{ mb: 2.5 }} variant="body2">
+        <Typography sx={{ mb: 3 }} variant="body2">
           {links.map((link, index) => (
             <Link
               component={RouterLink}

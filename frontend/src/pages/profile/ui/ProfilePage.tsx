@@ -8,6 +8,7 @@ import { useBookingMutations } from '@entities/booking/api/mutations/useBookingM
 import { useBookings } from '@entities/booking/api/queries/useBookings'
 import { useUserMutations } from '@entities/user/api/mutations/useUserMutations'
 import { useAuth } from '@features/auth/ui/AuthContext'
+import { fonts } from '@shared/theme/tokens'
 import { ProfileAccountTab } from '@widgets/profile/ui/ProfileAccountTab'
 import { ProfileBookingsTab } from '@widgets/profile/ui/ProfileBookingsTab'
 
@@ -56,13 +57,18 @@ export const ProfilePage = () => {
 
   return (
     <Box>
-      <Typography component="h1" gutterBottom variant="h4">
+      <Typography
+        component="h1"
+        gutterBottom
+        sx={{ fontFamily: fonts.display, fontWeight: 700, letterSpacing: '-0.02em' }}
+        variant="h4"
+      >
         {t('bookings.profileTitle')}
       </Typography>
-      <Typography color="text.secondary" sx={{ mb: 2 }}>
+      <Typography color="text.secondary" sx={{ mb: 3 }}>
         {user?.name} · {user?.email}
       </Typography>
-      <Stack direction="row" spacing={1} sx={{ mb: 3 }}>
+      <Stack direction="row" flexWrap="wrap" spacing={1} sx={{ mb: 3.5 }}>
         <Button
           component={RouterLink}
           to="/profile?tab=account"

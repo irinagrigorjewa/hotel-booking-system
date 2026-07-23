@@ -11,7 +11,7 @@ describe('HotelsMapPage', () => {
 
     expect(await screen.findByRole('heading', { name: 'Карта отелей' })).toBeInTheDocument()
     expect(await screen.findByTestId('hotels-map')).toBeInTheDocument()
-    expect(await screen.findByText('Grand Hotel')).toBeInTheDocument()
+    expect(screen.getAllByText('Grand Hotel').length).toBeGreaterThan(0)
   })
 
   it('shows empty state when no hotels', async () => {

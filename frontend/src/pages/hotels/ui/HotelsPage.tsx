@@ -6,6 +6,7 @@ import { Link as RouterLink } from 'react-router-dom'
 import { useHotels } from '@entities/hotel/api/queries/useHotels'
 import { useHotelListSearchParams } from '@features/hotel-filters/model/useHotelListSearchParams'
 import { useDebouncedCityFilter } from '@features/hotel-search/model/useDebouncedCityFilter'
+import { fonts } from '@shared/theme/tokens'
 import { HotelCatalog } from '@widgets/hotel-catalog/ui/HotelCatalog'
 
 export const HotelsPage = () => {
@@ -35,10 +36,15 @@ export const HotelsPage = () => {
 
   return (
     <Box>
-      <Typography component="h1" gutterBottom variant="h4">
+      <Typography
+        component="h1"
+        gutterBottom
+        sx={{ fontFamily: fonts.display, fontWeight: 700, letterSpacing: '-0.02em' }}
+        variant="h4"
+      >
         {t('hotels.title')}
       </Typography>
-      <Typography color="text.secondary" sx={{ mb: 2 }}>
+      <Typography color="text.secondary" sx={{ mb: 3 }} variant="body1">
         {t('hotels.subtitle')}
       </Typography>
       <HotelCatalog
@@ -82,7 +88,7 @@ export const HotelsPage = () => {
             : null
         }
       />
-      <Typography sx={{ mt: 3 }}>
+      <Typography sx={{ mt: 4 }} variant="body2">
         <Link component={RouterLink} to="/">
           {t('common.notFoundHome')}
         </Link>
