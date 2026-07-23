@@ -1,7 +1,9 @@
+from collections.abc import Callable
 from io import BytesIO
 
 import pytest
 from fastapi.testclient import TestClient
+from httpx import Response
 from sqlalchemy.orm import Session, sessionmaker
 
 from app.core.config import settings
@@ -20,6 +22,10 @@ HOTEL_PAYLOAD = {
     "latitude": "55.7558",
     "longitude": "37.6173",
 }
+
+
+def _png_upload() -> tuple[str, BytesIO, str]:
+    return ("photo.png", BytesIO(b"\x89PNG\r\n\x1a\nfake"), "image/png")
 
 
 def test_image_model_registers_schema() -> None:
@@ -57,6 +63,22 @@ def _create_admin(session: Session) -> dict[str, str]:
 def admin_headers(test_session_factory: sessionmaker[Session]) -> dict[str, str]:
     with test_session_factory() as session:
         return _create_admin(session)
+
+
+@pytest.fixture
+def client_headers(test_session_factory: sessionmaker[Session]) -> dict[str, str]:
+    with test_session_factory() as session:
+        client_user = User(
+            name="Client User",
+            email="client-img@example.com",
+            password_hash="hash",
+            role=UserRole.CLIENT,
+        )
+        session.add(client_user)
+        session.commit()
+        session.refresh(client_user)
+        token = create_access_token(user_id=client_user.id, role=client_user.role)
+        return {"Authorization": f"Bearer {token}"}
 
 
 @pytest.fixture
@@ -136,3 +158,38 @@ def test_oversized_file_returns_413(
     )
 
     assert response.status_code == 413
+
+
+def test_image_upload_rbac_requires_authentication(client: TestClient) -> None:
+    response = client.post(
+        "/api/v1/hotels/1/images",
+        files={"file": _png_upload()},
+    )
+
+    assert response.status_code == 401
+
+
+@pytest.mark.parametrize(
+    "mutation",
+    [
+        lambda client, headers: client.post(
+            "/api/v1/hotels/1/images",
+            headers=headers,
+            files={"file": _png_upload()},
+        ),
+        lambda client, headers: client.patch(
+            "/api/v1/images/1",
+            headers=headers,
+            json={"sort_order": 1},
+        ),
+        lambda client, headers: client.delete("/api/v1/images/1", headers=headers),
+    ],
+)
+def test_image_mutations_rbac_reject_client_users(
+    client: TestClient,
+    client_headers: dict[str, str],
+    mutation: Callable[[TestClient, dict[str, str]], Response],
+) -> None:
+    response = mutation(client, client_headers)
+
+    assert response.status_code == 403
