@@ -17,6 +17,12 @@ node_modules/
 # Storybook
 storybook-static/
 
+# Playwright
+frontend/test-results/
+frontend/playwright-report/
+frontend/blob-report/
+frontend/playwright/.cache/
+
 # User-uploaded media
 uploads/*
 !uploads/.gitkeep
