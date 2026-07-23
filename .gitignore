@@ -14,6 +14,9 @@ __pycache__/
 *.py[cod]
 node_modules/
 
+# Storybook
+storybook-static/
+
 # User-uploaded media
 uploads/*
 !uploads/.gitkeep
