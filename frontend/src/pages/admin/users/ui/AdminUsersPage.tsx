@@ -44,10 +44,7 @@ export const AdminUsersPage = () => {
 
   return (
     <Box>
-      <AdminPageHeader
-        links={[{ label: t('admin.back'), to: '/admin' }]}
-        title={t('admin.usersTitle')}
-      />
+      <AdminPageHeader title={t('admin.usersTitle')} />
       <Stack direction="row" spacing={1} sx={{ mb: 2 }}>
         <TextField
           label={t('common.search')}

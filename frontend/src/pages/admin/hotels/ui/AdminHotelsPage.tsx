@@ -72,10 +72,7 @@ export const AdminHotelsPage = () => {
 
   return (
     <Box>
-      <AdminPageHeader
-        links={[{ label: t('admin.nav.roomTypes'), to: '/admin/room-types' }]}
-        title={t('admin.hotelsTitle')}
-      />
+      <AdminPageHeader title={t('admin.hotelsTitle')} />
       {hotelsQuery.isError ? (
         <AdminErrorAlert
           message={t('admin.hotelsLoadFailed')}
@@ -102,19 +99,16 @@ export const AdminHotelsPage = () => {
           onSubmit={handleSubmit}
           submitError={formError}
         />
-        {editingHotel ? (
-          <Box sx={{ mt: 2 }}>
-            <Typography sx={{ mb: 1 }} variant="subtitle2">
-              {t('admin.hotelPhotos')}
-            </Typography>
-            <AdminHotelImageGallery hotelId={editingHotel.id} />
-            <HotelImageUpload
-              hotelId={editingHotel.id}
-              imagesCount={editingHotelDetail.data?.images.length ?? 0}
-            />
-          </Box>
-        ) : null}
       </AdminFormSection>
+      {editingHotel ? (
+        <AdminFormSection title={t('admin.hotelPhotos')}>
+          <AdminHotelImageGallery hotelId={editingHotel.id} />
+          <HotelImageUpload
+            hotelId={editingHotel.id}
+            imagesCount={editingHotelDetail.data?.images.length ?? 0}
+          />
+        </AdminFormSection>
+      ) : null}
       <Table>
         <TableHead>
           <TableRow>
