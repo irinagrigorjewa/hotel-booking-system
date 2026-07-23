@@ -4,27 +4,27 @@ import { type ChangeEvent } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { useNotify } from '@app/providers/NotificationProvider'
-import { uploadHotelImageMutationOptions } from '@entities/image/api/mutations/uploadHotelImageMutationOptions'
+import { uploadRoomImageMutationOptions } from '@entities/image/api/mutations/uploadRoomImageMutationOptions'
 
-const MAX_HOTEL_IMAGES = 10
+const MAX_ROOM_IMAGES = 10
 const MAX_UPLOAD_BYTES = 5 * 1024 * 1024
 const ALLOWED_IMAGE_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp'])
 
-interface HotelImageUploadProps {
-  hotelId: number
+interface RoomImageUploadProps {
+  roomId: number
   imagesCount: number
 }
 
-export const HotelImageUpload = ({
-  hotelId,
+export const RoomImageUpload = ({
+  roomId,
   imagesCount,
-}: HotelImageUploadProps) => {
+}: RoomImageUploadProps) => {
   const { t } = useTranslation()
   const { notifySuccess, notifyError, notifyApiError } = useNotify()
   const queryClient = useQueryClient()
-  const uploadMutation = useMutation(uploadHotelImageMutationOptions(queryClient))
+  const uploadMutation = useMutation(uploadRoomImageMutationOptions(queryClient))
 
-  const atLimit = imagesCount >= MAX_HOTEL_IMAGES
+  const atLimit = imagesCount >= MAX_ROOM_IMAGES
   const isUploading = uploadMutation.isPending
   const isDisabled = atLimit || isUploading
 
@@ -49,7 +49,7 @@ export const HotelImageUpload = ({
     }
 
     try {
-      await uploadMutation.mutateAsync({ hotelId, file })
+      await uploadMutation.mutateAsync({ roomId, file })
       notifySuccess('notifications.imageUploaded')
     } catch (uploadError) {
       notifyApiError(uploadError, 'errors.uploadImageFailed')
@@ -60,7 +60,7 @@ export const HotelImageUpload = ({
     <Box sx={{ mt: 1 }}>
       {atLimit ? (
         <Typography color="text.secondary" sx={{ mb: 1 }} variant="body2">
-          {t('admin.hotelPhotosLimitReached')}
+          {t('admin.roomPhotosLimitReached')}
         </Typography>
       ) : null}
       <Button component="label" disabled={isDisabled} size="small">

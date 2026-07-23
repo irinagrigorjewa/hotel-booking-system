@@ -19,5 +19,6 @@ export const uploadHotelImageMutationOptions = (queryClient: QueryClient) =>
       await queryClient.invalidateQueries({
         queryKey: hotelKeys.detail(hotelId),
       })
+      await queryClient.invalidateQueries({ queryKey: hotelKeys.lists() })
     },
   })

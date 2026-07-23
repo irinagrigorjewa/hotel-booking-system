@@ -70,10 +70,7 @@ export const AdminRoomTypesPage = () => {
 
   return (
     <Box>
-      <AdminPageHeader
-        links={[{ label: t('admin.nav.hotels'), to: '/admin/hotels' }]}
-        title={t('admin.roomTypesTitle')}
-      />
+      <AdminPageHeader title={t('admin.roomTypesTitle')} />
       {roomTypesQuery.isError ? (
         <AdminErrorAlert
           message={t('admin.roomTypesLoadFailed')}

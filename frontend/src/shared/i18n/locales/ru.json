@@ -33,6 +33,7 @@
     "selectHotel": "Выберите отель",
     "selectHotelHint": "Выберите отель, чтобы увидеть отзывы.",
     "nav": {
+      "home": "Обзор",
       "users": "Пользователи",
       "hotels": "Отели",
       "roomTypes": "Типы номеров",
@@ -40,6 +41,8 @@
       "bookings": "Бронирования",
       "reviews": "Отзывы"
     },
+    "navLabel": "Админ-навигация",
+    "openNav": "Меню",
     "colCoordinates": "Координаты",
     "colNumber": "Номер",
     "colType": "Тип",
@@ -68,8 +71,18 @@
     "roomTypesDeleteFailed": "Не удалось удалить тип номера",
     "roomTypesDuplicateName": "Тип номера с таким названием уже существует",
     "hotelPhotos": "Фото отеля",
+    "hotelPhotosEmpty": "Фотографии ещё не загружены",
+    "hotelPhotosCoverHint": "Первое фото — обложка",
+    "roomPhotos": "Фото номера",
+    "roomPhotosEmpty": "Фотографии ещё не загружены",
+    "roomPhotosLimitReached": "Можно загрузить не более 10 фото",
+    "movePhotoLeft": "Переместить влево",
+    "movePhotoRight": "Переместить вправо",
+    "confirmDeletePhotoTitle": "Удалить фото?",
+    "confirmDeletePhoto": "Фото будет удалено без возможности восстановления.",
     "uploadPhoto": "Загрузить фото",
     "uploadPhotoFailed": "Не удалось загрузить фото",
+    "hotelPhotosLimitReached": "Можно загрузить не более 10 фото",
     "form": {
       "nameRequired": "Укажите название",
       "cityRequired": "Укажите город",
@@ -104,6 +117,7 @@
     "retry": "Повторить",
     "submit": "Отправить",
     "delete": "Удалить",
+    "confirmDelete": "Подтвердить",
     "cancel": "Отменить",
     "save": "Сохранить",
     "create": "Создать",
@@ -160,6 +174,9 @@
       "checkIn": "Заезд",
       "checkOut": "Выезд",
       "apply": "Применить"
+    },
+    "gallery": {
+      "photoAlt": "Номер {{roomNumber}} фото {{order}}"
     }
   },
   "enums": {
@@ -278,6 +295,7 @@
     "favoriteAdded": "Добавлено в избранное",
     "favoriteRemoved": "Удалено из избранного",
     "imageUploaded": "Фото загружено",
+    "imageDeleted": "Фото удалено",
     "hotelSaved": "Отель сохранён",
     "hotelDeleted": "Отель удалён",
     "roomSaved": "Номер сохранён",
@@ -299,6 +317,10 @@
     "updateRoleFailed": "Не удалось изменить роль",
     "updateBookingFailed": "Не удалось изменить статус бронирования",
     "uploadImageFailed": "Не удалось загрузить фото",
+    "deleteImageFailed": "Не удалось удалить фото",
+    "reorderImageFailed": "Не удалось изменить порядок фото",
+    "invalidImageType": "Допустимы только JPEG, PNG или WebP",
+    "imageTooLarge": "Размер файла не должен превышать 5 МБ",
     "authRequestFailed": "Не удалось выполнить запрос авторизации",
     "generic": "Произошла ошибка"
   },
@@ -307,6 +329,7 @@
     "Invalid token": "Недействительный токен",
     "Forbidden": "Доступ запрещён",
     "Hotel not found": "Отель не найден",
+    "Image not found": "Фото не найдено",
     "Room not found": "Номер не найден",
     "Booking not found": "Бронирование не найдено",
     "Review not found": "Отзыв не найден",
@@ -320,6 +343,9 @@
     "Booking cannot be cancelled": "Бронирование нельзя отменить",
     "Invalid status transition": "Недопустимый переход статуса",
     "Cannot demote the last admin": "Нельзя снять роль у единственного администратора",
-    "User not found": "Пользователь не найден"
+    "User not found": "Пользователь не найден",
+    "Maximum number of images reached": "Достигнут лимит в 10 фото",
+    "File too large": "Файл слишком большой",
+    "Unsupported media type": "Неподдерживаемый тип файла"
   }
 }

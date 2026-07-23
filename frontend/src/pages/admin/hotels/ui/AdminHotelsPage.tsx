@@ -13,17 +13,20 @@ import { useTranslation } from 'react-i18next'
 
 import { useNotify } from '@app/providers/NotificationProvider'
 import { useHotelMutations } from '@entities/hotel/api/mutations/useHotelMutations'
+import { useHotel } from '@entities/hotel/api/queries/useHotel'
 import { useHotels } from '@entities/hotel/api/queries/useHotels'
 import type {
   HotelListItem,
   HotelWritePayload,
 } from '@entities/hotel/model/types'
 
+import { AdminHotelImageGallery } from '@features/admin-hotel/ui/AdminHotelImageGallery'
 import { HotelForm } from '@features/admin-hotel/ui/HotelForm'
 import { HotelImageUpload } from '@features/admin-hotel/ui/HotelImageUpload'
 import { AdminErrorAlert } from '@shared/ui/AdminErrorAlert'
 import { AdminFormSection } from '@shared/ui/AdminFormSection'
 import { AdminPageHeader } from '@shared/ui/AdminPageHeader'
+import { ConfirmDialog } from '@shared/ui/ConfirmDialog'
 
 export const AdminHotelsPage = () => {
   const { t } = useTranslation()
@@ -32,6 +35,8 @@ export const AdminHotelsPage = () => {
   const { createHotel, updateHotel, deleteHotel } = useHotelMutations()
   const [editingHotel, setEditingHotel] = useState<HotelListItem | null>(null)
   const [formError, setFormError] = useState('')
+  const [pendingDeleteId, setPendingDeleteId] = useState<number | null>(null)
+  const editingHotelDetail = useHotel(editingHotel?.id ?? 0)
 
   const isSubmitting = createHotel.isPending || updateHotel.isPending
 
@@ -60,15 +65,14 @@ export const AdminHotelsPage = () => {
       notifySuccess('notifications.hotelDeleted')
     } catch (error) {
       notifyApiError(error, 'admin.hotelsDeleteFailed')
+    } finally {
+      setPendingDeleteId(null)
     }
   }
 
   return (
     <Box>
-      <AdminPageHeader
-        links={[{ label: t('admin.nav.roomTypes'), to: '/admin/room-types' }]}
-        title={t('admin.hotelsTitle')}
-      />
+      <AdminPageHeader title={t('admin.hotelsTitle')} />
       {hotelsQuery.isError ? (
         <AdminErrorAlert
           message={t('admin.hotelsLoadFailed')}
@@ -96,6 +100,15 @@ export const AdminHotelsPage = () => {
           submitError={formError}
         />
       </AdminFormSection>
+      {editingHotel ? (
+        <AdminFormSection title={t('admin.hotelPhotos')}>
+          <AdminHotelImageGallery hotelId={editingHotel.id} />
+          <HotelImageUpload
+            hotelId={editingHotel.id}
+            imagesCount={editingHotelDetail.data?.images.length ?? 0}
+          />
+        </AdminFormSection>
+      ) : null}
       <Table>
         <TableHead>
           <TableRow>
@@ -116,16 +129,13 @@ export const AdminHotelsPage = () => {
                 {hotel.latitude}, {hotel.longitude}
               </TableCell>
               <TableCell align="right">
-                <HotelImageUpload hotelId={hotel.id} />
                 <Button onClick={() => setEditingHotel(hotel)} size="small">
                   {t('common.edit')}
                 </Button>
                 <Button
                   color="error"
                   disabled={deleteHotel.isPending}
-                  onClick={() => {
-                    void handleDelete(hotel.id)
-                  }}
+                  onClick={() => setPendingDeleteId(hotel.id)}
                   size="small"
                 >
                   {t('common.delete')}
@@ -140,6 +150,17 @@ export const AdminHotelsPage = () => {
           {t('admin.hotelsEmpty')}
         </Typography>
       ) : null}
+      <ConfirmDialog
+        isConfirming={deleteHotel.isPending}
+        onCancel={() => setPendingDeleteId(null)}
+        onConfirm={() => {
+          if (pendingDeleteId !== null) {
+            void handleDelete(pendingDeleteId)
+          }
+        }}
+        open={pendingDeleteId !== null}
+        title={t('common.confirmDelete')}
+      />
     </Box>
   )
 }

@@ -22,6 +22,7 @@ import { useReviews } from '@entities/review/api/queries/useReviews'
 
 import { AdminErrorAlert } from '@shared/ui/AdminErrorAlert'
 import { AdminPageHeader } from '@shared/ui/AdminPageHeader'
+import { ConfirmDialog } from '@shared/ui/ConfirmDialog'
 
 export const AdminReviewsPage = () => {
   const { t } = useTranslation()
@@ -34,26 +35,22 @@ export const AdminReviewsPage = () => {
     size: 50,
   })
   const { deleteReview } = useReviewMutations(selectedHotelId)
+  const [pendingDeleteId, setPendingDeleteId] = useState<number | null>(null)
 
   const handleDelete = async (reviewId: number): Promise<void> => {
-    if (!window.confirm(t('reviews.deleteConfirm'))) {
-      return
-    }
-
     try {
       await deleteReview.mutateAsync(reviewId)
       notifySuccess('notifications.reviewDeleted')
     } catch (error) {
       notifyApiError(error, 'errors.deleteReviewFailed')
+    } finally {
+      setPendingDeleteId(null)
     }
   }
 
   return (
     <Box>
-      <AdminPageHeader
-        links={[{ label: t('admin.back'), to: '/admin' }]}
-        title={t('admin.reviewsTitle')}
-      />
+      <AdminPageHeader title={t('admin.reviewsTitle')} />
       <FormControl size="small" sx={{ mb: 2, minWidth: 260 }}>
         <InputLabel id="admin-review-hotel">{t('bookings.colHotel')}</InputLabel>
         <Select
@@ -104,7 +101,7 @@ export const AdminReviewsPage = () => {
                 <TableCell align="right">
                   <Button
                     color="error"
-                    onClick={() => void handleDelete(review.id)}
+                    onClick={() => setPendingDeleteId(review.id)}
                     size="small"
                   >
                     {t('common.delete')}
@@ -115,6 +112,17 @@ export const AdminReviewsPage = () => {
           </TableBody>
         </Table>
       ) : null}
+      <ConfirmDialog
+        isConfirming={deleteReview.isPending}
+        onCancel={() => setPendingDeleteId(null)}
+        onConfirm={() => {
+          if (pendingDeleteId !== null) {
+            void handleDelete(pendingDeleteId)
+          }
+        }}
+        open={pendingDeleteId !== null}
+        title={t('reviews.deleteConfirm')}
+      />
     </Box>
   )
 }

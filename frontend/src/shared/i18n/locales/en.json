@@ -33,6 +33,7 @@
     "selectHotel": "Select a hotel",
     "selectHotelHint": "Select a hotel to see its reviews.",
     "nav": {
+      "home": "Overview",
       "users": "Users",
       "hotels": "Hotels",
       "roomTypes": "Room types",
@@ -40,6 +41,8 @@
       "bookings": "Bookings",
       "reviews": "Reviews"
     },
+    "navLabel": "Admin navigation",
+    "openNav": "Menu",
     "colCoordinates": "Coordinates",
     "colNumber": "Room",
     "colType": "Type",
@@ -68,8 +71,18 @@
     "roomTypesDeleteFailed": "Failed to delete room type",
     "roomTypesDuplicateName": "A room type with this name already exists",
     "hotelPhotos": "Hotel photos",
+    "hotelPhotosEmpty": "No photos uploaded yet",
+    "hotelPhotosCoverHint": "First photo is cover",
+    "roomPhotos": "Room photos",
+    "roomPhotosEmpty": "No photos uploaded yet",
+    "roomPhotosLimitReached": "You can upload up to 10 photos",
+    "movePhotoLeft": "Move left",
+    "movePhotoRight": "Move right",
+    "confirmDeletePhotoTitle": "Delete photo?",
+    "confirmDeletePhoto": "The photo will be permanently deleted.",
     "uploadPhoto": "Upload photo",
     "uploadPhotoFailed": "Failed to upload photo",
+    "hotelPhotosLimitReached": "You can upload up to 10 photos",
     "form": {
       "nameRequired": "Enter name",
       "cityRequired": "Enter city",
@@ -104,6 +117,7 @@
     "retry": "Retry",
     "submit": "Submit",
     "delete": "Delete",
+    "confirmDelete": "Confirm",
     "cancel": "Cancel",
     "save": "Save",
     "create": "Create",
@@ -160,6 +174,9 @@
       "checkIn": "Check-in",
       "checkOut": "Check-out",
       "apply": "Apply"
+    },
+    "gallery": {
+      "photoAlt": "Room {{roomNumber}} photo {{order}}"
     }
   },
   "enums": {
@@ -278,6 +295,7 @@
     "favoriteAdded": "Added to favorites",
     "favoriteRemoved": "Removed from favorites",
     "imageUploaded": "Photo uploaded",
+    "imageDeleted": "Photo deleted",
     "hotelSaved": "Hotel saved",
     "hotelDeleted": "Hotel deleted",
     "roomSaved": "Room saved",
@@ -299,6 +317,10 @@
     "updateRoleFailed": "Failed to update role",
     "updateBookingFailed": "Failed to update booking status",
     "uploadImageFailed": "Failed to upload photo",
+    "deleteImageFailed": "Failed to delete photo",
+    "reorderImageFailed": "Failed to reorder photo",
+    "invalidImageType": "Only JPEG, PNG, or WebP are allowed",
+    "imageTooLarge": "File size must not exceed 5 MB",
     "authRequestFailed": "Unable to complete authentication request",
     "generic": "Something went wrong"
   },
@@ -307,6 +329,7 @@
     "Invalid token": "Invalid token",
     "Forbidden": "Forbidden",
     "Hotel not found": "Hotel not found",
+    "Image not found": "Image not found",
     "Room not found": "Room not found",
     "Booking not found": "Booking not found",
     "Review not found": "Review not found",
@@ -320,6 +343,9 @@
     "Booking cannot be cancelled": "Booking cannot be cancelled",
     "Invalid status transition": "Invalid status transition",
     "Cannot demote the last admin": "Cannot demote the last admin",
-    "User not found": "User not found"
+    "User not found": "User not found",
+    "Maximum number of images reached": "Photo limit of 10 reached",
+    "File too large": "File is too large",
+    "Unsupported media type": "Unsupported file type"
   }
 }
