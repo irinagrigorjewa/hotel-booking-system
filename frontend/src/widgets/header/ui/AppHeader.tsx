@@ -4,6 +4,7 @@ import { Link as RouterLink } from 'react-router-dom'
 
 import { LanguageSwitcher } from '@features/language-switch/ui/LanguageSwitcher'
 import { useAuth } from '@features/auth/ui/AuthContext'
+import { APP_HEADER_STICKY_TOP_PX } from '@shared/layout/appHeaderSticky'
 import { elevation, fonts } from '@shared/theme/tokens'
 
 export const AppHeader = () => {
@@ -26,11 +27,14 @@ export const AppHeader = () => {
       <Toolbar
         disableGutters={false}
         sx={{
-          flexWrap: 'wrap',
+          flexWrap: 'nowrap',
           gap: { xs: 0.5, md: 0.75 },
-          minHeight: { xs: 52, sm: 56 },
-          py: { xs: 0.5, sm: 0 },
-          rowGap: 0.5,
+          minHeight: {
+            xs: APP_HEADER_STICKY_TOP_PX.xs,
+            sm: APP_HEADER_STICKY_TOP_PX.sm,
+          },
+          overflowX: { xs: 'auto', sm: 'visible' },
+          py: 0,
         }}
       >
         <Typography
@@ -38,11 +42,16 @@ export const AppHeader = () => {
           sx={{
             color: 'primary.main',
             flexGrow: 1,
+            flexShrink: 1,
             fontFamily: fonts.display,
             fontWeight: 700,
             letterSpacing: '-0.02em',
+            minWidth: 0,
             mr: 1,
+            overflow: 'hidden',
             textDecoration: 'none',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
           }}
           to="/"
           variant="h6"
@@ -54,7 +63,8 @@ export const AppHeader = () => {
           sx={{
             alignItems: 'center',
             display: 'flex',
-            flexWrap: 'wrap',
+            flexShrink: 0,
+            flexWrap: 'nowrap',
             gap: 0.25,
           }}
         >

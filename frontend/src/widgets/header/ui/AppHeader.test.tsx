@@ -31,4 +31,13 @@ describe('AppHeader', () => {
     expect(appBar).toHaveClass('MuiAppBar-colorInherit')
     expect(appBar).toHaveClass('MuiAppBar-positionSticky')
   })
+
+  it('keeps a single-row toolbar so sticky filters stay below the header on xs', () => {
+    const { container } = renderWithProviders(<AppHeader />)
+    const toolbar = container.querySelector('.MuiToolbar-root')
+    const nav = container.querySelector('nav')
+
+    expect(toolbar).toHaveStyle({ flexWrap: 'nowrap' })
+    expect(nav).toHaveStyle({ flexWrap: 'nowrap' })
+  })
 })

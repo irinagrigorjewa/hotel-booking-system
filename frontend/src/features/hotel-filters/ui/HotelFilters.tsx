@@ -11,6 +11,7 @@ import { useTranslation } from 'react-i18next'
 
 import type { HotelSort } from '@entities/hotel/model/types'
 import { STAR_OPTIONS } from '@shared/config/domainOptions'
+import { APP_HEADER_STICKY_TOP_PX } from '@shared/layout/appHeaderSticky'
 import { elevation, radius } from '@shared/theme/tokens'
 
 import { parseStarsSelect } from '../model/parseFilters'
@@ -65,7 +66,10 @@ export const HotelFilters = ({
         position: 'sticky',
         px: 1.5,
         py: 1.5,
-        top: { xs: 52, sm: 56 },
+        top: {
+          xs: APP_HEADER_STICKY_TOP_PX.xs,
+          sm: APP_HEADER_STICKY_TOP_PX.sm,
+        },
         zIndex: 2,
       }}
     >
