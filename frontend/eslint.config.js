@@ -4,12 +4,12 @@ import tseslint from 'typescript-eslint'
 
 export default tseslint.config(
   {
-    ignores: ['dist/**', 'node_modules/**'],
+    ignores: ['dist/**', 'node_modules/**', 'storybook-static/**'],
   },
   js.configs.recommended,
   ...tseslint.configs.recommended,
   {
-    files: ['src/**/*.{ts,tsx}'],
+    files: ['src/**/*.{ts,tsx}', '.storybook/**/*.{ts,tsx}'],
     languageOptions: {
       ecmaVersion: 2022,
       globals: {
