@@ -69,6 +69,9 @@
     "roomTypesDuplicateName": "A room type with this name already exists",
     "hotelPhotos": "Hotel photos",
     "hotelPhotosEmpty": "No photos uploaded yet",
+    "hotelPhotosCoverHint": "First photo is cover",
+    "movePhotoLeft": "Move left",
+    "movePhotoRight": "Move right",
     "confirmDeletePhotoTitle": "Delete photo?",
     "confirmDeletePhoto": "The photo will be permanently deleted.",
     "uploadPhoto": "Upload photo",
@@ -305,6 +308,7 @@
     "updateBookingFailed": "Failed to update booking status",
     "uploadImageFailed": "Failed to upload photo",
     "deleteImageFailed": "Failed to delete photo",
+    "reorderImageFailed": "Failed to reorder photo",
     "authRequestFailed": "Unable to complete authentication request",
     "generic": "Something went wrong"
   },

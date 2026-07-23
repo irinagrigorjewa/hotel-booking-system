@@ -126,4 +126,73 @@ describe('AdminHotelImageGallery', () => {
 
     expect(await screen.findByRole('alert')).toHaveTextContent('Фото не найдено')
   })
+
+  it('reorders photos via left/right buttons and PATCHes sort_order', async () => {
+    let images = [
+      { id: 10, url: '/media/hotels/1/a.jpg', sort_order: 0 },
+      { id: 11, url: '/media/hotels/1/b.jpg', sort_order: 1 },
+    ]
+    const patches: Array<{ id: number; sort_order: number }> = []
+
+    server.use(
+      http.get('*/api/v1/hotels/:hotelId', () => {
+        const sorted = [...images].sort((a, b) => a.sort_order - b.sort_order)
+        return HttpResponse.json({
+          ...hotelWithImages,
+          images: sorted,
+          cover_image: sorted[0]?.url ?? null,
+        })
+      }),
+      http.patch('*/api/v1/images/:imageId', async ({ params, request }) => {
+        const imageId = Number(params.imageId)
+        const body = (await request.json()) as { sort_order: number }
+        patches.push({ id: imageId, sort_order: body.sort_order })
+        images = images.map((image) =>
+          image.id === imageId ? { ...image, sort_order: body.sort_order } : image,
+        )
+        const updated = images.find((image) => image.id === imageId)
+        return HttpResponse.json({
+          id: imageId,
+          url: updated?.url ?? '',
+          sort_order: body.sort_order,
+          entity_type: 'HOTEL',
+          entity_id: 1,
+        })
+      }),
+    )
+
+    renderWithProviders(<AdminHotelImageGallery hotelId={1} />)
+
+    expect(await screen.findByAltText('Grand Hotel фото 0')).toBeInTheDocument()
+    expect(screen.getByText('Первое фото — обложка')).toBeInTheDocument()
+
+    const secondThumb = screen.getByAltText('Grand Hotel фото 1').closest('div')
+    expect(secondThumb).not.toBeNull()
+    fireEvent.click(
+      within(secondThumb as HTMLElement).getByRole('button', {
+        name: 'Переместить влево',
+      }),
+    )
+
+    await waitFor(() => {
+      expect(patches).toEqual(
+        expect.arrayContaining([
+          { id: 11, sort_order: 0 },
+          { id: 10, sort_order: 1 },
+        ]),
+      )
+    })
+
+    await waitFor(() => {
+      const gallery = screen.getByLabelText('Фото отеля')
+      const alts = within(gallery)
+        .getAllByRole('img')
+        .map((img) => img.getAttribute('alt'))
+      expect(alts[0]).toBe('Grand Hotel фото 0')
+      expect(screen.getByAltText('Grand Hotel фото 0')).toHaveAttribute(
+        'src',
+        expect.stringContaining('b.jpg'),
+      )
+    })
+  })
 })

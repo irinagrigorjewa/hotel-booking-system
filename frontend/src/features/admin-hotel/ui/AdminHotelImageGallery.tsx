@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next'
 import { useNotify } from '@app/providers/NotificationProvider'
 import { useHotel } from '@entities/hotel/api/queries/useHotel'
 import { deleteImageMutationOptions } from '@entities/image/api/mutations/deleteImageMutationOptions'
+import { updateImageSortOrderMutationOptions } from '@entities/image/api/mutations/updateImageSortOrderMutationOptions'
 import { mediaUrl } from '@shared/lib/mediaUrl'
 import { ConfirmDialog } from '@shared/ui/ConfirmDialog'
 
@@ -23,10 +24,15 @@ export const AdminHotelImageGallery = ({
   const deleteMutation = useMutation(
     deleteImageMutationOptions(queryClient, hotelId),
   )
+  const reorderMutation = useMutation(
+    updateImageSortOrderMutationOptions(queryClient, hotelId),
+  )
   const [pendingDeleteId, setPendingDeleteId] = useState<number | null>(null)
 
   const hotel = hotelQuery.data
-  const images = hotel?.images ?? []
+  const images = [...(hotel?.images ?? [])].sort(
+    (a, b) => a.sort_order - b.sort_order || a.id - b.id,
+  )
 
   const handleConfirmDelete = async (): Promise<void> => {
     if (pendingDeleteId === null) {
@@ -40,6 +46,30 @@ export const AdminHotelImageGallery = ({
       notifyApiError(error, 'errors.deleteImageFailed')
     } finally {
       setPendingDeleteId(null)
+    }
+  }
+
+  const handleMove = async (index: number, direction: -1 | 1): Promise<void> => {
+    const targetIndex = index + direction
+    if (targetIndex < 0 || targetIndex >= images.length) {
+      return
+    }
+
+    const reordered = [...images]
+    const [moved] = reordered.splice(index, 1)
+    if (!moved) {
+      return
+    }
+    reordered.splice(targetIndex, 0, moved)
+
+    const updates = reordered
+      .map((image, sortOrder) => ({ imageId: image.id, sortOrder }))
+      .filter((update, sortOrder) => images[sortOrder]?.id !== update.imageId)
+
+    try {
+      await reorderMutation.mutateAsync(updates)
+    } catch (error) {
+      notifyApiError(error, 'errors.reorderImageFailed')
     }
   }
 
@@ -61,6 +91,9 @@ export const AdminHotelImageGallery = ({
 
   return (
     <Box>
+      <Typography color="text.secondary" sx={{ mb: 1.5 }} variant="body2">
+        {t('admin.hotelPhotosCoverHint')}
+      </Typography>
       <Box
         aria-label={t('admin.hotelPhotos')}
         sx={{
@@ -73,7 +106,7 @@ export const AdminHotelImageGallery = ({
           },
         }}
       >
-        {images.map((image) => {
+        {images.map((image, index) => {
           const src = mediaUrl(image.url)
 
           if (!src) {
@@ -104,7 +137,36 @@ export const AdminHotelImageGallery = ({
                   width: '100%',
                 }}
               />
-              <Box sx={{ p: 1 }}>
+              <Box
+                sx={{
+                  display: 'flex',
+                  flexWrap: 'wrap',
+                  gap: 0.5,
+                  p: 1,
+                }}
+              >
+                <Button
+                  disabled={index === 0 || reorderMutation.isPending}
+                  onClick={() => {
+                    void handleMove(index, -1)
+                  }}
+                  size="small"
+                  type="button"
+                >
+                  {t('admin.movePhotoLeft')}
+                </Button>
+                <Button
+                  disabled={
+                    index === images.length - 1 || reorderMutation.isPending
+                  }
+                  onClick={() => {
+                    void handleMove(index, 1)
+                  }}
+                  size="small"
+                  type="button"
+                >
+                  {t('admin.movePhotoRight')}
+                </Button>
                 <Button
                   color="error"
                   onClick={() => setPendingDeleteId(image.id)}

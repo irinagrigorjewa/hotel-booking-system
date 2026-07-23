@@ -69,6 +69,9 @@
     "roomTypesDuplicateName": "Тип номера с таким названием уже существует",
     "hotelPhotos": "Фото отеля",
     "hotelPhotosEmpty": "Фотографии ещё не загружены",
+    "hotelPhotosCoverHint": "Первое фото — обложка",
+    "movePhotoLeft": "Переместить влево",
+    "movePhotoRight": "Переместить вправо",
     "confirmDeletePhotoTitle": "Удалить фото?",
     "confirmDeletePhoto": "Фото будет удалено без возможности восстановления.",
     "uploadPhoto": "Загрузить фото",
@@ -305,6 +308,7 @@
     "updateBookingFailed": "Не удалось изменить статус бронирования",
     "uploadImageFailed": "Не удалось загрузить фото",
     "deleteImageFailed": "Не удалось удалить фото",
+    "reorderImageFailed": "Не удалось изменить порядок фото",
     "authRequestFailed": "Не удалось выполнить запрос авторизации",
     "generic": "Произошла ошибка"
   },
