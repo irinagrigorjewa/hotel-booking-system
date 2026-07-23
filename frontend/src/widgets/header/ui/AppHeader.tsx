@@ -42,15 +42,15 @@ export const AppHeader = () => {
           sx={{
             color: 'primary.main',
             flexGrow: 1,
-            flexShrink: 1,
+            // Prefer horizontal scroll on the Toolbar (overflowX auto @xs) over
+            // collapsing the wordmark to width 0 under flex nowrap pressure.
+            flexShrink: 0,
             fontFamily: fonts.display,
             fontWeight: 700,
             letterSpacing: '-0.02em',
-            minWidth: 0,
+            minWidth: 'auto',
             mr: 1,
-            overflow: 'hidden',
             textDecoration: 'none',
-            textOverflow: 'ellipsis',
             whiteSpace: 'nowrap',
           }}
           to="/"

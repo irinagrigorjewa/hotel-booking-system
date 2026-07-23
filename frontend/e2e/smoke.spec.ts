@@ -2,6 +2,7 @@ import { expect, test } from '@playwright/test'
 
 import { installApiMocks } from './fixtures/mockApi'
 import {
+  assertHeaderBrandVisible,
   assertHomeHeroFullBleed,
   assertNavAvailable,
   assertNoDocumentOverflowX,
@@ -90,6 +91,10 @@ test.describe('HBS UI smoke', () => {
       await page.goto(path)
       await assertNavAvailable(page)
       await assertNoDocumentOverflowX(page)
+
+      if (path === '/' || path === '/hotels') {
+        await assertHeaderBrandVisible(page)
+      }
 
       if (path === '/') {
         await assertHomeHeroFullBleed(page)

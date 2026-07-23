@@ -40,4 +40,16 @@ describe('AppHeader', () => {
     expect(toolbar).toHaveStyle({ flexWrap: 'nowrap' })
     expect(nav).toHaveStyle({ flexWrap: 'nowrap' })
   })
+
+  it('does not allow the brand wordmark to flex-shrink to zero width', () => {
+    renderWithProviders(<AppHeader />)
+    const brand = screen.getByRole('link', { name: 'Hotel Booking System' })
+
+    expect(brand).toBeVisible()
+    expect(brand).toHaveStyle({
+      flexShrink: '0',
+      minWidth: 'auto',
+      whiteSpace: 'nowrap',
+    })
+  })
 })

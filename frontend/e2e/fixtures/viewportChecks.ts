@@ -17,8 +17,7 @@ export const assertNoDocumentOverflowX = async (page: Page): Promise<void> => {
 
 /**
  * Nav is available when the AppBar/Auth header chrome exposes reachable
- * destinations. On narrow viewports the brand wordmark may be CSS-clipped
- * (ellipsis / flex shrink) — treat hotels or auth brand link as sufficient.
+ * destinations (hotels/map/auth links or AuthLayout brand).
  */
 export const assertNavAvailable = async (page: Page): Promise<void> => {
   const navigation = page.getByRole('navigation')
@@ -33,6 +32,19 @@ export const assertNavAvailable = async (page: Page): Promise<void> => {
   // AuthLayout: brand + language switcher, no navigation landmark
   await expect(page.getByRole('link', { name: /Hotel Booking System/i }).first()).toBeVisible()
   await expect(page.getByRole('button', { name: 'EN', exact: true })).toBeVisible()
+}
+
+/**
+ * AppHeader brand wordmark must stay readable at narrow viewports (375px):
+ * visible text and a positive layout width (not flex-collapsed to 0).
+ */
+export const assertHeaderBrandVisible = async (page: Page): Promise<void> => {
+  const brand = page.getByRole('banner').getByRole('link', { name: /Hotel Booking System/i })
+  await expect(brand).toBeVisible()
+
+  const box = await brand.boundingBox()
+  expect(box, 'header brand boundingBox').not.toBeNull()
+  expect(box!.width, 'header brand width must be > 0').toBeGreaterThan(0)
 }
 
 export const assertHomeHeroFullBleed = async (page: Page): Promise<void> => {
