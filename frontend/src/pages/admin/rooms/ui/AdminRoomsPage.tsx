@@ -15,11 +15,14 @@ import { useTranslation } from 'react-i18next'
 import { useNotify } from '@app/providers/NotificationProvider'
 import { useHotels } from '@entities/hotel/api/queries/useHotels'
 
+import { AdminRoomImageGallery } from '@features/admin-room/ui/AdminRoomImageGallery'
 import { RoomForm } from '@features/admin-room/ui/RoomForm'
+import { RoomImageUpload } from '@features/admin-room/ui/RoomImageUpload'
 import { AdminFormSection } from '@shared/ui/AdminFormSection'
 import { AdminPageHeader } from '@shared/ui/AdminPageHeader'
 import { ConfirmDialog } from '@shared/ui/ConfirmDialog'
 import { useRoomMutations } from '@entities/room/api/mutations/useRoomMutations'
+import { useRoom } from '@entities/room/api/queries/useRoom'
 import { useRoomTypes } from '@entities/room-type/api/queries/useRoomTypes'
 import { useRooms } from '@entities/room/api/queries/useRooms'
 import type { Room, RoomWritePayload } from '@entities/room/model/types'
@@ -34,6 +37,7 @@ export const AdminRoomsPage = () => {
   const [editing, setEditing] = useState<Room | null>(null)
   const [formError, setFormError] = useState('')
   const [pendingDeleteId, setPendingDeleteId] = useState<number | null>(null)
+  const editingRoomDetail = useRoom(editing?.id ?? 0)
 
   const isSubmitting = createRoom.isPending || updateRoom.isPending
 
@@ -100,6 +104,18 @@ export const AdminRoomsPage = () => {
           roomTypes={roomTypesQuery.data?.items ?? []}
           submitError={formError}
         />
+        {editing ? (
+          <Box sx={{ mt: 2 }}>
+            <Typography sx={{ mb: 1 }} variant="subtitle2">
+              {t('admin.roomPhotos')}
+            </Typography>
+            <AdminRoomImageGallery roomId={editing.id} />
+            <RoomImageUpload
+              imagesCount={editingRoomDetail.data?.images.length ?? 0}
+              roomId={editing.id}
+            />
+          </Box>
+        ) : null}
       </AdminFormSection>
       <Table>
         <TableHead>
