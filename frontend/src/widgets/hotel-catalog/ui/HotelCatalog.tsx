@@ -46,7 +46,14 @@ export const HotelCatalog = ({
       <HotelFilters onChange={onFiltersChange} showSort={showSort} value={filters} />
     ) : null}
     {mapHref && mapLabel ? (
-      <Button component={RouterLink} sx={{ mb: 2 }} to={mapHref}>
+      <Button
+        color="secondary"
+        component={RouterLink}
+        size="small"
+        sx={{ mb: 2 }}
+        to={mapHref}
+        variant="outlined"
+      >
         {mapLabel}
       </Button>
     ) : null}
@@ -59,9 +66,11 @@ export const HotelCatalog = ({
     />
     {pagination && pagination.count > 0 && !isLoading && !isError ? (
       <Pagination
+        color="primary"
         count={pagination.count}
         onChange={(_, page) => pagination.onChange(page)}
         page={pagination.page}
+        shape="rounded"
         sx={{ display: 'flex', justifyContent: 'center', mt: 3 }}
       />
     ) : null}

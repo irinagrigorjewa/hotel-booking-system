@@ -11,6 +11,7 @@ import { useTranslation } from 'react-i18next'
 
 import type { HotelSort } from '@entities/hotel/model/types'
 import { STAR_OPTIONS } from '@shared/config/domainOptions'
+import { elevation, radius } from '@shared/theme/tokens'
 
 import { parseStarsSelect } from '../model/parseFilters'
 
@@ -52,10 +53,20 @@ export const HotelFilters = ({
       component="form"
       onSubmit={(event) => event.preventDefault()}
       sx={{
+        bgcolor: 'background.paper',
+        border: 1,
+        borderColor: 'divider',
+        borderRadius: `${radius.md}px`,
+        boxShadow: elevation[1],
         display: 'flex',
         flexWrap: 'wrap',
-        gap: 2,
-        mb: 3,
+        gap: 1.5,
+        mb: 2,
+        position: 'sticky',
+        px: 1.5,
+        py: 1.5,
+        top: { xs: 52, sm: 56 },
+        zIndex: 2,
       }}
     >
       <TextField
@@ -64,9 +75,10 @@ export const HotelFilters = ({
           onChange({ ...value, city: event.target.value })
         }
         size="small"
+        sx={{ flex: '1 1 160px', minWidth: 140 }}
         value={value.city}
       />
-      <FormControl size="small" sx={{ minWidth: 140 }}>
+      <FormControl size="small" sx={{ flex: '0 1 120px', minWidth: 120 }}>
         <InputLabel id="hotel-stars-filter-label">{t('common.stars')}</InputLabel>
         <Select
           label={t('common.stars')}
@@ -83,7 +95,7 @@ export const HotelFilters = ({
         </Select>
       </FormControl>
       {showSort ? (
-        <FormControl size="small" sx={{ minWidth: 180 }}>
+        <FormControl size="small" sx={{ flex: '0 1 160px', minWidth: 140 }}>
           <InputLabel id="hotel-sort-filter-label">{t('common.sort')}</InputLabel>
           <Select
             label={t('common.sort')}
