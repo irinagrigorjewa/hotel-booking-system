@@ -76,6 +76,7 @@
     "confirmDeletePhoto": "The photo will be permanently deleted.",
     "uploadPhoto": "Upload photo",
     "uploadPhotoFailed": "Failed to upload photo",
+    "hotelPhotosLimitReached": "You can upload up to 10 photos",
     "form": {
       "nameRequired": "Enter name",
       "cityRequired": "Enter city",
@@ -309,6 +310,8 @@
     "uploadImageFailed": "Failed to upload photo",
     "deleteImageFailed": "Failed to delete photo",
     "reorderImageFailed": "Failed to reorder photo",
+    "invalidImageType": "Only JPEG, PNG, or WebP are allowed",
+    "imageTooLarge": "File size must not exceed 5 MB",
     "authRequestFailed": "Unable to complete authentication request",
     "generic": "Something went wrong"
   },
@@ -331,6 +334,9 @@
     "Booking cannot be cancelled": "Booking cannot be cancelled",
     "Invalid status transition": "Invalid status transition",
     "Cannot demote the last admin": "Cannot demote the last admin",
-    "User not found": "User not found"
+    "User not found": "User not found",
+    "Maximum number of images reached": "Photo limit of 10 reached",
+    "File too large": "File is too large",
+    "Unsupported media type": "Unsupported file type"
   }
 }

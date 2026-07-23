@@ -76,6 +76,7 @@
     "confirmDeletePhoto": "Фото будет удалено без возможности восстановления.",
     "uploadPhoto": "Загрузить фото",
     "uploadPhotoFailed": "Не удалось загрузить фото",
+    "hotelPhotosLimitReached": "Можно загрузить не более 10 фото",
     "form": {
       "nameRequired": "Укажите название",
       "cityRequired": "Укажите город",
@@ -309,6 +310,8 @@
     "uploadImageFailed": "Не удалось загрузить фото",
     "deleteImageFailed": "Не удалось удалить фото",
     "reorderImageFailed": "Не удалось изменить порядок фото",
+    "invalidImageType": "Допустимы только JPEG, PNG или WebP",
+    "imageTooLarge": "Размер файла не должен превышать 5 МБ",
     "authRequestFailed": "Не удалось выполнить запрос авторизации",
     "generic": "Произошла ошибка"
   },
@@ -331,6 +334,9 @@
     "Booking cannot be cancelled": "Бронирование нельзя отменить",
     "Invalid status transition": "Недопустимый переход статуса",
     "Cannot demote the last admin": "Нельзя снять роль у единственного администратора",
-    "User not found": "Пользователь не найден"
+    "User not found": "Пользователь не найден",
+    "Maximum number of images reached": "Достигнут лимит в 10 фото",
+    "File too large": "Файл слишком большой",
+    "Unsupported media type": "Неподдерживаемый тип файла"
   }
 }
