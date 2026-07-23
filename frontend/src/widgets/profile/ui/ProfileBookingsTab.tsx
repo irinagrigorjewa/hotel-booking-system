@@ -52,45 +52,54 @@ export const ProfileBookingsTab = ({
   }
 
   return (
-    <Table size="small">
-      <TableHead>
-        <TableRow>
-          <TableCell>{t('bookings.colHotel')}</TableCell>
-          <TableCell>{t('bookings.colRoom')}</TableCell>
-          <TableCell>{t('bookings.colDates')}</TableCell>
-          <TableCell>{t('bookings.colTotal')}</TableCell>
-          <TableCell>{t('bookings.colStatus')}</TableCell>
-          <TableCell />
-        </TableRow>
-      </TableHead>
-      <TableBody>
-        {bookings.map((booking) => (
-          <TableRow key={booking.id}>
-            <TableCell>{booking.room.hotel_name}</TableCell>
-            <TableCell>{booking.room.number}</TableCell>
-            <TableCell>
-              {t('bookings.datesRow', {
-                checkIn: booking.check_in,
-                checkOut: booking.check_out,
-                nights: booking.nights,
-              })}
-            </TableCell>
-            <TableCell>{booking.total_price} ₽</TableCell>
-            <TableCell>{t(`enums.booking.${booking.status}`)}</TableCell>
-            <TableCell align="right">
-              {canCancelBooking(booking.status) ? (
-                <Button
-                  disabled={cancellingId === booking.id}
-                  onClick={() => void onCancel(booking.id)}
-                  size="small"
-                >
-                  {t('bookings.cancel')}
-                </Button>
-              ) : null}
-            </TableCell>
+    <Box
+      sx={{
+        border: '1px solid',
+        borderColor: 'divider',
+        borderRadius: 2,
+        overflow: 'auto',
+      }}
+    >
+      <Table size="small">
+        <TableHead>
+          <TableRow>
+            <TableCell>{t('bookings.colHotel')}</TableCell>
+            <TableCell>{t('bookings.colRoom')}</TableCell>
+            <TableCell>{t('bookings.colDates')}</TableCell>
+            <TableCell>{t('bookings.colTotal')}</TableCell>
+            <TableCell>{t('bookings.colStatus')}</TableCell>
+            <TableCell />
           </TableRow>
-        ))}
-      </TableBody>
-    </Table>
+        </TableHead>
+        <TableBody>
+          {bookings.map((booking) => (
+            <TableRow key={booking.id}>
+              <TableCell>{booking.room.hotel_name}</TableCell>
+              <TableCell>{booking.room.number}</TableCell>
+              <TableCell>
+                {t('bookings.datesRow', {
+                  checkIn: booking.check_in,
+                  checkOut: booking.check_out,
+                  nights: booking.nights,
+                })}
+              </TableCell>
+              <TableCell>{booking.total_price} ₽</TableCell>
+              <TableCell>{t(`enums.booking.${booking.status}`)}</TableCell>
+              <TableCell align="right">
+                {canCancelBooking(booking.status) ? (
+                  <Button
+                    disabled={cancellingId === booking.id}
+                    onClick={() => void onCancel(booking.id)}
+                    size="small"
+                  >
+                    {t('bookings.cancel')}
+                  </Button>
+                ) : null}
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </Box>
   )
 }

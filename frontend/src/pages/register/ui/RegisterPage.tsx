@@ -6,6 +6,7 @@ import { Link as RouterLink, useNavigate } from 'react-router-dom'
 
 import { useAuth } from '@features/auth/ui/AuthContext'
 import { getApiErrorMessage } from '@shared/lib/getApiErrorMessage'
+import { fonts } from '@shared/theme/tokens'
 
 interface RegisterFormValues {
   name: string
@@ -52,10 +53,14 @@ export const RegisterPage = () => {
 
   return (
     <Box component="form" noValidate onSubmit={handleSubmit(submit)}>
-      <Typography component="h1" variant="h4">
+      <Typography
+        component="h1"
+        sx={{ fontFamily: fonts.display, fontWeight: 700, letterSpacing: '-0.02em' }}
+        variant="h4"
+      >
         {t('auth.registerTitle')}
       </Typography>
-      <Typography sx={{ mb: 3 }} color="text.secondary">
+      <Typography sx={{ mb: 3, mt: 1 }} color="text.secondary">
         {t('auth.registerSubtitle')}
       </Typography>
       {submitError ? (
@@ -129,6 +134,7 @@ export const RegisterPage = () => {
         {...register('phone')}
       />
       <Button
+        color="cta"
         disabled={isSubmitting}
         fullWidth
         sx={{ mt: 3 }}
@@ -137,13 +143,13 @@ export const RegisterPage = () => {
       >
         {isSubmitting ? t('auth.registerSubmitting') : t('auth.registerSubmit')}
       </Button>
-      <Typography sx={{ mt: 2 }}>
+      <Typography sx={{ mt: 2.5 }} variant="body2">
         {t('auth.hasAccount')}{' '}
         <Link component={RouterLink} to="/login">
           {t('nav.login')}
         </Link>
       </Typography>
-      <Typography sx={{ mt: 1.5 }}>
+      <Typography sx={{ mt: 1.5 }} variant="body2">
         <Link component={RouterLink} to="/">
           {t('auth.toHome')}
         </Link>

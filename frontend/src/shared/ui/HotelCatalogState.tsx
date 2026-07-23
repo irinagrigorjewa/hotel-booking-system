@@ -1,9 +1,10 @@
-import { Alert, Box, Button, Grid, Skeleton, Typography } from '@mui/material'
+import { Alert, Button, Grid, Paper, Skeleton, Typography } from '@mui/material'
 import { useTranslation } from 'react-i18next'
 
 import { HotelCard } from '@entities/hotel/ui/HotelCard'
 import type { HotelListItem } from '@entities/hotel/model/types'
 import { SKELETON_CARD_KEYS } from '@shared/config/domainOptions'
+import { elevation, radius } from '@shared/theme/tokens'
 
 interface HotelCatalogStateProps {
   isLoading: boolean
@@ -12,6 +13,8 @@ interface HotelCatalogStateProps {
   onRetry: () => void
   emptyMessage?: string
 }
+
+const SKELETON_HEIGHT = 280
 
 export const HotelCatalogState = ({
   isLoading,
@@ -28,7 +31,11 @@ export const HotelCatalogState = ({
       <Grid container spacing={2}>
         {SKELETON_CARD_KEYS.map((index) => (
           <Grid key={index} size={{ xs: 12, sm: 6, md: 4 }}>
-            <Skeleton height={180} variant="rounded" />
+            <Skeleton
+              height={SKELETON_HEIGHT}
+              sx={{ borderRadius: `${radius.md}px` }}
+              variant="rounded"
+            />
           </Grid>
         ))}
       </Grid>
@@ -44,6 +51,8 @@ export const HotelCatalogState = ({
           </Button>
         }
         severity="error"
+        sx={{ borderRadius: `${radius.md}px` }}
+        variant="outlined"
       >
         {t('hotels.loadFailed')}
       </Alert>
@@ -52,16 +61,32 @@ export const HotelCatalogState = ({
 
   if (items.length === 0) {
     return (
-      <Box sx={{ py: 4, textAlign: 'center' }}>
-        <Typography color="text.secondary">{emptyText}</Typography>
-      </Box>
+      <Paper
+        elevation={0}
+        sx={{
+          border: 1,
+          borderColor: 'divider',
+          borderRadius: `${radius.md}px`,
+          boxShadow: elevation[0],
+          px: 3,
+          py: 6,
+          textAlign: 'center',
+        }}
+      >
+        <Typography color="text.secondary" component="p" variant="body1">
+          {emptyText}
+        </Typography>
+        <Typography color="text.secondary" sx={{ mt: 1 }} variant="body2">
+          {t('hotels.emptyHint')}
+        </Typography>
+      </Paper>
     )
   }
 
   return (
     <Grid container spacing={2}>
       {items.map((hotel) => (
-        <Grid key={hotel.id} size={{ xs: 12, sm: 6, md: 4 }}>
+        <Grid key={hotel.id} size={{ xs: 12, sm: 6, md: 4, lg: 3 }}>
           <HotelCard hotel={hotel} />
         </Grid>
       ))}

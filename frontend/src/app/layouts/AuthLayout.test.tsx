@@ -23,7 +23,7 @@ describe('AuthLayout', () => {
   it('links the brand to home and shows a language switcher', async () => {
     const user = userEvent.setup()
 
-    renderWithProviders(
+    const { container } = renderWithProviders(
       <Routes>
         <Route element={<AuthLayout />}>
           <Route path="login" element={<p>Login form</p>} />
@@ -37,7 +37,14 @@ describe('AuthLayout', () => {
     expect(screen.getByRole('button', { name: 'RU' })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'EN' })).toBeInTheDocument()
 
-    await user.click(screen.getByRole('link', { name: 'Hotel Booking System' }))
+    const header = container.querySelector('header')
+    expect(header).not.toBeNull()
+    const brand = screen.getByRole('link', { name: 'Hotel Booking System' })
+    expect(header).toContainElement(brand)
+    expect(brand).toHaveAttribute('href', '/')
+    expect(brand).toHaveClass('MuiTypography-h6')
+
+    await user.click(brand)
 
     expect(await screen.findByText('Home page')).toBeInTheDocument()
   })

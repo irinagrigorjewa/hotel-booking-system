@@ -135,6 +135,7 @@
     "loading": "Loading…",
     "onMap": "On the map",
     "notFoundTitle": "Page not found",
+    "notFoundHint": "This page does not exist or may have been moved.",
     "notFoundHome": "Back home",
     "backToCatalog": "Back to catalog",
     "returnToCatalog": "Return to catalog"
@@ -200,7 +201,9 @@
       "ariaLabel": "Hotel gallery",
       "photoAlt": "{{hotelName}} photo {{order}}"
     },
-    "homeTagline": "Find a hotel for your next trip.",
+    "homeHeadline": "Find your next stay",
+    "homeTagline": "Search by city and book rooms that fit your trip.",
+    "homeHeroLabel": "Home search",
     "popular": "Popular hotels",
     "allHotels": "All hotels",
     "openMap": "Open map",
@@ -209,6 +212,7 @@
     "subtitle": "Filter the catalog by city and stars.",
     "onMap": "On map",
     "notFound": "No hotels found",
+    "emptyHint": "Try a different city or star rating.",
     "loadFailed": "Failed to load hotels",
     "invalidId": "Invalid hotel id",
     "detailNotFound": "Hotel not found",
@@ -263,12 +267,15 @@
   },
   "favorites": {
     "title": "Favorites",
+    "subtitle": "Hotels you saved for later.",
     "empty": "No favorites yet",
     "add": "Add to favorites",
     "remove": "Remove from favorites"
   },
   "map": {
     "title": "Hotels map",
+    "listTitle": "{{count}} hotels",
+    "listLabel": "Hotels on the map",
     "loadFailed": "Failed to load map",
     "empty": "No hotels to show on the map"
   },

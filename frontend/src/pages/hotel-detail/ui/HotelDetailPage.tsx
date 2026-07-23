@@ -46,7 +46,7 @@ export const HotelDetailPage = () => {
   const hotel = hotelQuery.data
 
   return (
-    <Box>
+    <Box sx={{ display: 'flex', flexDirection: 'column', gap: { xs: 3, md: 4 } }}>
       <HotelDetailHeader hotel={hotel} />
       <HotelDetailGallery
         hotelId={hotel.id}
@@ -57,7 +57,12 @@ export const HotelDetailPage = () => {
       />
       <HotelDetailReviews hotelId={hotel.id} />
       <HotelDetailRooms hotelId={hotel.id} />
-      <Button component={RouterLink} sx={{ mt: 3 }} to="/hotels">
+      <Button
+        component={RouterLink}
+        sx={{ alignSelf: 'flex-start' }}
+        to="/hotels"
+        variant="outlined"
+      >
         {t('common.backToCatalog')}
       </Button>
     </Box>
