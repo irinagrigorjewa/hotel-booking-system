@@ -70,6 +70,9 @@
     "hotelPhotos": "Hotel photos",
     "hotelPhotosEmpty": "No photos uploaded yet",
     "hotelPhotosCoverHint": "First photo is cover",
+    "roomPhotos": "Room photos",
+    "roomPhotosEmpty": "No photos uploaded yet",
+    "roomPhotosLimitReached": "You can upload up to 10 photos",
     "movePhotoLeft": "Move left",
     "movePhotoRight": "Move right",
     "confirmDeletePhotoTitle": "Delete photo?",
@@ -168,6 +171,9 @@
       "checkIn": "Check-in",
       "checkOut": "Check-out",
       "apply": "Apply"
+    },
+    "gallery": {
+      "photoAlt": "Room {{roomNumber}} photo {{order}}"
     }
   },
   "enums": {

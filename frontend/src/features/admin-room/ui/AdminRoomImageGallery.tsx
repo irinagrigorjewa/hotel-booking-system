@@ -4,33 +4,33 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { useNotify } from '@app/providers/NotificationProvider'
-import { useHotel } from '@entities/hotel/api/queries/useHotel'
 import { deleteImageMutationOptions } from '@entities/image/api/mutations/deleteImageMutationOptions'
 import { updateImageSortOrderMutationOptions } from '@entities/image/api/mutations/updateImageSortOrderMutationOptions'
+import { useRoom } from '@entities/room/api/queries/useRoom'
 import { mediaUrl } from '@shared/lib/mediaUrl'
 import { ConfirmDialog } from '@shared/ui/ConfirmDialog'
 
-interface AdminHotelImageGalleryProps {
-  hotelId: number
+interface AdminRoomImageGalleryProps {
+  roomId: number
 }
 
-export const AdminHotelImageGallery = ({
-  hotelId,
-}: AdminHotelImageGalleryProps) => {
+export const AdminRoomImageGallery = ({
+  roomId,
+}: AdminRoomImageGalleryProps) => {
   const { t } = useTranslation()
   const { notifySuccess, notifyApiError } = useNotify()
   const queryClient = useQueryClient()
-  const hotelQuery = useHotel(hotelId)
+  const roomQuery = useRoom(roomId)
   const deleteMutation = useMutation(
-    deleteImageMutationOptions(queryClient, { hotelId }),
+    deleteImageMutationOptions(queryClient, { roomId }),
   )
   const reorderMutation = useMutation(
-    updateImageSortOrderMutationOptions(queryClient, { hotelId }),
+    updateImageSortOrderMutationOptions(queryClient, { roomId }),
   )
   const [pendingDeleteId, setPendingDeleteId] = useState<number | null>(null)
 
-  const hotel = hotelQuery.data
-  const images = [...(hotel?.images ?? [])].sort(
+  const room = roomQuery.data
+  const images = [...(room?.images ?? [])].sort(
     (a, b) => a.sort_order - b.sort_order || a.id - b.id,
   )
 
@@ -73,7 +73,7 @@ export const AdminHotelImageGallery = ({
     }
   }
 
-  if (hotelQuery.isLoading) {
+  if (roomQuery.isLoading) {
     return (
       <Box aria-busy="true" sx={{ display: 'flex', justifyContent: 'center', py: 2 }}>
         <CircularProgress size={24} />
@@ -84,18 +84,15 @@ export const AdminHotelImageGallery = ({
   if (images.length === 0) {
     return (
       <Typography color="text.secondary" variant="body2">
-        {t('admin.hotelPhotosEmpty')}
+        {t('admin.roomPhotosEmpty')}
       </Typography>
     )
   }
 
   return (
     <Box>
-      <Typography color="text.secondary" sx={{ mb: 1.5 }} variant="body2">
-        {t('admin.hotelPhotosCoverHint')}
-      </Typography>
       <Box
-        aria-label={t('admin.hotelPhotos')}
+        aria-label={t('admin.roomPhotos')}
         sx={{
           display: 'grid',
           gap: 1.5,
@@ -124,8 +121,8 @@ export const AdminHotelImageGallery = ({
               }}
             >
               <Box
-                alt={t('hotels.gallery.photoAlt', {
-                  hotelName: hotel?.name ?? '',
+                alt={t('rooms.gallery.photoAlt', {
+                  roomNumber: room?.number ?? '',
                   order: image.sort_order,
                 })}
                 component="img"

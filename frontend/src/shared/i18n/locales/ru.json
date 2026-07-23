@@ -70,6 +70,9 @@
     "hotelPhotos": "Фото отеля",
     "hotelPhotosEmpty": "Фотографии ещё не загружены",
     "hotelPhotosCoverHint": "Первое фото — обложка",
+    "roomPhotos": "Фото номера",
+    "roomPhotosEmpty": "Фотографии ещё не загружены",
+    "roomPhotosLimitReached": "Можно загрузить не более 10 фото",
     "movePhotoLeft": "Переместить влево",
     "movePhotoRight": "Переместить вправо",
     "confirmDeletePhotoTitle": "Удалить фото?",
@@ -168,6 +171,9 @@
       "checkIn": "Заезд",
       "checkOut": "Выезд",
       "apply": "Применить"
+    },
+    "gallery": {
+      "photoAlt": "Номер {{roomNumber}} фото {{order}}"
     }
   },
   "enums": {
