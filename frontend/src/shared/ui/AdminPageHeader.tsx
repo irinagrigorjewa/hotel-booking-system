@@ -1,6 +1,8 @@
 import { Link, Typography } from '@mui/material'
 import { Link as RouterLink } from 'react-router-dom'
 
+import { fonts } from '@shared/theme/tokens'
+
 interface AdminPageLink {
   label: string
   to: string
@@ -17,17 +19,23 @@ export const AdminPageHeader = ({
 }: AdminPageHeaderProps) => {
   return (
     <>
-      <Typography component="h1" gutterBottom variant="h4">
+      <Typography
+        component="h1"
+        gutterBottom
+        sx={{ fontFamily: fonts.display, fontWeight: 700, letterSpacing: '-0.02em' }}
+        variant="h4"
+      >
         {title}
       </Typography>
       {links.length > 0 ? (
-        <Typography sx={{ mb: 2 }}>
+        <Typography sx={{ mb: 2.5 }} variant="body2">
           {links.map((link, index) => (
             <Link
               component={RouterLink}
               key={link.to}
               sx={index > 0 ? { ml: 2 } : undefined}
               to={link.to}
+              underline="hover"
             >
               {link.label}
             </Link>

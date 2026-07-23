@@ -209,6 +209,7 @@
     "subtitle": "Filter the catalog by city and stars.",
     "onMap": "On map",
     "notFound": "No hotels found",
+    "emptyHint": "Try a different city or star rating.",
     "loadFailed": "Failed to load hotels",
     "invalidId": "Invalid hotel id",
     "detailNotFound": "Hotel not found",

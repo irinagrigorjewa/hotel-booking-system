@@ -53,7 +53,11 @@ describe('FavoriteButton', () => {
 
     renderWithProviders(<FavoriteButton hotelId={1} isFavorite={false} />)
 
-    fireEvent.click(screen.getByRole('button', { name: 'В избранное' }))
+    const button = screen.getByRole('button', { name: 'В избранное' })
+    expect(button.querySelector('svg')).toBeTruthy()
+    expect(button).toHaveStyle({ minHeight: '40px', minWidth: '40px' })
+
+    fireEvent.click(button)
 
     await waitFor(() => {
       expect(addSpy).toHaveBeenCalledWith(1)

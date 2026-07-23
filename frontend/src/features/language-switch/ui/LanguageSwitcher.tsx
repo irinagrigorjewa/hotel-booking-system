@@ -8,7 +8,12 @@ export const LanguageSwitcher = () => {
   const current = i18n.language.startsWith('en') ? 'en' : 'ru'
 
   return (
-    <ButtonGroup color="inherit" size="small" variant="outlined">
+    <ButtonGroup
+      color="inherit"
+      size="small"
+      sx={{ '& .MuiButton-root': { minHeight: 40, minWidth: 40, px: 1 } }}
+      variant="outlined"
+    >
       <Button
         aria-pressed={current === 'ru'}
         onClick={() => {

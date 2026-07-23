@@ -13,10 +13,13 @@ import { Link as RouterLink } from 'react-router-dom'
 import type { HotelListItem } from '@entities/hotel/model/types'
 import { FavoriteButton } from '@features/favorite-toggle/ui/FavoriteButton'
 import { mediaUrl } from '@shared/lib/mediaUrl'
+import { elevation, fonts, radius } from '@shared/theme/tokens'
 
 interface HotelCardProps {
   hotel: HotelListItem
 }
+
+const COVER_HEIGHT = 200
 
 export const HotelCard = ({ hotel }: HotelCardProps) => {
   const { t } = useTranslation()
@@ -26,11 +29,13 @@ export const HotelCard = ({ hotel }: HotelCardProps) => {
     <Card
       component="article"
       sx={{
+        borderRadius: `${radius.md}px`,
         height: '100%',
+        overflow: 'hidden',
         position: 'relative',
         transition: 'box-shadow 0.2s ease, transform 0.2s ease',
         '&:hover': {
-          boxShadow: 6,
+          boxShadow: elevation[2],
           transform: 'translateY(-2px)',
         },
       }}
@@ -44,7 +49,7 @@ export const HotelCard = ({ hotel }: HotelCardProps) => {
           <CardMedia
             alt={hotel.name}
             component="img"
-            height="140"
+            height={COVER_HEIGHT}
             image={coverSrc}
             sx={{ objectFit: 'cover' }}
           />
@@ -53,10 +58,10 @@ export const HotelCard = ({ hotel }: HotelCardProps) => {
             aria-label={t('hotels.noPhoto')}
             sx={{
               alignItems: 'center',
-              bgcolor: 'action.hover',
+              bgcolor: 'primary.light',
               color: 'text.secondary',
               display: 'flex',
-              height: 140,
+              height: COVER_HEIGHT,
               justifyContent: 'center',
               px: 2,
               textAlign: 'center',
@@ -65,41 +70,55 @@ export const HotelCard = ({ hotel }: HotelCardProps) => {
             <Typography variant="body2">{t('hotels.noPhoto')}</Typography>
           </Box>
         )}
-        <CardContent>
-          <Typography component="h2" gutterBottom variant="h6">
+        <CardContent sx={{ display: 'flex', flexDirection: 'column', gap: 0.75, p: 2 }}>
+          {hotel.min_price !== null ? (
+            <Typography
+              component="p"
+              sx={{
+                color: 'text.primary',
+                fontFamily: fonts.display,
+                fontVariantNumeric: 'tabular-nums',
+                fontWeight: 700,
+                letterSpacing: '-0.01em',
+                m: 0,
+              }}
+              variant="h6"
+            >
+              {t('common.fromPrice', { price: hotel.min_price })}
+            </Typography>
+          ) : null}
+          <Typography
+            component="h2"
+            sx={{
+              WebkitBoxOrient: 'vertical',
+              WebkitLineClamp: 2,
+              display: '-webkit-box',
+              fontFamily: fonts.display,
+              fontWeight: 600,
+              lineHeight: 1.3,
+              overflow: 'hidden',
+            }}
+            variant="subtitle1"
+          >
             {hotel.name}
           </Typography>
-          <Typography color="text.secondary" variant="body2">
-            {hotel.city}
-          </Typography>
-          <Box sx={{ alignItems: 'center', display: 'flex', gap: 1, mt: 1 }}>
-            <Rating readOnly size="small" value={hotel.stars} />
-            <Typography variant="body2">{hotel.stars}</Typography>
+          <Box sx={{ alignItems: 'center', display: 'flex', flexWrap: 'wrap', gap: 0.75 }}>
+            <Typography color="text.secondary" variant="body2">
+              {hotel.city}
+            </Typography>
+            <Rating
+              readOnly
+              size="small"
+              sx={{ color: 'rating.main', '& .MuiRating-iconEmpty': { color: 'divider' } }}
+              value={hotel.stars}
+            />
           </Box>
           {hotel.avg_rating !== null ? (
-            <Typography color="text.secondary" sx={{ mt: 0.5 }} variant="body2">
+            <Typography color="text.secondary" variant="body2">
               {t('hotels.cardRating', {
                 rating: hotel.avg_rating,
                 count: hotel.reviews_count,
               })}
-            </Typography>
-          ) : null}
-          <Typography sx={{ mt: 1 }} variant="body2">
-            {hotel.address}
-          </Typography>
-          {hotel.description ? (
-            <Typography
-              color="text.secondary"
-              sx={{
-                WebkitBoxOrient: 'vertical',
-                WebkitLineClamp: 2,
-                display: '-webkit-box',
-                mt: 1,
-                overflow: 'hidden',
-              }}
-              variant="body2"
-            >
-              {hotel.description}
             </Typography>
           ) : null}
         </CardContent>
